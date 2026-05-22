@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>بروتين وكارب - الإشراف السحابي</title>
+<title>بروتين وكارب - الإشراف السحابي المتكامل</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=400;700;900&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
@@ -14,6 +14,20 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 @keyframes wobble { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg) scale(1.05); } }
 .splash-welcome-text { margin-top: 15px; font-size: 26px; font-weight: 900; color: #fff; }
 .splash-welcome-text .yellow { color: #eab308; } .splash-welcome-text .green { color: #22c55e; }
+
+#adminAuthModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
+.auth-card { background: #1e293b; border: 2px solid #334155; border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); animation: scaleUp 0.3s ease-out; }
+@keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.auth-icon { font-size: 45px; margin-bottom: 15px; display: inline-block; }
+.auth-title { font-size: 20px; font-weight: 900; color: #facc15; margin-bottom: 10px; }
+.auth-desc { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+.auth-input { width: 100%; padding: 14px; border-radius: 10px; background: rgba(15,23,42,0.6); color: white; border: 2px solid #475569; text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 4px; outline: none; margin-bottom: 15px; }
+.auth-input:focus { border-color: #22c55e; }
+.auth-btn-group { display: flex; gap: 10px; }
+.auth-btn { flex: 1; padding: 12px; border-radius: 10px; font-weight: bold; font-family: 'Cairo'; border: none; cursor: pointer; font-size: 14px; }
+.auth-btn-confirm { background: #22c55e; color: white; }
+.auth-btn-cancel { background: #ef4444; color: white; }
+
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
 .reports-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: rgba(30,41,59,0.9); border-bottom: 1px solid rgba(255,255,255,0.08); }
@@ -26,7 +40,8 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-content { flex: 1; overflow-y: auto; padding: 12px; }
 .report-card { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.06); }
 .report-card-num { font-size: 16px; font-weight: 900; color: #facc15; }
-.top-banner { width: 100%; height: 120px; background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.95)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000'); background-size: cover; background-position: center; border-radius: 14px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+
+.top-banner { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 14px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); transition: background-image 0.5s ease; }
 .container { width: 100%; max-width: 700px; margin: auto; }
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.7); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
 .brand-title { font-size: 22px; font-weight: 900; }
@@ -59,6 +74,19 @@ input[type="number"] { font-size: 18px; text-align: center; }
     <div class="splash-welcome-text">أهلاً <span class="yellow">يوملز</span> <span class="green">👋</span></div>
 </div>
 
+<div id="adminAuthModal">
+    <div class="auth-card">
+        <span class="auth-icon">🛡️</span>
+        <div class="auth-title">الوصول السحابي الآمن</div>
+        <div class="auth-desc">يرجى إدخال رمز المشرف للدخول للوحة التحكم</div>
+        <input type="password" id="adminPasswordInput" class="auth-input" placeholder="•••••" maxlength="6" inputmode="numeric">
+        <div class="auth-btn-group">
+            <button class="auth-btn type-confirm auth-btn-confirm" onclick="verifyAdminCode()">تأكيد الدخول</button>
+            <button class="auth-btn type-cancel auth-btn-cancel" onclick="closeAdminModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
 <div class="reports-overlay" id="reportsOverlay">
     <div class="reports-header">
         <div class="reports-header-title">📋 سجل تسليم اليوم</div>
@@ -72,7 +100,7 @@ input[type="number"] { font-size: 18px; text-align: center; }
 </div>
 
 <div class="container">
-    <div class="top-banner"></div>
+    <div class="top-banner" id="topBanner"></div>
     <div class="header">
         <button onclick="openReports()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">⋮</button>
         <div class="brand-title"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
@@ -82,6 +110,7 @@ input[type="number"] { font-size: 18px; text-align: center; }
     <div class="card control-panel" id="adminPanel">
         <div class="control-item"><label>📁 رفع كشف الـ PDF اليومي للسحابة:</label><input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file"/></div>
         <div class="control-item"><label>💬 رقم واتساب المطبخ الدولي:</label><input id="whatsappInput" type="tel" value="966506546313"/></div>
+        <div class="control-item"><label>🖼️ رابط صورة البانر العلوية (الأبعاد المفضلة 700x120):</label><input id="bannerUrlInput" type="url" placeholder="الصق رابط الصورة هنا..."/></div>
         <button class="uploadBtn" onclick="saveAdminSettings()">💾 حفظ ومزامنة الإعدادات</button>
         <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:#dc2626; color:white; width:100%; border:none; padding:8px; margin-top:8px; border-radius:6px; font-family:'Cairo'; font-weight:bold;">🔒 إغلاق</button>
     </div>
@@ -89,8 +118,8 @@ input[type="number"] { font-size: 18px; text-align: center; }
     <div class="card">
         <h3>نظام الاستعلام للمشتركين:</h3>
         <input id="mealInput" placeholder="أدخل رقم اشتراك العميل..." type="number" style="margin-top:8px; font-family:'Cairo';"/>
-        <button class="searchBtn" onclick="checkMeal()">🔍 بحث فوري في السحابة</button>
-        <div id="status" style="margin-top:10px; font-size:13px; color:#facc15; text-align:center; font-weight:bold;">⏳ جاري الاتصال بالسيرفر السحابي...</div>
+        <button class="searchBtn" onclick="checkMeal()">🔍 بحث</button>
+        <div id="status" style="margin-top:10px; font-size:13px; color:#facc15; text-align:center; font-weight:bold;">⏳ جاري الاتصال بالسيرفر...</div>
     </div>
 
     <div class="card"><div class="stats"><div class="stat greenBox">تم تسليمها<h2 id="doneMeals">0</h2></div><div class="stat red">تم إلغاؤها<h2 id="cancelMeals">0</h2></div></div></div>
@@ -111,7 +140,11 @@ input[type="number"] { font-size: 18px; text-align: center; }
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-// مفاتيح الربط السحابية الرسمية والمفعلة الخاصة بإبراهيم
+const audioSuccess = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-500.wav"); 
+const audioError = new Audio("https://assets.mixkit.co/active_storage/sfx/911/911-500.wav"); 
+
+const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
   authDomain: "protencarp.firebaseapp.com",
@@ -125,49 +158,72 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-var meals = [], tableStatus = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313";
+var meals = [], tableStatus = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 
 setTimeout(() => { 
     let s = document.getElementById("splashScreen");
     if(s) { s.style.opacity = "0"; setTimeout(() => s.style.display="none", 500); }
 }, 2000);
 
-// المزامنة الفورية لايف مع السحابة لجوجل
 db.ref("pnc_data").on("value", (snapshot) => {
     let data = snapshot.val() || {};
     meals = data.mealsList || [];
     tableStatus = data.actions || {};
     waNum = data.whatsapp || "966506546313";
+    currentBannerUrl = data.bannerUrl || defaultBanner;
     
     document.getElementById("waLink").href = "https://wa.me/" + waNum;
     document.getElementById("whatsappInput").value = waNum;
+    document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
+    
+    document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.95)), url('${currentBannerUrl}')`;
     
     searchedNumbers.clear();
     Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
     
+    // تم تعديل الصياغة لتصبح "متصل بالسيرفر" بناءً على طلبك
     if(meals.length > 0) {
-        document.getElementById("status").innerHTML = "🟢 متصل بالسحابة لايف! إجمالي كشف اليوم: " + meals.length;
+        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر. إجمالي كشف اليوم: " + meals.length;
     } else {
-        document.getElementById("status").innerHTML = "🟢 متصل بالسحابة.. بانتظار رفع كشف الـ PDF اليومي.";
+        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر. بانتظار رفع كشف الـ PDF اليومي.";
     }
     recalculateStats(); renderCards(); updateReports();
 });
 
 function openAdmin() {
-    let p = prompt("🔒 أدخل رمز الدخول الأمني للمشرف:");
-    if(p === "71138") document.getElementById("adminPanel").style.display = "block";
-    else if(p !== null) alert("الرمز خطأ!");
+    document.getElementById("adminPasswordInput").value = "";
+    document.getElementById("adminAuthModal").style.display = "flex";
+    document.getElementById("adminPasswordInput").focus();
+}
+function closeAdminModal() {
+    document.getElementById("adminAuthModal").style.display = "none";
+}
+function verifyAdminCode() {
+    let code = document.getElementById("adminPasswordInput").value.trim();
+    if(code === "71138") {
+        audioSuccess.play();
+        document.getElementById("adminAuthModal").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+    } else {
+        audioError.play();
+        alert("❌ الرمز السري خطأ! حاول مجدداً.");
+    }
 }
 
 function saveAdminSettings() {
     let num = document.getElementById("whatsappInput").value.trim();
+    let bUrl = document.getElementById("bannerUrlInput").value.trim();
+    if(!bUrl) bUrl = defaultBanner;
+    
     db.ref("pnc_data/whatsapp").set(num);
-    alert("✅ تم تحديث رقم الواتساب سحابياً!");
+    db.ref("pnc_data/bannerUrl").set(bUrl);
+    audioSuccess.play();
+    alert("✅ تم حفظ وتحديث الإعدادات والصورة السحابية بنجاح!");
 }
 
 async function startReadingPDF(file) {
     if(!file) return;
-    document.getElementById("status").innerHTML = "⏳ جاري قراءة وفرز ملف الـ PDF سحابياً...";
+    document.getElementById("status").innerHTML = "⏳ جاري قراءة وفرز ملف الـ PDF...";
     meals = []; searchedNumbers.clear();
     
     let reader = new FileReader();
@@ -192,9 +248,12 @@ async function startReadingPDF(file) {
             }
             meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
             
-            db.ref("pnc_data").set({ mealsList: meals, actions: {}, whatsapp: waNum });
+            db.ref("pnc_data/mealsList").set(meals);
+            db.ref("pnc_data/actions").set({});
+            audioSuccess.play();
             alert("🎉 تم رفع الكشف وتحديث أجهزة المطبخ والمناديب فوراً! العدد: " + meals.length);
         } catch(e) {
+            audioError.play();
             document.getElementById("status").innerHTML = "❌ خطأ في قراءة ملف الـ PDF!";
         }
     };
@@ -204,10 +263,32 @@ async function startReadingPDF(file) {
 function checkMeal() {
     let input = document.getElementById("mealInput"), num = input.value.trim();
     if (!num) return;
-    if (meals.length === 0) { alert("⚠️ الرجاء رفع كشف الـ PDF أولاً."); return; }
-    let meal = meals.find(m => m.number == num);
-    if (!meal) { alert("❌ هذا الرقم غير مسجل في كشف اليوم!"); input.value = ""; return; }
+    if (meals.length === 0) { audioError.play(); alert("⚠️ الرجاء رفع كشف الـ PDF أولاً."); return; }
     
+    let meal = meals.find(m => m.number == num);
+    if (!meal) { 
+        audioError.play(); 
+        alert("❌ هذا الرقم غير مسجل في كشف اليوم بتاتاً!"); 
+        input.value = ""; 
+        return; 
+    }
+    
+    if(tableStatus[num]) {
+        let saved = tableStatus[num];
+        if(saved.status === "done") {
+            audioError.play();
+            alert(`⚠️ المشترك: (${meal.name}) قد استلم وجبته مسبقاً في تمام الساعة: ${saved.time}`);
+            input.value = "";
+            return;
+        } else if(saved.status === "cancel") {
+            audioError.play();
+            alert(`⚠️ انتبه! المشترك: (${meal.name}) اشتراكه ملغى لهذا اليوم منذ الساعة: ${saved.time}`);
+            input.value = "";
+            return;
+        }
+    }
+    
+    audioSuccess.play(); 
     searchedNumbers.add(num);
     if(!tableStatus[num]) {
         db.ref("pnc_data/actions/" + num).set({ status: "pending", time: "--:--" });
@@ -222,6 +303,7 @@ function checkMeal() {
 function actionMeal(num, type) {
     let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
     db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString });
+    audioSuccess.play();
 }
 
 function recalculateStats() {
