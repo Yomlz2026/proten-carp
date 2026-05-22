@@ -10,7 +10,7 @@
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
 
 /* شاشة الترحيب */
-#splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+#splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
 .splash-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 30px 40px; border-radius: 24px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: splashFadeIn 0.5s ease; max-width: 85%; }
 @keyframes splashFadeIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .splash-text { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
@@ -92,7 +92,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .card-actions-area { display: flex; gap: 8px; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 10px; }
 .card-row-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; }
 
-/* شريط الواتساب المدمج والجديد في الأسفل لحماية الشاشة من التغطية */
+/* شريط الواتساب المدمج والجديد في الأسفل */
 .whatsapp-bottom-bar { position: fixed; bottom: 38px; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 15px; z-index: 998; display: flex; justify-content: center; align-items: center; }
 .whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); transition: transform 0.2s; }
 .whatsapp-btn-link:active { transform: scale(0.98); }
@@ -162,7 +162,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
     </div>
 
     <div class="card control-panel" id="adminPanel">
-        <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:10px; font-size:12px;"/>
+        <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:10px; font-size:12px Pap;"/>
         <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب..." style="margin-bottom:10px;"/>
         <input id="bannerUrlInput" type="url" placeholder="رابط صورة البانر العلوية..." style="margin-bottom:10px;"/>
         <button class="uploadBtn" onclick="saveAdminSettings()" style="margin-bottom:5px;">💾 حفظ الإعدادات السحابية</button>
@@ -255,12 +255,16 @@ const db = firebase.database();
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery"; 
 
-window.addEventListener('load', () => {
-    setTimeout(() => { 
-        let s = document.getElementById("splashScreen");
-        if(s) { s.style.opacity = "0"; setTimeout(() => s.style.display="none", 600); }
-    }, 1500);
-});
+// دالة إخفاء شاشة الترحيب بشكل آمن وسريع
+function hideSplash() {
+    let s = document.getElementById("splashScreen");
+    if(s) { 
+        s.style.opacity = "0"; 
+        setTimeout(() => { s.style.display = "none"; }, 400); 
+    }
+}
+window.addEventListener('DOMContentLoaded', () => { setTimeout(hideSplash, 600); });
+window.addEventListener('load', () => { setTimeout(hideSplash, 300); });
 
 function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
     document.getElementById("alertIcon").innerHTML = icon;
@@ -300,6 +304,7 @@ db.ref("pnc_data").on("value", (snapshot) => {
     
     document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
     recalculateStats(); renderCards(); updateReports();
+    hideSplash(); // إخفاء إضافي للتأكيد بعد جلب البيانات
 });
 
 function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
@@ -426,5 +431,128 @@ function checkMeal() {
     }
     
     let branchText = meal.branch === 'batarji' ? "🏪 فرع البترجي" : "🚚 قسم التوصيل";
-    showCustomAlert("👤", "تأكيد حالة الفرز", `اسم المشترك: <b>${meal.name}</b><br>القسم الحالي: <span style
+    showCustomAlert("👤", "تأكيد حالة الفرز", `اسم المشترك: <b>${meal.name}</b><br>القسم الحالي: <span style="color:#facc15">${branchText}</span><br>رقم الاشتراك: # ${num}<br><br>اختر الإجراء المطلق:`, true, true, num);
+    input.value = "";
+}
 
+function actionMeal(num, type) {
+    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+    searchedNumbers.delete(num); searchedNumbers.add(num);
+    db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString });
+}
+
+function recalculateStats() {
+    let d = 0, c = 0, overlayD = 0, overlayC = 0;
+    
+    Object.keys(tableStatus).forEach(k => {
+        let meal = meals.find(m => m.number == k);
+        let statusData = tableStatus[k];
+        
+        if(statusData.status === "done") overlayD++;
+        if(statusData.status === "cancel") overlayC++;
+        
+        if (meal && meal.branch === currentBranchView) {
+            if(statusData.status === "done") d++; 
+            if(statusData.status === "cancel") c++;
+        }
+    });
+    
+    document.getElementById("doneMeals").innerHTML = d; 
+    document.getElementById("cancelMeals").innerHTML = c;
+    
+    let overlayDone = document.getElementById("overlayDoneCount");
+    let overlayCancel = document.getElementById("overlayCancelCount");
+    if(overlayDone) overlayDone.innerHTML = overlayD;
+    if(overlayCancel) overlayCancel.innerHTML = overlayC;
+}
+
+function renderCards() {
+    let container = document.getElementById("mealCardsContainer"), numbers = Array.from(searchedNumbers);
+    
+    let filteredNumbers = numbers.filter(num => {
+        let meal = meals.find(m => m.number == num);
+        return meal && meal.branch === currentBranchView;
+    });
+
+    if (filteredNumbers.length === 0) { 
+        container.innerHTML = `<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد عمليات فرز في هذا القسم حالياً.</p>`; 
+        return; 
+    }
+    
+    let html = "";
+    filteredNumbers.reverse().forEach(num => {
+        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num] || {};
+        let st = item.status || "pending", tm = item.time || "--:--";
+        let txt = "⏳ معلق", col = "#facc15";
+        if(st === "done") { txt = "✅ مستلم"; col = "#22c55e"; }
+        if(st === "cancel") { txt = "❌ ملغى"; col = "#ef4444"; }
+        
+        html += `<div class="meal-row-card">
+            <div class="meal-card-main-info">
+                <div class="meal-card-info">
+                    <span class="meal-card-num"># ${num}</span>
+                    <span class="meal-card-name">${name}</span>
+                </div>
+                <div style="text-align:left;">
+                    <span style="color:${col}; font-weight:700; font-size:13px;">${txt}</span><br>
+                    <small style="color:#94a3b8; font-size:11px;">${tm}</small>
+                </div>
+            </div>
+            ${st === "pending" ? `
+            <div class="card-actions-area">
+                <button class="card-row-btn modal-btn-deliver" onclick="actionMeal('${num}', 'done')">✅ تسليم سريع</button>
+                <button class="card-row-btn modal-btn-cancel" onclick="actionMeal('${num}', 'cancel')">❌ إلغاء</button>
+            </div>
+            ` : ''}
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function openReports() { updateReports(); document.getElementById("reportsOverlay").classList.add("open"); }
+function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
+
+function switchTab(t) { 
+    activeTab = t; 
+    document.getElementById("tab-done").classList.toggle("active-tab", t==="done"); 
+    document.getElementById("tab-cancel").classList.toggle("active-tab", t==="cancel"); 
+    document.getElementById("tab-archive").classList.toggle("active-tab", t==="archive"); 
+    updateReports(); 
+}
+
+function updateReports() {
+    let content = document.getElementById("reportsContent"), html = "";
+    
+    if(activeTab === 'archive') {
+        let archiveKeys = Object.keys(historyArchive);
+        if(archiveKeys.length === 0) { content.innerHTML = `<div style="text-align:center; color:#64748b; padding:40px;">لا يوجد أيام مؤرشفة حتى الآن.</div>`; return; }
+        
+        archiveKeys.reverse().forEach(key => {
+            let item = historyArchive[key];
+            html += `<div class="report-card" style="border-right: 4px solid #38bdf8;">
+                <div>
+                    <span style="color:#38bdf8; font-weight:bold; font-size:14px;">📅 ${item.date}</span><br>
+                    <small style="color:#22c55e;">✅ مستلم: ${item.done}</small> | 
+                    <small style="color:#ef4444;">❌ ملغى: ${item.cancel}</small>
+                </div>
+                <div>
+                    <button class="delete-archive-btn" onclick="deleteArchiveItem('${key}')">🗑️</button>
+                </div>
+            </div>`;
+        });
+        content.innerHTML = html;
+        return;
+    }
+    
+    let keys = Object.keys(tableStatus).filter(k => tableStatus[k].status === activeTab);
+    if(keys.length === 0) { content.innerHTML = `<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ.</div>`; return; }
+    keys.forEach(num => {
+        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num;
+        let branchLabel = meal && meal.branch === 'batarji' ? "🏪 بترجي" : "🚚 توصيل";
+        html += `<div class="report-card"><div><b># ${num}</b> <small style="color:#facc15; padding-right:5px;">[${branchLabel}]</small><br><small style="color:#cbd5e1">${name}</small></div><div style="text-align:left"><span style="color:${activeTab==='done'?'#22c55e':'#ef4444'}">${activeTab==='done'?'✓ مستلم':'✕ ملغى'}</span><br><small style="color:#94a3b8">${tableStatus[num].time}</small></div></div>`;
+    });
+    content.innerHTML = html;
+}
+</script>
+</body>
+</html>
