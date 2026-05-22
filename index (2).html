@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>بروتين وكارب - الإشراف السحابي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght=400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 80px; }
+#splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1a0a2e 50%, #0f172a 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+.splash-bowl { position: relative; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; }
+.splash-noodle-emoji { font-size: 70px; animation: wobble 0.5s ease-in-out infinite alternate; filter: drop-shadow(0 10px 20px rgba(234,179,8,0.3)); }
+@keyframes wobble { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg) scale(1.05); } }
+.splash-welcome-text { margin-top: 15px; font-size: 26px; font-weight: 900; color: #fff; }
+.splash-welcome-text .yellow { color: #eab308; } .splash-welcome-text .green { color: #22c55e; }
+.reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
+.reports-overlay.open { display: flex; }
+.reports-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: rgba(30,41,59,0.9); border-bottom: 1px solid rgba(255,255,255,0.08); }
+.reports-header-title { font-size: 18px; font-weight: 900; color: #facc15; }
+.reports-close-btn { background: rgba(255,255,255,0.08); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+.reports-tabs { display: flex; border-bottom: 2px solid rgba(255,255,255,0.08); }
+.reports-tab { flex: 1; padding: 14px; text-align: center; font-size: 15px; font-weight: 900; border: none; cursor: pointer; color: #94a3b8; background: rgba(30,41,59,0.5); }
+.reports-tab.active-tab { color: #22c55e; border-bottom: 3px solid #22c55e; background: rgba(34,197,94,0.05); }
+.reports-tab.cancel-tab.active-tab { color: #ef4444; border-bottom-color: #ef4444; background: rgba(239,68,68,0.05); }
+.reports-content { flex: 1; overflow-y: auto; padding: 12px; }
+.report-card { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.06); }
+.report-card-num { font-size: 16px; font-weight: 900; color: #facc15; }
+.top-banner { width: 100%; height: 120px; background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.95)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000'); background-size: cover; background-position: center; border-radius: 14px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+.container { width: 100%; max-width: 700px; margin: auto; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.7); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
+.brand-title { font-size: 22px; font-weight: 900; }
+.brand-protein { color: #22c55e; } .brand-carb { color: #facc15; }
+.card { background: rgba(30,41,59,0.65); border: 1px solid rgba(255,255,255,.05); padding: 15px; border-radius: 14px; margin-bottom: 15px; }
+.control-panel { background: #14532d; border: 2px solid #22c55e; display: none; }
+.control-item { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.control-item label { font-size: 13px; font-weight: bold; color: #facc15; }
+input { width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.1); outline: none; font-family: 'Cairo', sans-serif; }
+input[type="number"] { font-size: 18px; text-align: center; }
+.uploadBtn { background: linear-gradient(45deg,#16a34a,#eab308); color: white; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; border: none; cursor: pointer; }
+.searchBtn { background: #2563eb; color: white; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: bold; width: 100%; margin-top: 10px; border: none; cursor: pointer; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat { padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; }
+.greenBox { background: #16a34a; } .red { background: #dc2626; }
+.meal-row-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.meal-card-info { display: flex; justify-content: space-between; font-weight: bold; }
+.meal-card-num { color: #facc15; }
+.meal-card-actions { display: flex; gap: 8px; }
+.actionBtn { padding: 10px; border-radius: 8px; font-weight: bold; flex: 1; color: white; border: none; cursor: pointer; }
+.deliverBtn { background: #16a34a; } .cancelBtn { background: #dc2626; }
+.whatsapp-float { position: fixed; bottom: 25px; right: 20px; width: 55px; height: 55px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 999; }
+.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #16a34a; color: white; padding: 4px; z-index: 999; text-align: center; font-size: 11px; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div id="splashScreen">
+    <div class="splash-bowl"><span class="splash-noodle-emoji">🍳</span></div>
+    <div class="splash-welcome-text">أهلاً <span class="yellow">يوملز</span> <span class="green">👋</span></div>
+</div>
+
+<div class="reports-overlay" id="reportsOverlay">
+    <div class="reports-header">
+        <div class="reports-header-title">📋 سجل تسليم اليوم</div>
+        <button class="reports-close-btn" onclick="closeReports()">✕</button>
+    </div>
+    <div class="reports-tabs">
+        <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">✅ المستلمون</button>
+        <button class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">❌ الملغيون</button>
+    </div>
+    <div class="reports-content" id="reportsContent"></div>
+</div>
+
+<div class="container">
+    <div class="top-banner"></div>
+    <div class="header">
+        <button onclick="openReports()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">⋮</button>
+        <div class="brand-title"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
+        <button onclick="openAdmin()" style="background:rgba(255,255,255,0.1); color:white; padding:6px 12px; border-radius:8px; border:none; font-family:'Cairo'; font-size:13px; font-weight:bold;">⚙️ لوحة المشرف</button>
+    </div>
+
+    <div class="card control-panel" id="adminPanel">
+        <div class="control-item"><label>📁 رفع كشف الـ PDF اليومي للسحابة:</label><input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file"/></div>
+        <div class="control-item"><label>💬 رقم واتساب المطبخ الدولي:</label><input id="whatsappInput" type="tel" value="966506546313"/></div>
+        <button class="uploadBtn" onclick="saveAdminSettings()">💾 حفظ ومزامنة الإعدادات</button>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:#dc2626; color:white; width:100%; border:none; padding:8px; margin-top:8px; border-radius:6px; font-family:'Cairo'; font-weight:bold;">🔒 إغلاق</button>
+    </div>
+
+    <div class="card">
+        <h3>نظام الاستعلام للمشتركين:</h3>
+        <input id="mealInput" placeholder="أدخل رقم اشتراك العميل..." type="number" style="margin-top:8px; font-family:'Cairo';"/>
+        <button class="searchBtn" onclick="checkMeal()">🔍 بحث فوري في السحابة</button>
+        <div id="status" style="margin-top:10px; font-size:13px; color:#facc15; text-align:center; font-weight:bold;">⏳ جاري الاتصال بالسيرفر السحابي...</div>
+    </div>
+
+    <div class="card"><div class="stats"><div class="stat greenBox">تم تسليمها<h2 id="doneMeals">0</h2></div><div class="stat red">تم إلغاؤها<h2 id="cancelMeals">0</h2></div></div></div>
+
+    <div class="card">
+        <h3>الاشتراكات المفرزة الحالية:</h3>
+        <div id="mealCardsContainer" style="margin-top:5px;"><p style="color:#94a3b8; text-align:center; font-size:13px; padding:15px;">بانتظار المزامنة الفورية...</p></div>
+    </div>
+</div>
+
+<a class="whatsapp-float" id="waLink" href="https://wa.me/966506546313" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:32px; height:32px;"/></a>
+<div class="ticker-wrap">تصميم وتطوير مأمون محمد 0506546313</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+// مفاتيح الربط السحابية الرسمية والمفعلة الخاصة بإبراهيم
+const firebaseConfig = {
+  apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
+  authDomain: "protencarp.firebaseapp.com",
+  projectId: "protencarp",
+  storageBucket: "protencarp.firebasestorage.app",
+  messagingSenderId: "37899247050",
+  appId: "1:37899247050:web:e8464a6386510174e2c333",
+  databaseURL: "https://protencarp-default-rtdb.firebaseio.com/"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+var meals = [], tableStatus = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313";
+
+setTimeout(() => { 
+    let s = document.getElementById("splashScreen");
+    if(s) { s.style.opacity = "0"; setTimeout(() => s.style.display="none", 500); }
+}, 2000);
+
+// المزامنة الفورية لايف مع السحابة لجوجل
+db.ref("pnc_data").on("value", (snapshot) => {
+    let data = snapshot.val() || {};
+    meals = data.mealsList || [];
+    tableStatus = data.actions || {};
+    waNum = data.whatsapp || "966506546313";
+    
+    document.getElementById("waLink").href = "https://wa.me/" + waNum;
+    document.getElementById("whatsappInput").value = waNum;
+    
+    searchedNumbers.clear();
+    Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
+    
+    if(meals.length > 0) {
+        document.getElementById("status").innerHTML = "🟢 متصل بالسحابة لايف! إجمالي كشف اليوم: " + meals.length;
+    } else {
+        document.getElementById("status").innerHTML = "🟢 متصل بالسحابة.. بانتظار رفع كشف الـ PDF اليومي.";
+    }
+    recalculateStats(); renderCards(); updateReports();
+});
+
+function openAdmin() {
+    let p = prompt("🔒 أدخل رمز الدخول الأمني للمشرف:");
+    if(p === "71138") document.getElementById("adminPanel").style.display = "block";
+    else if(p !== null) alert("الرمز خطأ!");
+}
+
+function saveAdminSettings() {
+    let num = document.getElementById("whatsappInput").value.trim();
+    db.ref("pnc_data/whatsapp").set(num);
+    alert("✅ تم تحديث رقم الواتساب سحابياً!");
+}
+
+async function startReadingPDF(file) {
+    if(!file) return;
+    document.getElementById("status").innerHTML = "⏳ جاري قراءة وفرز ملف الـ PDF سحابياً...";
+    meals = []; searchedNumbers.clear();
+    
+    let reader = new FileReader();
+    reader.onload = async function() {
+        try {
+            let typedarray = new Uint8Array(this.result), pdf = await pdfjsLib.getDocument(typedarray).promise;
+            for (let p = 1; p <= pdf.numPages; p++) {
+                let page = await pdf.getPage(p), content = await page.getTextContent(), lastY = "", lines = [], currentLine = "";
+                for (let item of content.items) {
+                    if (lastY !== "" && item.transform[5] !== lastY) { lines.push(currentLine); currentLine = ""; }
+                    currentLine += " " + item.str; lastY = item.transform[5];
+                }
+                lines.push(currentLine);
+                lines.forEach(line => {
+                    let numMatch = line.match(/\b\d{5,8}\b/);
+                    if (numMatch) {
+                        let num = numMatch[0], nameClean = line.replace(num, "").replace(/[:\-\*]/g, "").trim().replace(/\s+/g, " ");
+                        if (nameClean.length < 3) nameClean = "مشترك رقم (" + num + ")";
+                        meals.push({ number: num, name: nameClean });
+                    }
+                });
+            }
+            meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
+            
+            db.ref("pnc_data").set({ mealsList: meals, actions: {}, whatsapp: waNum });
+            alert("🎉 تم رفع الكشف وتحديث أجهزة المطبخ والمناديب فوراً! العدد: " + meals.length);
+        } catch(e) {
+            document.getElementById("status").innerHTML = "❌ خطأ في قراءة ملف الـ PDF!";
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function checkMeal() {
+    let input = document.getElementById("mealInput"), num = input.value.trim();
+    if (!num) return;
+    if (meals.length === 0) { alert("⚠️ الرجاء رفع كشف الـ PDF أولاً."); return; }
+    let meal = meals.find(m => m.number == num);
+    if (!meal) { alert("❌ هذا الرقم غير مسجل في كشف اليوم!"); input.value = ""; return; }
+    
+    searchedNumbers.add(num);
+    if(!tableStatus[num]) {
+        db.ref("pnc_data/actions/" + num).set({ status: "pending", time: "--:--" });
+    }
+    input.value = "";
+    setTimeout(() => {
+        let c = document.getElementById("card-" + num);
+        if(c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 150);
+}
+
+function actionMeal(num, type) {
+    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+    db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString });
+}
+
+function recalculateStats() {
+    let d = 0, c = 0;
+    Object.keys(tableStatus).forEach(k => {
+        if(tableStatus[k].status === "done") d++;
+        if(tableStatus[k].status === "cancel") c++;
+    });
+    document.getElementById("doneMeals").innerHTML = d;
+    document.getElementById("cancelMeals").innerHTML = c;
+}
+
+function renderCards() {
+    let container = document.getElementById("mealCardsContainer"), numbers = Array.from(searchedNumbers).reverse();
+    if (numbers.length === 0) { container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد اشتراكات مفرزة حالياً.</p>'; return; }
+    let html = "";
+    numbers.forEach(num => {
+        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num] || {};
+        let st = item.status || "pending", tm = item.time || "--:--";
+        let txt = "⏳ قيد التحضير", col = "#facc15", showBtn = true;
+        if(st === "done") { txt = "✅ تم التسليم"; col = "#22c55e"; showBtn = false; }
+        if(st === "cancel") { txt = "❌ ملغية"; col = "#dc2626"; showBtn = false; }
+        
+        html += `<div class="meal-row-card" id="card-${num}">
+            <div class="meal-card-info"><span class="meal-card-num"># ${num}</span><span>${name}</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:13px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:6px;">
+                <span style="color:#94a3b8">الحالة:</span>
+                <div><span style="color:${col}">${txt}</span> <span style="font-size:11px; color:#94a3b8; margin-right:5px;">${tm}</span></div>
+            </div>
+            ${showBtn ? `<div class="meal-card-actions">
+                <button class="actionBtn deliverBtn" onclick="actionMeal('${num}', 'done')">✅ تسليم</button>
+                <button class="actionBtn cancelBtn" onclick="actionMeal('${num}', 'cancel')">❌ إلغاء</button>
+            </div>` : ''}
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function openReports() { updateReports(); document.getElementById("reportsOverlay").classList.add("open"); }
+function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
+function switchTab(t) { activeTab = t; document.getElementById("tab-done").classList.toggle("active-tab", t==="done"); document.getElementById("tab-cancel").classList.toggle("active-tab", t==="cancel"); updateReports(); }
+
+function updateReports() {
+    let content = document.getElementById("reportsContent"), html = "", keys = Object.keys(tableStatus).filter(k => tableStatus[k].status === activeTab);
+    if(keys.length === 0) { content.innerHTML = `<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ حالياً.</div>`; return; }
+    keys.forEach(num => {
+        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num;
+        html += `<div class="report-card"><div><b># ${num}</b><br><small style="color:#cbd5e1">${name}</small></div><div style="text-align:left"><span style="color:${activeTab==='done'?'#22c55e':'#ef4444'}">${activeTab==='done'?'✓ مستلم':'✕ ملغى'}</span><br><small style="color:#94a3b8">${tableStatus[num].time}</small></div></div>`;
+    });
+    content.innerHTML = html;
+}
+</script>
+</body>
+</html>
