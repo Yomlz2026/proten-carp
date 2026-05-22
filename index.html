@@ -79,9 +79,9 @@ input[type="number"] { font-size: 18px; text-align: center; }
 .deliverBtn { background: #16a34a; } .cancelBtn { background: #dc2626; }
 .whatsapp-float { position: fixed; bottom: 35px; right: 20px; width: 55px; height: 55px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 999; }
 
-/* شريط مأمون الاحترافي المتحرك في الأسفل */
-.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(90deg, #16a34a, #15803d, #16a34a); color: white; padding: 6px 0; z-index: 999; overflow: hidden; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); }
-.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 20s linear infinite; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+/* السلايدر المتحرك الحصري لـ مأمون محمد المتناسق مع المتجر */
+.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(90deg, #1e293b, #0f172a, #1e293b); color: #22c55e; padding: 8px 0; z-index: 999; overflow: hidden; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); border-top: 2px solid #22c55e; }
+.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 12s linear infinite; font-size: 14px; font-weight: 900; font-family: 'Cairo', sans-serif; letter-spacing: 0.5px; }
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 </style>
 </head>
@@ -159,7 +159,7 @@ input[type="number"] { font-size: 18px; text-align: center; }
 <a class="whatsapp-float" id="waLink" href="https://wa.me/966506546313" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:32px; height:32px;"/></a>
 
 <div class="ticker-wrap">
-    <div class="ticker-text">🔥 تصميم وتطوير مأمون محمد 0506546313 — جودة سحابية فائقة السرعة لبراند بروتين وكارب 🔥</div>
+    <div class="ticker-text">تصميم وتطوير مأمون محمد</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -169,11 +169,10 @@ input[type="number"] { font-size: 18px; text-align: center; }
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-// روابط مستقرة وآمنة للأصوات التنبيهية لتعمل دون مشاكل
-const audioSuccess = new Audio("https://cdn.jsdelivr.net/gh/saoudrizwan/DynamicBlurView@master/Example/Resources/Glass.mp3"); 
-const audioError = new Audio("https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"); 
+// نغمات ألعاب تفاعلية أصلية وسريعة (صح / خطأ) شبيهة بتطبيق وصلة
+const audioSuccess = new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-200.wav"); // صوت نجاح تفاعلي رنان وسريع
+const audioError = new Audio("https://assets.mixkit.co/active_storage/sfx/2955/2955-200.wav"); // صوت تنبيه سريع وحاسم عند الخطأ
 
-// دالة لتفعيل الصوت ومزامنة المتصفح فور أول تفاعل للمستخدم لكسر حماية التشغيل التلقائي
 function unlockAudio() {
     audioSuccess.play().then(() => { audioSuccess.pause(); audioSuccess.currentTime = 0; }).catch(()=>null);
     audioError.play().then(() => { audioError.pause(); audioError.currentTime = 0; }).catch(()=>null);
@@ -205,18 +204,17 @@ setTimeout(() => {
     if(s) { s.style.opacity = "0"; setTimeout(() => s.style.display="none", 500); }
 }, 2000);
 
-// دالة النافذة المنبثقة المخصصة البديلة للايرت
 function showCustomAlert(message, isSuccess = true) {
     document.getElementById("alertMessage").innerHTML = message;
     let iconEl = document.getElementById("alertIcon");
     let btnEl = document.querySelector(".alert-close-btn");
     
     if (isSuccess) {
-        iconEl.innerHTML = "✅";
+        iconEl.innerHTML = "✨";
         btnEl.style.background = "#22c55e";
         audioSuccess.play().catch(()=>null);
     } else {
-        iconEl.innerHTML = "⚠️";
+        iconEl.innerHTML = "❌";
         btnEl.style.background = "#ef4444";
         audioError.play().catch(()=>null);
     }
@@ -243,7 +241,6 @@ db.ref("pnc_data").on("value", (snapshot) => {
     searchedNumbers.clear();
     Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
     
-    // تعديل العرض ليعرض الرقم مباشرة دون نصوص إضافية غير ضرورية
     if(meals.length > 0) {
         document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر: " + meals.length;
     } else {
@@ -268,7 +265,7 @@ function verifyAdminCode() {
         document.getElementById("adminPanel").style.display = "block";
     } else {
         try { audioError.play(); } catch(e){}
-        showCustomAlert("❌ الرمز السري خطأ! حاول مجدداً.", false);
+        showCustomAlert("رمز الوصول خطأ! حاول مجدداً.", false);
     }
 }
 
@@ -279,7 +276,7 @@ function saveAdminSettings() {
     
     db.ref("pnc_data/whatsapp").set(num);
     db.ref("pnc_data/bannerUrl").set(bUrl);
-    showCustomAlert("✅ تم حفظ وتحديث الإعدادات والصورة السحابية بنجاح!", true);
+    showCustomAlert("تم حفظ وتحديث الإعدادات بنجاح!", true);
 }
 
 async function startReadingPDF(file) {
@@ -311,10 +308,10 @@ async function startReadingPDF(file) {
             
             db.ref("pnc_data/mealsList").set(meals);
             db.ref("pnc_data/actions").set({});
-            showCustomAlert("🎉 تم رفع الكشف وتحديث أجهزة المطبخ والمناديب فوراً! العدد: " + meals.length, true);
+            showCustomAlert("تم رفع الكشف بنجاح! إجمالي المشتركين: " + meals.length, true);
         } catch(e) {
             document.getElementById("status").innerHTML = "❌ خطأ في قراءة ملف الـ PDF!";
-            showCustomAlert("❌ حدث خطأ أثناء معالجة ملف الـ PDF.", false);
+            showCustomAlert("حدث خطأ أثناء معالجة ملف الـ PDF.", false);
         }
     };
     reader.readAsArrayBuffer(file);
@@ -323,11 +320,11 @@ async function startReadingPDF(file) {
 function checkMeal() {
     let input = document.getElementById("mealInput"), num = input.value.trim();
     if (!num) return;
-    if (meals.length === 0) { showCustomAlert("⚠️ الرجاء رفع كشف الـ PDF أولاً.", false); return; }
+    if (meals.length === 0) { showCustomAlert("الرجاء رفع كشف الـ PDF أولاً.", false); return; }
     
     let meal = meals.find(m => m.number == num);
     if (!meal) { 
-        showCustomAlert(`❌ رقم الاشتراك [ ${num} ] غير مسجل في كشف اليوم بتاتاً!`, false); 
+        showCustomAlert(`رقم الاشتراك [ ${num} ] غير مسجل بكشف اليوم بتاتاً!`, false); 
         input.value = ""; 
         return; 
     }
@@ -335,11 +332,11 @@ function checkMeal() {
     if(tableStatus[num]) {
         let saved = tableStatus[num];
         if(saved.status === "done") {
-            showCustomAlert(`⚠️ المشترك: <b>(${meal.name})</b><br>قد استلم وجبته مسبقاً في تمام الساعة: <span style='color:#eab308'>${saved.time}</span>`, false);
+            showCustomAlert(`المشترك: <b>(${meal.name})</b><br>قد استلم وجبته مسبقاً الساعة: <span style='color:#eab308'>${saved.time}</span>`, false);
             input.value = "";
             return;
         } else if(saved.status === "cancel") {
-            showCustomAlert(`⚠️ انتبه! المشترك: <b>(${meal.name})</b><br>اشتراكه ملغى لهذا اليوم منذ الساعة: <span style='color:#ef4444'>${saved.time}</span>`, false);
+            showCustomAlert(`انتبه! المشترك: <b>(${meal.name})</b><br>اشتراكه ملغى لهذا اليوم منذ الساعة: <span style='color:#ef4444'>${saved.time}</span>`, false);
             input.value = "";
             return;
         }
@@ -415,3 +412,4 @@ function updateReports() {
 </script>
 </body>
 </html>
+
