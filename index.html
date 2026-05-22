@@ -7,7 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=400;700;900&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 80px; }
+body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 80px; overflow-x: hidden; }
+
+/* تأثير الـ Splash Screen */
 #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1a0a2e 50%, #0f172a 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
 .splash-bowl { position: relative; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; }
 .splash-noodle-emoji { font-size: 70px; animation: wobble 0.5s ease-in-out infinite alternate; filter: drop-shadow(0 10px 20px rgba(234,179,8,0.3)); }
@@ -15,6 +17,16 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .splash-welcome-text { margin-top: 15px; font-size: 26px; font-weight: 900; color: #fff; }
 .splash-welcome-text .yellow { color: #eab308; } .splash-welcome-text .green { color: #22c55e; }
 
+/* النافذة المنبثقة الاحترافية للمعلومات البديلة عن الـ Alert */
+#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
+.alert-card { background: #1e293b; border-radius: 20px; padding: 25px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); animation: alertScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 2px solid #334155; }
+@keyframes alertScaleUp { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.alert-status-icon { font-size: 55px; margin-bottom: 15px; display: inline-block; }
+.alert-message-text { font-size: 17px; font-weight: 700; color: #f8fafc; line-height: 1.7; margin-bottom: 20px; }
+.alert-close-btn { background: #22c55e; color: white; padding: 10px 30px; border-radius: 10px; font-weight: bold; font-family: 'Cairo'; border: none; cursor: pointer; font-size: 15px; width: 100%; box-shadow: 0 4px 12px rgba(34,197,94,0.3); transition: background 0.2s; }
+.alert-close-btn:active { background: #16a34a; }
+
+/* لوحة المشرف المحمية */
 #adminAuthModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
 .auth-card { background: #1e293b; border: 2px solid #334155; border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); animation: scaleUp 0.3s ease-out; }
 @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -28,6 +40,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .auth-btn-confirm { background: #22c55e; color: white; }
 .auth-btn-cancel { background: #ef4444; color: white; }
 
+/* واجهة السجلات الجانبية */
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
 .reports-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: rgba(30,41,59,0.9); border-bottom: 1px solid rgba(255,255,255,0.08); }
@@ -41,6 +54,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .report-card { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.06); }
 .report-card-num { font-size: 16px; font-weight: 900; color: #facc15; }
 
+/* البانر والتنسيق العام */
 .top-banner { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 14px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); transition: background-image 0.5s ease; }
 .container { width: 100%; max-width: 700px; margin: auto; }
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.7); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
@@ -63,8 +77,12 @@ input[type="number"] { font-size: 18px; text-align: center; }
 .meal-card-actions { display: flex; gap: 8px; }
 .actionBtn { padding: 10px; border-radius: 8px; font-weight: bold; flex: 1; color: white; border: none; cursor: pointer; }
 .deliverBtn { background: #16a34a; } .cancelBtn { background: #dc2626; }
-.whatsapp-float { position: fixed; bottom: 25px; right: 20px; width: 55px; height: 55px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 999; }
-.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #16a34a; color: white; padding: 4px; z-index: 999; text-align: center; font-size: 11px; font-weight: bold; }
+.whatsapp-float { position: fixed; bottom: 35px; right: 20px; width: 55px; height: 55px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 999; }
+
+/* شريط مأمون الاحترافي المتحرك في الأسفل */
+.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: linear-gradient(90deg, #16a34a, #15803d, #16a34a); color: white; padding: 6px 0; z-index: 999; overflow: hidden; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); }
+.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 20s linear infinite; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+@keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 </style>
 </head>
 <body>
@@ -72,6 +90,14 @@ input[type="number"] { font-size: 18px; text-align: center; }
 <div id="splashScreen">
     <div class="splash-bowl"><span class="splash-noodle-emoji">🍳</span></div>
     <div class="splash-welcome-text">أهلاً <span class="yellow">يوملز</span> <span class="green">👋</span></div>
+</div>
+
+<div id="customAlertModal">
+    <div class="alert-card">
+        <span id="alertIcon" class="alert-status-icon">🔔</span>
+        <div id="alertMessage" class="alert-message-text">رسالة النظام السحابي</div>
+        <button class="alert-close-btn" onclick="closeCustomAlert()">حسنًا</button>
+    </div>
 </div>
 
 <div id="adminAuthModal">
@@ -131,7 +157,10 @@ input[type="number"] { font-size: 18px; text-align: center; }
 </div>
 
 <a class="whatsapp-float" id="waLink" href="https://wa.me/966506546313" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:32px; height:32px;"/></a>
-<div class="ticker-wrap">تصميم وتطوير مأمون محمد 0506546313</div>
+
+<div class="ticker-wrap">
+    <div class="ticker-text">🔥 تصميم وتطوير مأمون محمد 0506546313 — جودة سحابية فائقة السرعة لبراند بروتين وكارب 🔥</div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -140,8 +169,19 @@ input[type="number"] { font-size: 18px; text-align: center; }
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-const audioSuccess = new Audio("https://assets.mixkit.co/active_storage/sfx/2869/2869-500.wav"); 
-const audioError = new Audio("https://assets.mixkit.co/active_storage/sfx/911/911-500.wav"); 
+// روابط مستقرة وآمنة للأصوات التنبيهية لتعمل دون مشاكل
+const audioSuccess = new Audio("https://cdn.jsdelivr.net/gh/saoudrizwan/DynamicBlurView@master/Example/Resources/Glass.mp3"); 
+const audioError = new Audio("https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"); 
+
+// دالة لتفعيل الصوت ومزامنة المتصفح فور أول تفاعل للمستخدم لكسر حماية التشغيل التلقائي
+function unlockAudio() {
+    audioSuccess.play().then(() => { audioSuccess.pause(); audioSuccess.currentTime = 0; }).catch(()=>null);
+    audioError.play().then(() => { audioError.pause(); audioError.currentTime = 0; }).catch(()=>null);
+    window.removeEventListener('click', unlockAudio);
+    window.removeEventListener('touchstart', unlockAudio);
+}
+window.addEventListener('click', unlockAudio);
+window.addEventListener('touchstart', unlockAudio);
 
 const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 
@@ -165,6 +205,28 @@ setTimeout(() => {
     if(s) { s.style.opacity = "0"; setTimeout(() => s.style.display="none", 500); }
 }, 2000);
 
+// دالة النافذة المنبثقة المخصصة البديلة للايرت
+function showCustomAlert(message, isSuccess = true) {
+    document.getElementById("alertMessage").innerHTML = message;
+    let iconEl = document.getElementById("alertIcon");
+    let btnEl = document.querySelector(".alert-close-btn");
+    
+    if (isSuccess) {
+        iconEl.innerHTML = "✅";
+        btnEl.style.background = "#22c55e";
+        audioSuccess.play().catch(()=>null);
+    } else {
+        iconEl.innerHTML = "⚠️";
+        btnEl.style.background = "#ef4444";
+        audioError.play().catch(()=>null);
+    }
+    document.getElementById("customAlertModal").style.display = "flex";
+}
+
+function closeCustomAlert() {
+    document.getElementById("customAlertModal").style.display = "none";
+}
+
 db.ref("pnc_data").on("value", (snapshot) => {
     let data = snapshot.val() || {};
     meals = data.mealsList || [];
@@ -181,11 +243,11 @@ db.ref("pnc_data").on("value", (snapshot) => {
     searchedNumbers.clear();
     Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
     
-    // تم تعديل الصياغة لتصبح "متصل بالسيرفر" بناءً على طلبك
+    // تعديل العرض ليعرض الرقم مباشرة دون نصوص إضافية غير ضرورية
     if(meals.length > 0) {
-        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر. إجمالي كشف اليوم: " + meals.length;
+        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر: " + meals.length;
     } else {
-        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر. بانتظار رفع كشف الـ PDF اليومي.";
+        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر. بانتظار رفع كشف الـ PDF.";
     }
     recalculateStats(); renderCards(); updateReports();
 });
@@ -201,12 +263,12 @@ function closeAdminModal() {
 function verifyAdminCode() {
     let code = document.getElementById("adminPasswordInput").value.trim();
     if(code === "71138") {
-        audioSuccess.play();
+        try { audioSuccess.play(); } catch(e){}
         document.getElementById("adminAuthModal").style.display = "none";
         document.getElementById("adminPanel").style.display = "block";
     } else {
-        audioError.play();
-        alert("❌ الرمز السري خطأ! حاول مجدداً.");
+        try { audioError.play(); } catch(e){}
+        showCustomAlert("❌ الرمز السري خطأ! حاول مجدداً.", false);
     }
 }
 
@@ -217,8 +279,7 @@ function saveAdminSettings() {
     
     db.ref("pnc_data/whatsapp").set(num);
     db.ref("pnc_data/bannerUrl").set(bUrl);
-    audioSuccess.play();
-    alert("✅ تم حفظ وتحديث الإعدادات والصورة السحابية بنجاح!");
+    showCustomAlert("✅ تم حفظ وتحديث الإعدادات والصورة السحابية بنجاح!", true);
 }
 
 async function startReadingPDF(file) {
@@ -250,11 +311,10 @@ async function startReadingPDF(file) {
             
             db.ref("pnc_data/mealsList").set(meals);
             db.ref("pnc_data/actions").set({});
-            audioSuccess.play();
-            alert("🎉 تم رفع الكشف وتحديث أجهزة المطبخ والمناديب فوراً! العدد: " + meals.length);
+            showCustomAlert("🎉 تم رفع الكشف وتحديث أجهزة المطبخ والمناديب فوراً! العدد: " + meals.length, true);
         } catch(e) {
-            audioError.play();
             document.getElementById("status").innerHTML = "❌ خطأ في قراءة ملف الـ PDF!";
+            showCustomAlert("❌ حدث خطأ أثناء معالجة ملف الـ PDF.", false);
         }
     };
     reader.readAsArrayBuffer(file);
@@ -263,12 +323,11 @@ async function startReadingPDF(file) {
 function checkMeal() {
     let input = document.getElementById("mealInput"), num = input.value.trim();
     if (!num) return;
-    if (meals.length === 0) { audioError.play(); alert("⚠️ الرجاء رفع كشف الـ PDF أولاً."); return; }
+    if (meals.length === 0) { showCustomAlert("⚠️ الرجاء رفع كشف الـ PDF أولاً.", false); return; }
     
     let meal = meals.find(m => m.number == num);
     if (!meal) { 
-        audioError.play(); 
-        alert("❌ هذا الرقم غير مسجل في كشف اليوم بتاتاً!"); 
+        showCustomAlert(`❌ رقم الاشتراك [ ${num} ] غير مسجل في كشف اليوم بتاتاً!`, false); 
         input.value = ""; 
         return; 
     }
@@ -276,19 +335,17 @@ function checkMeal() {
     if(tableStatus[num]) {
         let saved = tableStatus[num];
         if(saved.status === "done") {
-            audioError.play();
-            alert(`⚠️ المشترك: (${meal.name}) قد استلم وجبته مسبقاً في تمام الساعة: ${saved.time}`);
+            showCustomAlert(`⚠️ المشترك: <b>(${meal.name})</b><br>قد استلم وجبته مسبقاً في تمام الساعة: <span style='color:#eab308'>${saved.time}</span>`, false);
             input.value = "";
             return;
         } else if(saved.status === "cancel") {
-            audioError.play();
-            alert(`⚠️ انتبه! المشترك: (${meal.name}) اشتراكه ملغى لهذا اليوم منذ الساعة: ${saved.time}`);
+            showCustomAlert(`⚠️ انتبه! المشترك: <b>(${meal.name})</b><br>اشتراكه ملغى لهذا اليوم منذ الساعة: <span style='color:#ef4444'>${saved.time}</span>`, false);
             input.value = "";
             return;
         }
     }
     
-    audioSuccess.play(); 
+    try { audioSuccess.play(); } catch(e){}
     searchedNumbers.add(num);
     if(!tableStatus[num]) {
         db.ref("pnc_data/actions/" + num).set({ status: "pending", time: "--:--" });
@@ -303,7 +360,7 @@ function checkMeal() {
 function actionMeal(num, type) {
     let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
     db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString });
-    audioSuccess.play();
+    try { audioSuccess.play(); } catch(e){}
 }
 
 function recalculateStats() {
