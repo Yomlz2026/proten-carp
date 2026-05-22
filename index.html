@@ -9,7 +9,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Kufi Arabic', sans-serif; }
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 100px; overflow-x: hidden; position: relative; }
 
-/* شاشة الترحيب الاحترافية المخصصة للجوال (أهلاً يوملز) */
+/* شاشة الترحيب الاحترافية المخصصة للجوال (أهلاً يوملز) مع دخول ناعم */
 #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 .splash-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 30px 40px; border-radius: 24px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: splashFadeIn 0.5s ease; max-width: 85%; }
 @keyframes splashFadeIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -49,8 +49,8 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
 .report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
-/* فوتر إحصائي ثابت أسفل السلايدر الجانبي بناءً على طلبك */
-.reports-footer-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255,255,255,0.08); padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; box-shadow: 0 -10px 25px rgba(0,0,0,0.3); }
+/* فوتر إحصائي ثابت أسفل السلايدر الجانبي */
+.reports-footer-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255,255,255,0.08); padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; box-shadow: 0 -10px 25px rgba(0,0,0,0.3); z-index: 5001; }
 .report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
 
 /* البانر والتنسيق العام للموقع */
@@ -86,8 +86,9 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .card-actions-area { display: flex; gap: 8px; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 10px; }
 .card-row-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; }
 
-/* تم تعديل وتثبيت الزر العائم ليكون يسار الشاشة ومتحرك بنعومة مع السحب غصب */
-.whatsapp-float { position: absolute; bottom: 120px; left: 20px; width: 50px; height: 50px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 999; transition: transform 0.1s linear; }
+/* تعديل موقع زر الواتساب: بالجهة اليمنى وفي منتصف الشاشة عمودياً تماماً لمنع ضياعه */
+.whatsapp-float { position: fixed; top: 50%; right: 20px; transform: translateY(-50%); width: 52px; height: 52px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 9999; transition: all 0.2s; }
+.whatsapp-float:active { transform: translateY(-50%) scale(0.9); }
 
 /* شريط مأمون محمد النقي */
 .ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; padding: 10px 0; z-index: 999; overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.06); }
@@ -176,7 +177,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 </div>
 
 <a class="whatsapp-float" id="waLink" href="https://wa.me/966506546313" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:26px; height:26px;"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:28px; height:28px;"/>
 </a>
 
 <div class="ticker-wrap">
@@ -217,13 +218,6 @@ function playBeep(type) {
 window.addEventListener('click', () => { initAudio(); }, { once: true });
 window.addEventListener('touchstart', () => { initAudio(); }, { once: true });
 
-// تحديث حركة زر الواتساب العائم جهة اليسار ليتحرك بنعومة مع سحب الصفحة
-window.addEventListener('scroll', () => {
-    let waButton = document.getElementById("waLink");
-    let scrollTop = window.scrollY || document.documentElement.scrollTop;
-    waButton.style.transform = `translateY(${scrollTop * 0.15}px)`;
-});
-
 const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 const firebaseConfig = {
   apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
@@ -240,7 +234,6 @@ const db = firebase.database();
 
 var meals = [], tableStatus = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 
-// الخروج المريح والناعم لشاشة الترحيب (أهلاً يوملز)
 window.addEventListener('load', () => {
     setTimeout(() => { 
         let s = document.getElementById("splashScreen");
@@ -373,7 +366,6 @@ function recalculateStats() {
     });
     document.getElementById("doneMeals").innerHTML = d; document.getElementById("cancelMeals").innerHTML = c;
     
-    // تحديث الإحصائيات داخل فوتر السلايدر الجانبي أيضاً تلقائياً
     let overlayDone = document.getElementById("overlayDoneCount");
     let overlayCancel = document.getElementById("overlayCancelCount");
     if(overlayDone) overlayDone.innerHTML = d;
@@ -430,3 +422,4 @@ function updateReports() {
 </script>
 </body>
 </html>
+
