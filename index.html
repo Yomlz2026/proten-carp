@@ -3,139 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>بروتين وكارب - الإشراف السحابي المتكامل</title>
-<link href="https://fonts.cdnfonts.com/css/din-next-lt-arabic" rel="stylesheet">
+<title>بروتين وكارب - الإشراف السحابي</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'DIN Next LT Arabic', 'Cairo', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Kufi Arabic', sans-serif; }
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 80px; overflow-x: hidden; }
 
-/* تأثير الـ Splash Screen */
-#splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #1a0a2e 50%, #0f172a 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-.splash-bowl { position: relative; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; }
-.splash-noodle-emoji { font-size: 70px; animation: wobble 0.5s ease-in-out infinite alternate; filter: drop-shadow(0 10px 20px rgba(234,179,8,0.3)); }
-@keyframes wobble { 0% { transform: rotate(-5deg); } 100% { transform: rotate(5deg) scale(1.05); } }
-.splash-welcome-text { margin-top: 15px; font-size: 24px; font-weight: 700; color: #fff; }
-.splash-welcome-text .yellow { color: #eab308; } .splash-welcome-text .green { color: #22c55e; }
+/* تأثير الـ Splash Screen النظيف */
+#splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
+.splash-text { font-size: 24px; font-weight: 900; color: #fff; }
+.splash-text .yellow { color: #eab308; } .splash-text .green { color: #22c55e; }
 
-/* النافذة المنبثقة الاحترافية للمعلومات */
-#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
-.alert-card { background: #1e293b; border-radius: 24px; padding: 30px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); animation: alertScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid rgba(255, 255, 255, 0.1); }
-@keyframes alertScaleUp { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.alert-status-icon { font-size: 55px; margin-bottom: 15px; display: inline-block; }
-.alert-message-text { font-size: 16px; font-weight: 500; color: #f8fafc; line-height: 1.8; margin-bottom: 25px; }
-.alert-close-btn { background: rgba(255, 255, 255, 0.08); color: white; padding: 12px 30px; border-radius: 14px; font-weight: bold; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 15px; width: 100%; transition: all 0.2s; }
-.alert-close-btn:active { background: rgba(255, 255, 255, 0.15); }
+/* النافذة المنبثقة الاحترافية الفخمة لاتخاذ الإجراء الفوري */
+#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
+.alert-card { background: #1e293b; border-radius: 24px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); animation: alertScaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid rgba(255, 255, 255, 0.08); }
+@keyframes alertScaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.alert-status-icon { font-size: 45px; margin-bottom: 12px; display: inline-block; }
+.alert-title-text { font-size: 18px; font-weight: 700; color: #facc15; margin-bottom: 8px; }
+.alert-message-text { font-size: 15px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
 
-/* لوحة المشرف المحمية بثيم منبثق فخم */
+/* أزرار الإجراءات الفخمة داخل النافذة المنبثقة */
+.modal-actions-group { display: flex; gap: 10px; margin-bottom: 12px; }
+.modal-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.modal-btn-deliver { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+.modal-btn-cancel { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+.modal-btn-close { background: rgba(255, 255, 255, 0.06); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; }
+
+/* لوحة المشرف المحمية */
 #adminAuthModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
-.auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 35px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); animation: scaleUp 0.3s ease-out; }
-@keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.auth-icon { font-size: 45px; margin-bottom: 15px; display: inline-block; }
-.auth-title { font-size: 20px; font-weight: 700; color: #facc15; margin-bottom: 10px; }
-.auth-desc { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
-.auth-input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15,23,42,0.6); color: white; border: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 4px; outline: none; margin-bottom: 20px; }
-.auth-input:focus { border-color: #22c55e; }
-.auth-btn-group { display: flex; gap: 10px; }
-.auth-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
-.auth-btn-confirm { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
-.auth-btn-cancel { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+.auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 30px; width: 100%; max-width: 380px; text-align: center; }
+.auth-input { width: 100%; padding: 12px; border-radius: 12px; background: rgba(15,23,42,0.6); color: white; border: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 20px; font-weight: bold; letter-spacing: 3px; outline: none; margin-bottom: 15px; }
 
-/* واجهة السجلات الجانبية الفخمة */
+/* واجهة السجلات الجانبية */
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
-.reports-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: rgba(30,41,59,0.9); border-bottom: 1px solid rgba(255,255,255,0.08); }
-.reports-header-title { font-size: 18px; font-weight: 700; color: #facc15; }
-.reports-close-btn { background: rgba(255,255,255,0.08); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; }
-.reports-tabs { display: flex; border-bottom: 2px solid rgba(255,255,255,0.08); }
-.reports-tab { flex: 1; padding: 14px; text-align: center; font-size: 15px; font-weight: 700; border: none; cursor: pointer; color: #94a3b8; background: rgba(30,41,59,0.5); }
-.reports-tab.active-tab { color: #22c55e; border-bottom: 3px solid #22c55e; background: rgba(34,197,94,0.05); }
-.reports-tab.cancel-tab.active-tab { color: #ef4444; border-bottom-color: #ef4444; background: rgba(239,68,68,0.05); }
+.reports-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.reports-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.reports-tab { flex: 1; padding: 14px; text-align: center; font-size: 14px; font-weight: 700; border: none; cursor: pointer; color: #94a3b8; background: transparent; }
+.reports-tab.active-tab { color: #22c55e; border-bottom: 2px solid #22c55e; }
+.reports-tab.cancel-tab.active-tab { color: #ef4444; border-bottom-color: #ef4444; }
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; }
-.report-card { background: rgba(255,255,255,0.04); border-radius: 14px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.06); }
-.report-card-num { font-size: 16px; font-weight: 700; color: #facc15; }
+.report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
-/* البانر والتنسيق العام للمتجر */
-.top-banner { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); transition: background-image 0.5s ease; }
-.container { width: 100%; max-width: 700px; margin: auto; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.5); padding: 14px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.brand-title { font-size: 22px; font-weight: 700; }
+/* البانر والتنسيق العام للموقع - نسخة من ثيم الـ Modal الفخم */
+.top-banner { width: 100%; height: 110px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08); }
+.container { width: 100%; max-width: 650px; margin: auto; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.45); padding: 12px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.brand-title { font-size: 20px; font-weight: 700; }
 .brand-protein { color: #22c55e; } .brand-carb { color: #facc15; }
 
-/* الكروت المحدثة مقتبسة بالكامل من فخامة النافذة المنبثقة */
-.card { background: rgba(30, 41, 59, 0.45); border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; border-radius: 20px; margin-bottom: 15px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-.control-panel { background: rgba(20, 83, 45, 0.4); border: 1px solid rgba(34, 197, 94, 0.3); display: none; }
-.control-item { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-.control-item label { font-size: 13px; font-weight: bold; color: #facc15; }
+/* الكروت الزجاجية المتناسقة مع المنبثق تماماً */
+.card { background: rgba(30, 41, 59, 0.45); border: 1px solid rgba(255, 255, 255, 0.06); padding: 20px; border-radius: 20px; margin-bottom: 15px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+.control-panel { background: rgba(20, 83, 45, 0.25); border: 1px solid rgba(34, 197, 94, 0.2); display: none; }
 
-/* الحقول والأزرار المتناسقة مع هوية الـ Modal الفخم */
-input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23, 42, 0.6); color: white; border: 1px solid rgba(255, 255, 255, 0.1); outline: none; transition: all 0.2s; font-size: 15px; }
-input:focus { border-color: rgba(255, 255, 255, 0.25); background: rgba(15, 23, 42, 0.8); }
-input[type="number"] { font-size: 18px; text-align: center; font-weight: bold; }
+input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23, 42, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.08); outline: none; font-size: 15px; font-weight: 700; }
+input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px; }
 
-/* الأزرار الفخمة الموحدة */
-.uploadBtn { background: rgba(255, 255, 255, 0.08); color: white; padding: 14px; border-radius: 14px; font-weight: bold; width: 100%; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: all 0.2s; }
-.uploadBtn:active { background: rgba(255, 255, 255, 0.15); }
-
-.searchBtn { background: rgba(255, 255, 255, 0.08); color: white; padding: 14px; border-radius: 14px; font-size: 16px; font-weight: bold; width: 100%; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-.searchBtn:active { background: rgba(255, 255, 255, 0.15); }
+.searchBtn { background: rgba(255, 255, 255, 0.06); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: background 0.2s; }
+.searchBtn:active { background: rgba(255, 255, 255, 0.12); }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.stat { padding: 14px; border-radius: 14px; text-align: center; font-weight: bold; border: 1px solid rgba(255,255,255,0.05); }
-.greenBox { background: rgba(34, 197, 94, 0.15); color: #22c55e; border-color: rgba(34, 197, 94, 0.25); } 
-.red { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.25); }
+.stat { padding: 12px; border-radius: 14px; text-align: center; font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.04); }
+.greenBox { background: rgba(34, 197, 94, 0.12); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); } 
+.red { background: rgba(239, 68, 68, 0.12); color: #ef4444; border-color: rgba(239, 68, 68, 0.18); }
 
-/* كروت الفرز المفرزة الفخمة */
-.meal-row-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px; margin-top: 10px; display: flex; flex-direction: column; gap: 10px; }
-.meal-card-info { display: flex; justify-content: space-between; font-weight: 700; }
-.meal-card-num { color: #facc15; }
-.meal-card-actions { display: flex; gap: 10px; margin-top: 5px; }
+/* قائمة الفرز السفلية النظيفة (الترتيب أحدث فوق تلقائياً) */
+.meal-row-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; padding: 14px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; animation: slideIn 0.2s ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+.meal-card-info { display: flex; flex-direction: column; gap: 2px; }
+.meal-card-num { color: #facc15; font-weight: 700; font-size: 15px; }
+.meal-card-name { font-size: 14px; color: #e2e8f0; }
 
-.actionBtn { padding: 12px; border-radius: 12px; font-weight: bold; flex: 1; border: none; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-.deliverBtn { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
-.deliverBtn:active { background: rgba(34, 197, 94, 0.3); }
-.cancelBtn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
-.cancelBtn:active { background: rgba(239, 68, 68, 0.25); }
+.whatsapp-float { position: fixed; bottom: 45px; right: 20px; width: 50px; height: 50px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; }
 
-.whatsapp-float { position: fixed; bottom: 45px; right: 20px; width: 52px; height: 52px; background: #25d366; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 999; }
-
-/* شريط التكرار السفلي الفخم بالخط الموحد وجملة حصرية فقط */
-.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; color: #94a3b8; padding: 10px 0; z-index: 999; overflow: hidden; box-shadow: 0 -4px 20px rgba(0,0,0,0.4); border-top: 1px solid rgba(255, 255, 255, 0.08); }
-.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 14s linear infinite; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; color: #cbd5e1; }
+/* شريط مأمون محمد النقي تماماً وبخط سلة المتناسق */
+.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; padding: 10px 0; z-index: 999; overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 14s linear infinite; font-size: 13px; font-weight: 700; color: #cbd5e1; }
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 </style>
 </head>
 <body>
 
 <div id="splashScreen">
-    <div class="splash-bowl"><span class="splash-noodle-emoji">🍳</span></div>
-    <div class="splash-welcome-text">أهلاً <span class="yellow">يوملز</span> <span class="green">👋</span></div>
+    <div class="splash-text">بروتين و<span class="brand-carb">كارب</span> السحابي السريع ⚡</div>
 </div>
 
 <div id="customAlertModal">
     <div class="alert-card">
-        <span id="alertIcon" class="alert-status-icon">✨</span>
-        <div id="alertMessage" class="alert-message-text">رسالة النظام السحابي</div>
-        <button class="alert-close-btn" onclick="closeCustomAlert()">حسنًا</button>
+        <span id="alertIcon" class="alert-status-icon">👤</span>
+        <div id="alertTitle" class="alert-title-text">تفاصيل المشترك</div>
+        <div id="alertMessage" class="alert-message-text">جاري جلب البيانات...</div>
+        
+        <div id="modalActionButtons" class="modal-actions-group" style="display: none;">
+            <button class="modal-btn modal-btn-deliver" id="modalConfirmBtn">✅ تسليم الوجبة</button>
+            <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">❌ إلغاء اليوم</button>
+        </div>
+        <button class="modal-btn modal-btn-close" onclick="closeCustomAlert()">إغلاق النافذة</button>
     </div>
 </div>
 
 <div id="adminAuthModal">
     <div class="auth-card">
-        <span class="auth-icon">🛡️</span>
-        <div class="auth-title">الوصول السحابي الآمن</div>
-        <div class="auth-desc">يرجى إدخال رمز المشرف للدخول للوحة التحكم</div>
+        <div class="alert-title-text">🔒 رمز المشرف الآمن</div>
         <input type="password" id="adminPasswordInput" class="auth-input" placeholder="•••••" maxlength="6" inputmode="numeric">
-        <div class="auth-btn-group">
-            <button class="auth-btn type-confirm auth-btn-confirm" onclick="verifyAdminCode()">تأكيد الدخول</button>
-            <button class="auth-btn type-cancel auth-btn-cancel" onclick="closeAdminModal()">إلغاء</button>
+        <div class="modal-actions-group">
+            <button class="modal-btn modal-btn-deliver" onclick="verifyAdminCode()">تأكيد</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeAdminModal()">إلغاء</button>
         </div>
     </div>
 </div>
 
 <div class="reports-overlay" id="reportsOverlay">
     <div class="reports-header">
-        <div class="reports-header-title">📋 سجل تسليم اليوم</div>
-        <button class="reports-close-btn" onclick="closeReports()">✕</button>
+        <div style="font-weight:700; color:#facc15;">📋 سجل العمليات اليومي</div>
+        <button onclick="closeReports()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
     </div>
     <div class="reports-tabs">
         <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">✅ المستلمون</button>
@@ -147,35 +128,34 @@ input[type="number"] { font-size: 18px; text-align: center; font-weight: bold; }
 <div class="container">
     <div class="top-banner" id="topBanner"></div>
     <div class="header">
-        <button onclick="openReports()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">⋮</button>
+        <button onclick="openReports()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">⋮</button>
         <div class="brand-title"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
-        <button onclick="openAdmin()" style="background:rgba(255,255,255,0.08); color:white; padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); font-size:13px; font-weight:bold;">⚙️ لوحة المشرف</button>
+        <button onclick="openAdmin()" style="background:rgba(255,255,255,0.05); color:white; padding:6px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); font-size:12px; font-weight:bold;">⚙️ لوحة التحكم</button>
     </div>
 
     <div class="card control-panel" id="adminPanel">
-        <div class="control-item"><label>📁 رفع كشف الـ PDF اليومي للسحابة:</label><input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file"/></div>
-        <div class="control-item"><label>💬 رقم واتساب المطبخ الدولي:</label><input id="whatsappInput" type="tel" value="966506546313"/></div>
-        <div class="control-item"><label>🖼️ رابط صورة البانر العلوية:</label><input id="bannerUrlInput" type="url" placeholder="الصق رابط الصورة هنا..."/></div>
-        <button class="uploadBtn" onclick="saveAdminSettings()">💾 حفظ ومزامنة الإعدادات</button>
-        <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); width:100%; padding:10px; margin-top:8px; border-radius:12px; font-weight:bold;">🔒 إغلاق</button>
+        <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:10px; font-size:12px;"/>
+        <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب..." style="margin-bottom:10px;"/>
+        <input id="bannerUrlInput" type="url" placeholder="رابط صورة البانر العلوية..." style="margin-bottom:10px;"/>
+        <button class="uploadBtn" onclick="saveAdminSettings()" style="margin-bottom:5px;">💾 حفظ الإعدادات السحابية</button>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" class="modal-btn modal-btn-cancel" style="width:100%; padding:8px;">إغلاق اللوحة</button>
     </div>
 
     <div class="card">
-        <h3 style="font-size:16px; font-weight:700;">نظام الاستعلام للمشتركين:</h3>
-        <input id="mealInput" placeholder="أدخل رقم اشتراك العميل..." type="number" style="margin-top:10px;"/>
-        <button class="searchBtn" onclick="checkMeal()">🔍 بحث عن الاشتراك</button>
-        <div id="status" style="margin-top:12px; font-size:13px; color:#facc15; text-align:center; font-weight:bold;">⏳ جاري الاتصال بالسيرفر...</div>
+        <input id="mealInput" placeholder="اكتب رقم اشتراك العميل هنا..." type="number"/>
+        <button class="searchBtn" onclick="checkMeal()">🔍 ابدأ الفرز والبحث</button>
+        <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;">⏳ جاري المزامنة...</div>
     </div>
 
-    <div class="card"><div class="stats"><div class="stat greenBox">تم تسليمها<h2 id="doneMeals" style="margin-top:4px;">0</h2></div><div class="stat red">تم إلغاؤها<h2 id="cancelMeals" style="margin-top:4px;">0</h2></div></div></div>
+    <div class="card"><div class="stats"><div class="stat greenBox">تم تسليمها: <span id="doneMeals">0</span></div><div class="stat red">تم إلغاؤها: <span id="cancelMeals">0</span></div></div></div>
 
     <div class="card">
-        <h3 style="font-size:16px; font-weight:700;">الاشتراكات المفرزة الحالية:</h3>
-        <div id="mealCardsContainer" style="margin-top:5px;"><p style="color:#94a3b8; text-align:center; font-size:13px; padding:15px;">بانتظار المزامنة الفورية...</p></div>
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:5px;">قائمة الفرز المباشرة (الأحدث بالأعلى):</h3>
+        <div id="mealCardsContainer"></div>
     </div>
 </div>
 
-<a class="whatsapp-float" id="waLink" href="https://wa.me/966506546313" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:28px; height:28px;"/></a>
+<a class="whatsapp-float" id="waLink" href="https://wa.me/966506546313" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:26px; height:26px;"/></a>
 
 <div class="ticker-wrap">
     <div class="ticker-text">تصميم وتطوير مأمون محمد</div>
@@ -188,24 +168,39 @@ input[type="number"] { font-size: 18px; text-align: center; font-weight: bold; }
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-// أصوات تفاعلية مشفرة كلياً Base64 ومدمجة داخلياً لتعمل فوراً دون تحميل خارجي
-const soundSuccessBase64 = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQgAAAAA/v8BAP7/AAAAAA=="; 
-const soundErrorBase64 = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQgAAAAA//8BAP//AAAAAA==";
+// نظام توليد الذبذبات الصافية (Web Audio API) لتشغيل أصوات نقية غصب عن المتصفح وبدون ملفات خارجية
+let audioCtx = null;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
 
-const audioSuccess = new Audio("https://assets.mixkit.co/active_storage/sfx/2019/2019-200.wav"); 
-const audioError = new Audio("https://assets.mixkit.co/active_storage/sfx/2955/2955-200.wav"); 
-
-function unlockAudio() {
-    audioSuccess.play().then(() => { audioSuccess.pause(); audioSuccess.currentTime = 0; }).catch(()=>null);
-    audioError.play().then(() => { audioError.pause(); audioError.currentTime = 0; }).catch(()=>null);
-    window.removeEventListener('click', unlockAudio);
-    window.removeEventListener('touchstart', unlockAudio);
+function playBeep(type) {
+    try {
+        initAudio();
+        if (!audioCtx) return;
+        let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        
+        if (type === 'success') {
+            // نغمة رنين مزدوجة مبهجة وسريعة (ترا-ران!)
+            osc.type = 'sine'; osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08); // A5
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+        } else {
+            // نغمة تنبيه سريعة وحاسمة للخطأ أو التكرار
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            osc.frequency.setValueAtTime(165, audioCtx.currentTime + 0.08); // E3
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+    } catch(e) { console.log(e); }
 }
-window.addEventListener('click', unlockAudio);
-window.addEventListener('touchstart', unlockAudio);
+
+window.addEventListener('click', () => { initAudio(); }, { once: true });
+window.addEventListener('touchstart', () => { initAudio(); }, { once: true });
 
 const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
-
 const firebaseConfig = {
   apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
   authDomain: "protencarp.firebaseapp.com",
@@ -223,33 +218,28 @@ var meals = [], tableStatus = {}, searchedNumbers = new Set(), activeTab = "done
 
 setTimeout(() => { 
     let s = document.getElementById("splashScreen");
-    if(s) { s.style.opacity = "0"; setTimeout(() => s.style.display="none", 500); }
-}, 2000);
+    if(s) { s.style.opacity = "0"; setTimeout(() => s.style.display="none", 400); }
+}, 1500);
 
-function showCustomAlert(message, isSuccess = true) {
+function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
+    document.getElementById("alertIcon").innerHTML = icon;
+    document.getElementById("alertTitle").innerHTML = title;
     document.getElementById("alertMessage").innerHTML = message;
-    let iconEl = document.getElementById("alertIcon");
-    let btnEl = document.querySelector(".alert-close-btn");
     
-    if (isSuccess) {
-        iconEl.innerHTML = "✨";
-        btnEl.style.background = "rgba(34, 197, 94, 0.2)";
-        btnEl.style.color = "#22c55e";
-        btnEl.style.borderColor = "rgba(34, 197, 94, 0.3)";
-        audioSuccess.play().catch(()=>null);
+    let actionsBox = document.getElementById("modalActionButtons");
+    if(showActions && num) {
+        actionsBox.style.display = "flex";
+        document.getElementById("modalConfirmBtn").onclick = function() { actionMeal(num, 'done'); closeCustomAlert(); };
+        document.getElementById("modalCancelBtn").onclick = function() { actionMeal(num, 'cancel'); closeCustomAlert(); };
     } else {
-        iconEl.innerHTML = "❌";
-        btnEl.style.background = "rgba(239, 68, 68, 0.2)";
-        btnEl.style.color = "#ef4444";
-        btnEl.style.borderColor = "rgba(239, 68, 68, 0.3)";
-        audioError.play().catch(()=>null);
+        actionsBox.style.display = "none";
     }
+    
+    playBeep(isSuccess ? 'success' : 'error');
     document.getElementById("customAlertModal").style.display = "flex";
 }
 
-function closeCustomAlert() {
-    document.getElementById("customAlertModal").style.display = "none";
-}
+function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
 db.ref("pnc_data").on("value", (snapshot) => {
     let data = snapshot.val() || {};
@@ -261,55 +251,35 @@ db.ref("pnc_data").on("value", (snapshot) => {
     document.getElementById("waLink").href = "https://wa.me/" + waNum;
     document.getElementById("whatsappInput").value = waNum;
     document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
-    
-    document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.95)), url('${currentBannerUrl}')`;
+    document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
     
     searchedNumbers.clear();
     Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
     
-    if(meals.length > 0) {
-        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر: " + meals.length;
-    } else {
-        document.getElementById("status").innerHTML = "🟢 متصل بالسيرفر. بانتظار رفع كشف الـ PDF.";
-    }
+    document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
     recalculateStats(); renderCards(); updateReports();
 });
 
-function openAdmin() {
-    document.getElementById("adminPasswordInput").value = "";
-    document.getElementById("adminAuthModal").style.display = "flex";
-    document.getElementById("adminPasswordInput").focus();
-}
-function closeAdminModal() {
-    document.getElementById("adminAuthModal").style.display = "none";
-}
+function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
+function closeAdminModal() { document.getElementById("adminAuthModal").style.display = "none"; }
 function verifyAdminCode() {
-    let code = document.getElementById("adminPasswordInput").value.trim();
-    if(code === "71138") {
-        try { audioSuccess.play(); } catch(e){}
-        document.getElementById("adminAuthModal").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
+    if(document.getElementById("adminPasswordInput").value.trim() === "71138") {
+        playBeep('success'); document.getElementById("adminAuthModal").style.display = "none"; document.getElementById("adminPanel").style.display = "block";
     } else {
-        try { audioError.play(); } catch(e){}
-        showCustomAlert("رمز الوصول خطأ! حاول مجدداً.", false);
+        playBeep('error'); alert("الرمز غير صحيح!");
     }
 }
 
 function saveAdminSettings() {
-    let num = document.getElementById("whatsappInput").value.trim();
-    let bUrl = document.getElementById("bannerUrlInput").value.trim();
-    if(!bUrl) bUrl = defaultBanner;
-    
-    db.ref("pnc_data/whatsapp").set(num);
-    db.ref("pnc_data/bannerUrl").set(bUrl);
-    showCustomAlert("تم حفظ وتحديث الإعدادات بنجاح!", true);
+    db.ref("pnc_data/whatsapp").set(document.getElementById("whatsappInput").value.trim());
+    db.ref("pnc_data/bannerUrl").set(document.getElementById("bannerUrlInput").value.trim() || defaultBanner);
+    showCustomAlert("✨", "تم التحديث", "تم حفظ الإعدادات ومزامنتها بنجاح!", true);
 }
 
 async function startReadingPDF(file) {
     if(!file) return;
-    document.getElementById("status").innerHTML = "⏳ جاري قراءة وفرز ملف الـ PDF...";
+    document.getElementById("status").innerHTML = "⏳ فرز الـ PDF...";
     meals = []; searchedNumbers.clear();
-    
     let reader = new FileReader();
     reader.onload = async function() {
         try {
@@ -331,13 +301,10 @@ async function startReadingPDF(file) {
                 });
             }
             meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
-            
-            db.ref("pnc_data/mealsList").set(meals);
-            db.ref("pnc_data/actions").set({});
-            showCustomAlert("تم رفع الكشف بنجاح! إجمالي المشتركين: " + meals.length, true);
+            db.ref("pnc_data/mealsList").set(meals); db.ref("pnc_data/actions").set({});
+            showCustomAlert("✅", "نجاح الفرز", "تم تحميل الكشف اليومي بنجاح: " + meals.length + " مشترك", true);
         } catch(e) {
-            document.getElementById("status").innerHTML = "❌ خطأ في قراءة ملف الـ PDF!";
-            showCustomAlert("حدث خطأ أثناء معالجة ملف الـ PDF.", false);
+            showCustomAlert("❌", "خطأ بالملف", "فشل قراءة ملف الـ PDF الكشف غير مطابق.", false);
         }
     };
     reader.readAsArrayBuffer(file);
@@ -346,77 +313,57 @@ async function startReadingPDF(file) {
 function checkMeal() {
     let input = document.getElementById("mealInput"), num = input.value.trim();
     if (!num) return;
-    if (meals.length === 0) { showCustomAlert("الرجاء رفع كشف الـ PDF أولاً.", false); return; }
+    if (meals.length === 0) { showCustomAlert("⚠️", "تنبيه", "الرجاء رفع ملف الـ PDF الخاص بالمشتركين أولاً.", false); return; }
     
     let meal = meals.find(m => m.number == num);
-    if (!meal) { 
-        showCustomAlert(`رقم الاشتراك [ ${num} ] غير مسجل بكشف اليوم بتاتاً!`, false); 
-        input.value = ""; 
-        return; 
-    }
+    if (!meal) { showCustomAlert("❌", "غير موجود", `رقم الاشتراك [ ${num} ] غير مدرج في كشف اليوم!`, false); input.value = ""; return; }
     
     if(tableStatus[num]) {
         let saved = tableStatus[num];
         if(saved.status === "done") {
-            showCustomAlert(`المشترك: <b>(${meal.name})</b><br>قد استلم وجبته مسبقاً الساعة: <span style='color:#eab308'>${saved.time}</span>`, false);
-            input.value = "";
-            return;
+            showCustomAlert("✅", "مستلم مسبقاً", `المشترك: <b>(${meal.name})</b><br>استلم الوجبة اليوم الساعة: ${saved.time}`, false);
+            input.value = ""; return;
         } else if(saved.status === "cancel") {
-            showCustomAlert(`انتبه! المشترك: <b>(${meal.name})</b><br>اشتراكه ملغى لهذا اليوم منذ الساعة: <span style='color:#ef4444'>${saved.time}</span>`, false);
-            input.value = "";
-            return;
+            showCustomAlert("🛑", "اشتراك ملغى", `انتبه! المشترك: <b>(${meal.name})</b><br>طلب إلغاء اليوم منذ الساعة: ${saved.time}`, false);
+            input.value = ""; return;
         }
     }
     
-    try { audioSuccess.play(); } catch(e){}
-    searchedNumbers.add(num);
-    if(!tableStatus[num]) {
-        db.ref("pnc_data/actions/" + num).set({ status: "pending", time: "--:--" });
-    }
+    // إظهار التفاصيل داخل الـ Modal فورا مع أزرار الإجراء
+    showCustomAlert("👤", "تأكيد حالة الفرز", `اسم المشترك: <b>${meal.name}</b><br>رقم الاشتراك الحالي: # ${num}<br><br>الرجاء اختيار الإجراء المطلوب للعميل:`, true, true, num);
     input.value = "";
-    setTimeout(() => {
-        let c = document.getElementById("card-" + num);
-        if(c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 150);
 }
 
 function actionMeal(num, type) {
     let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+    // عند اتخاذ الإجراء، يتم إضافته فوراً للـ Set لإعادة ترتيب العرض ليكون بالأعلى
+    searchedNumbers.delete(num); searchedNumbers.add(num);
     db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString });
-    try { audioSuccess.play(); } catch(e){}
 }
 
 function recalculateStats() {
     let d = 0, c = 0;
     Object.keys(tableStatus).forEach(k => {
-        if(tableStatus[k].status === "done") d++;
-        if(tableStatus[k].status === "cancel") c++;
+        if(tableStatus[k].status === "done") d++; if(tableStatus[k].status === "cancel") c++;
     });
-    document.getElementById("doneMeals").innerHTML = d;
-    document.getElementById("cancelMeals").innerHTML = c;
+    document.getElementById("doneMeals").innerHTML = d; document.getElementById("cancelMeals").innerHTML = c;
 }
 
 function renderCards() {
-    let container = document.getElementById("mealCardsContainer"), numbers = Array.from(searchedNumbers).reverse();
-    if (numbers.length === 0) { container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد اشتراكات مفرزة حالياً.</p>'; return; }
+    let container = document.getElementById("mealCardsContainer"), numbers = Array.from(searchedNumbers);
+    if (numbers.length === 0) { container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد عمليات فرز حالياً.</p>'; return; }
     let html = "";
-    numbers.forEach(num => {
+    // عكس المصفوفة لقراءة الأحدث والعمليات الأخيرة فوق تلقائياً
+    numbers.reverse().forEach(num => {
         let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num] || {};
         let st = item.status || "pending", tm = item.time || "--:--";
-        let txt = "⏳ قيد التحضير", col = "#facc15", showBtn = true;
-        if(st === "done") { txt = "✅ تم التسليم"; col = "#22c55e"; showBtn = false; }
-        if(st === "cancel") { txt = "❌ ملغية"; col = "#dc2626"; showBtn = false; }
+        let txt = "⏳ معلق", col = "#facc15";
+        if(st === "done") { txt = "✅ مستلم"; col = "#22c55e"; }
+        if(st === "cancel") { txt = "❌ ملغى"; col = "#ef4444"; }
         
-        html += `<div class="meal-row-card" id="card-${num}">
-            <div class="meal-card-info"><span class="meal-card-num"># ${num}</span><span>${name}</span></div>
-            <div style="display:flex; justify-content:space-between; font-size:13px; border-top:1px dashed rgba(255,255,255,0.06); padding-top:8px;">
-                <span style="color:#94a3b8">الحالة:</span>
-                <div><span style="color:${col}">${txt}</span> <span style="font-size:11px; color:#94a3b8; margin-right:5px;">${tm}</span></div>
-            </div>
-            ${showBtn ? `<div class="meal-card-actions">
-                <button class="actionBtn deliverBtn" onclick="actionMeal('${num}', 'done')">✅ تسليم</button>
-                <button class="actionBtn cancelBtn" onclick="actionMeal('${num}', 'cancel')">❌ إلغاء</button>
-            </div>` : ''}
+        html += `<div class="meal-row-card">
+            <div class="meal-card-info"><span class="meal-card-num"># ${num}</span><span class="meal-card-name">${name}</span></div>
+            <div style="text-align:left;"><span style="color:${col}; font-weight:700; font-size:13px;">${txt}</span><br><small style="color:#94a3b8; font-size:11px;">${tm}</small></div>
         </div>`;
     });
     container.innerHTML = html;
@@ -428,7 +375,7 @@ function switchTab(t) { activeTab = t; document.getElementById("tab-done").class
 
 function updateReports() {
     let content = document.getElementById("reportsContent"), html = "", keys = Object.keys(tableStatus).filter(k => tableStatus[k].status === activeTab);
-    if(keys.length === 0) { content.innerHTML = `<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ حالياً.</div>`; return; }
+    if(keys.length === 0) { content.innerHTML = `<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ.</div>`; return; }
     keys.forEach(num => {
         let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num;
         html += `<div class="report-card"><div><b># ${num}</b><br><small style="color:#cbd5e1">${name}</small></div><div style="text-align:left"><span style="color:${activeTab==='done'?'#22c55e':'#ef4444'}">${activeTab==='done'?'✓ مستلم':'✕ ملغى'}</span><br><small style="color:#94a3b8">${tableStatus[num].time}</small></div></div>`;
