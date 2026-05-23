@@ -9,7 +9,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Kufi Arabic', sans-serif; }
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
 
-/* شاشة الترحيب */
+/* شاشة الترحيب المحمية */
 #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
 .splash-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 30px 40px; border-radius: 24px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); max-width: 85%; }
 .splash-text { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
@@ -47,7 +47,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 190px; }
 .report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
-/* التوصيل المخصص والتحكم */
+/* التحكم والتوصيل المخصص */
 .delivery-manual-box { background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.3); padding: 14px; border-radius: 14px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
 .delivery-manual-box label { font-size: 12px; color: #38bdf8; font-weight: 700; display: block; }
 .delivery-manual-box input { padding: 10px; font-size: 16px; text-align: center; background: rgba(15,23,42,0.8); border: 1px solid rgba(56, 189, 248, 0.2); }
@@ -96,12 +96,12 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .whatsapp-bottom-bar { position: fixed; bottom: 38px; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 15px; z-index: 998; display: flex; justify-content: center; align-items: center; }
 .whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); }
 
-/* شريط التمرير */
+/* شريط التمرير سفلي */
 .ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; padding: 10px 0; z-index: 999; overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.06); }
 .ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 14s linear infinite; font-size: 13px; font-weight: 700; color: #cbd5e1; }
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* قالب الـ PDF */
+/* قالب التقرير PDF */
 #pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; }
 .pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 .pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
@@ -133,6 +133,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 <div id="splashScreen">
     <div class="splash-card">
         <div class="splash-text">أهلاً <span class="brand-carb">يوملز</span> ⚡</div>
+        <div style="color: #64748b; font-size: 12px; margin-top: 10px;">جاري تشغيل النظام...</div>
     </div>
 </div>
 
@@ -383,6 +384,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 </div>
 
 <script>
+// تحديد المتغيرات الثابتة أولاً لتجنب مشاكل الترتيب والـ Reference Error
+const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
+const masterSystemSecret = "0506546313";
 const firebaseConfig = {
   apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
   authDomain: "protencarp.firebaseapp.com",
@@ -393,12 +397,8 @@ const firebaseConfig = {
   databaseURL: "https://protencarp-default-rtdb.firebaseio.com/"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-const masterSystemSecret = "0506546313";
-const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
-
+// المتغيرات الديناميكية للمنظومة
+var db;
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery"; 
 var deliveryTotalCount = 70; 
@@ -410,17 +410,22 @@ var staffData = {
     delivery: { name: "مسؤول قسم التوصيل", code: "3333" }
 };
 
-function hideSplash() {
+// دالة الأمان للإخفاء الفوري لشاشة الترحيب
+function forceHideSplash() {
     var s = document.getElementById("splashScreen");
     if(s) { 
         s.style.opacity = "0"; 
-        setTimeout(() => { s.style.display = "none"; }, 400); 
+        setTimeout(function() { s.style.display = "none"; }, 400); 
     }
 }
 
-setTimeout(function() {
-    hideSplash();
-}, 1000);
+// تشغيل نظام التحايل الآمن لتجنب تعليق الواجهات
+try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+} catch(e) {
+    console.log("Firebase Bypass Init.");
+}
 
 function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
     document.getElementById("alertIcon").innerHTML = icon;
@@ -440,7 +445,17 @@ function showCustomAlert(icon, title, message, isSuccess = true, showActions = f
 
 function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
+// تشغيل الأحداث فور جاهزية الـ DOM بالكامل على المتصفح
 document.addEventListener("DOMContentLoaded", function() {
+    // تشغيل المؤقت الاحتياطي (ثانيتين) لتخطي شاشة الترحيب مهما حدث
+    setTimeout(forceHideSplash, 2000);
+
+    if(!db) {
+        forceHideSplash();
+        if(document.getElementById("status")) document.getElementById("status").innerHTML = "⚠️ وضع عدم الاتصال السحابي.";
+        return;
+    }
+    
     db.ref("pnc_data").on("value", (snapshot) => {
         let data = snapshot.val() || {};
         meals = data.mealsList || [];
@@ -482,10 +497,10 @@ document.addEventListener("DOMContentLoaded", function() {
         recalculateStats(); 
         renderCards(); 
         updateReports();
-        hideSplash();
+        forceHideSplash();
     }, (error) => { 
-        console.log("Firebase error bypassed safely.");
-        hideSplash(); 
+        console.log("Firebase error handled.");
+        forceHideSplash(); 
     });
 });
 
@@ -500,6 +515,7 @@ function verifyAdminCode() {
 }
 
 function saveAdminSettings() {
+    if(!db) return;
     let updateData = {
         whatsapp: document.getElementById("whatsappInput").value.trim(),
         bannerUrl: document.getElementById("bannerUrlInput").value.trim() || defaultBanner,
@@ -526,10 +542,11 @@ function saveAdminSettings() {
 function updateDeliveryManualCount(val) {
     let num = parseInt(val) || 0;
     deliveryTotalCount = num;
-    db.ref("pnc_data/deliveryTotalCount").set(num);
+    if(db) db.ref("pnc_data/deliveryTotalCount").set(num);
 }
 
 function deliverAllPendingDelivery() {
+    if(!db) return;
     let count = 0;
     let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
     let staffName = staffData.delivery.name || "مسؤول قسم التوصيل";
@@ -568,6 +585,7 @@ function switchBranchView(view) {
 }
 
 function archiveCurrentDayData() {
+    if(!db) return;
     let doneCount = 0, cancelCount = 0;
     Object.keys(tableStatus).forEach(k => {
         if(tableStatus[k].status === "done") doneCount++;
@@ -581,11 +599,11 @@ function archiveCurrentDayData() {
 }
 
 function deleteArchiveItem(key) {
-    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { db.ref("pnc_data/archive/" + key).remove(); }
+    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { if(db) db.ref("pnc_data/archive/" + key).remove(); }
 }
 
 async function startReadingPDF(file) {
-    if(!file) return;
+    if(!file || !db) return;
     archiveCurrentDayData();
     document.getElementById("status").innerHTML = "⏳ فرز وقراءة الملف...";
     meals = []; searchedNumbers.clear();
@@ -677,7 +695,7 @@ function triggerWorkerAuth(num, type) {
             let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
             
             searchedNumbers.delete(num); searchedNumbers.add(num);
-            db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString, by: actingStaffName });
+            if(db) db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString, by: actingStaffName });
             
             closeWorkerAuthModal();
             let labelType = type === 'done' ? "تم تسليم الوجبة" : "تم إلغاء الوجبة";
