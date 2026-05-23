@@ -827,4 +827,140 @@ function updateReports() {
     
     let html = "";
     if(currentBranchView === "delivery" && activeTab !== 'archive') {
-        html += `<div class="delivery-ma
+        html += `<div class="delivery-manual-box">
+            <label>📦 إجمالي الحقائب المسلّمة للتوصيل جملةً:</label>
+            <input type="number" id="deliveryManualInput" value="${deliveryTotalCount}" oninput="updateDeliveryManualCount(this.value)" placeholder="مثال: 70">
+            <button class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">✅ تسليم باقي وجبات التوصيل جملة واحدة</button>
+        </div>`;
+    }
+    
+    if(activeTab === 'archive') {
+        let archiveKeys = Object.keys(historyArchive);
+        if(archiveKeys.length === 0) { content.innerHTML = html + `<div style="text-align:center; color:#64748b; padding:40px;">لا يوجد أيام مؤرشفة حتى الآن.</div>`; return; }
+        archiveKeys.reverse().forEach(key => {
+            let item = historyArchive[key];
+            html += `<div class="report-card" style="border-right: 4px solid #38bdf8;">
+                <div><span style="color:#38bdf8; font-weight:bold; font-size:14px;">📅 ${item.date}</span><br><small style="color:#22c55e;">✅ مستلم: ${item.done}</small> | <small style="color:#ef4444;">❌ ملغى: ${item.cancel}</small></div>
+                <div><button class="delete-archive-btn" onclick="deleteArchiveItem('${key}')">🗑️</button></div>
+            </div>`;
+        });
+        content.innerHTML = html; return;
+    }
+    
+    let keys = Object.keys(tableStatus).filter(k => {
+        let meal = meals.find(m => m.number == k);
+        return tableStatus[k].status === activeTab && meal && meal.branch === currentBranchView;
+    });
+    if(keys.length === 0) { content.innerHTML = html + `<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ لهذا القسم حالياً.</div>`; return; }
+    
+    keys.forEach(num => {
+        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num];
+        let lbl = meal.branch === 'delivery' ? "🚚 توصيل" : (meal.branch==='batarji'?'🏪 بترجي':'🏪 رحيلي');
+        html += `<div class="report-card"><div><b># ${num}</b> <small style="color:#facc15; padding-right:5px;">[${lbl}]</small><br><small style="color:#cbd5e1">${name}</small><br><small style="color:#64748b; font-size:10px;">بواسطة: ${item.by || 'غير معروف'}</small></div><div style="text-align:left"><span style="color:${activeTab==='done'?'#22c55e':'#ef4444'}">${activeTab==='done'?'✓ مستلم':'✕ ملغى'}</span><br><small style="color:#94a3b8">${item.time}</small></div></div>`;
+    });
+    content.innerHTML = html;
+}
+
+function generateAndSharePDFReport() {
+    if(meals.length === 0) { alert("لا توجد بيانات مشتركين لتوليد التقرير!"); return; }
+    let now = new Date();
+    let dateStr = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
+    let timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    
+    document.getElementById("pdfReportDate").innerText = dateStr;
+    document.getElementById("pdfReportTime").innerText = timeStr;
+    
+    document.getElementById("pdfLabelStaffBatarji").innerText = `المسؤول: ${staffData.batarji.name || ''}`;
+    document.getElementById("pdfLabelStaffRuhaily").innerText = `المسؤول: ${staffData.ruhaily.name || ''}`;
+    document.getElementById("pdfLabelStaffDelivery").innerText = `المسؤول: ${staffData.delivery.name || ''}`;
+    
+    let delDone = 0, delCancel = 0, delPending = 0;
+    let batDone = 0, batCancel = 0, batPending = 0;
+    let ruhDone = 0, ruhCancel = 0, ruhPending = 0;
+    
+    let delRowsHtml = "", batRowsHtml = "", ruhRowsHtml = "";
+    
+    meals.forEach(m => {
+        let statusItem = tableStatus[m.number];
+        let statusText = "⏳ قيد الانتظار";
+        let statusClass = "badge-pdf-pending";
+        let staffLog = "--";
+        
+        if (statusItem) {
+            staffLog = `${statusItem.by || '--'} / ${statusItem.time}`;
+            if (statusItem.status === 'done') {
+                statusText = "✅ مستلم";
+                statusClass = "badge-pdf-done";
+                if (m.branch === 'delivery') delDone++;
+                if (m.branch === 'batarji') batDone++;
+                if (m.branch === 'ruhaily') ruhDone++;
+            } else if (statusItem.status === 'cancel') {
+                statusText = "❌ ملغى";
+                statusClass = "badge-pdf-cancel";
+                if (m.branch === 'delivery') delCancel++;
+                if (m.branch === 'batarji') batCancel++;
+                if (m.branch === 'ruhaily') ruhCancel++;
+            }
+        } else {
+            if (m.branch === 'delivery') {
+                statusText = "🚚 تم الشحن تلقائياً";
+                statusClass = "badge-pdf-done";
+                staffLog = staffData.delivery.name || "قسم التوصيل";
+                delDone++;
+            } else {
+                if (m.branch === 'batarji') batPending++;
+                if (m.branch === 'ruhaily') ruhPending++;
+            }
+        }
+        
+        let rowHtml = `<tr>
+            <td><b># ${m.number}</b></td>
+            <td>${m.name}</td>
+            <td><span class="${statusClass}">${statusText}</span></td>
+            <td><small>${staffLog}</small></td>
+        </tr>`;
+        
+        if (m.branch === 'delivery') delRowsHtml += rowHtml;
+        else if (m.branch === 'batarji') batRowsHtml += rowHtml;
+        else if (m.branch === 'ruhaily') ruhRowsHtml += rowHtml;
+    });
+    
+    document.getElementById("pdfDeliveryTableBody").innerHTML = delRowsHtml || '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد بيانات لهذا القسم اليوم</td></tr>';
+    document.getElementById("pdfBatarjiTableBody").innerHTML = batRowsHtml || '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد بيانات لهذا الفرع اليوم</td></tr>';
+    document.getElementById("pdfRuhailyTableBody").innerHTML = ruhRowsHtml || '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد بيانات لهذا الفرع اليوم</td></tr>';
+    
+    let totalGlobal = meals.length;
+    let totalDone = delDone + batDone + ruhDone;
+    let totalCancel = delCancel + batCancel + ruhCancel;
+    let totalPending = batPending + ruhPending;
+    
+    document.getElementById("pdfMetaGlobalTotal").innerText = totalGlobal;
+    document.getElementById("pdfMetaGlobalDone").innerText = totalDone;
+    document.getElementById("pdfMetaGlobalPending").innerText = totalPending;
+    document.getElementById("pdfMetaGlobalCancel").innerText = totalCancel;
+    
+    document.getElementById("pdfSumDeliveryDone").innerText = delDone;
+    document.getElementById("pdfSumBatarjiDone").innerText = batDone;
+    document.getElementById("pdfSumRuhailyDone").innerText = ruhDone;
+    
+    let element = document.getElementById('pdfReportTemplate');
+    element.style.display = 'block';
+    
+    let opt = {
+        margin: [10, 10, 10, 10],
+        filename: `تقرير_فرز_بروتين_وكارب_${new Date().toISOString().slice(0,10)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+        element.style.display = 'none';
+    }).catch(err => {
+        console.error(err);
+        element.style.display = 'none';
+    });
+}
+</script>
+</body>
+</html>
