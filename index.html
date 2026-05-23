@@ -62,11 +62,11 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
 
-/* أزرار الفروع الثلاثة - تحول كامل للون الأخضر للقسم النشط */
+/* أزرار الفروع الثلاثة */
 .branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
 .branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); transition: all 0.25s ease; display: flex; justify-content: center; align-items: center; gap: 4px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
-/* الستايل الموحد للزر النشط باللون الأخضر التحولي الذكي */
+/* الستايل الموحد للزر النشط باللون الأخضر */
 .branch-filter-btn.active-branch-selected { 
     color: #ffffff !important; 
     background: rgba(34, 197, 94, 0.85) !important; 
@@ -131,6 +131,19 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .badge-pdf-cancel { color: #dc2626; font-weight: bold; }
 .badge-pdf-pending { color: #64748b; font-style: italic; }
 </style>
+
+<script>
+// كود الحماية الفوري (Fail-safe): يضمن إخفاء الشاشة الترحيبية تلقائياً حتى لو تعطلت السيرفرات الخارجية أو لم تفتح بالكامل
+function forceHideSplash() {
+    var s = document.getElementById("splashScreen");
+    if(s && s.style.display !== "none") {
+        s.style.opacity = "0";
+        setTimeout(function() { s.style.display = "none"; }, 400);
+    }
+}
+setTimeout(forceHideSplash, 1800); // إخفاء إجباري بعد ثانية و 800 جزء من الثانية كأقصى حد
+window.addEventListener('load', forceHideSplash);
+</script>
 </head>
 <body>
 
@@ -366,9 +379,6 @@ function hideSplash() {
     if(s) { s.style.opacity = "0"; setTimeout(() => { s.style.display = "none"; }, 400); }
 }
 
-// أمان إضافي: إخفاء الشاشة الترحيبية تلقائياً بعد ثانيتين كحد أقصى لمنع أي تعليق نهائياً
-setTimeout(hideSplash, 2000);
-
 function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
     document.getElementById("alertIcon").innerHTML = icon;
     document.getElementById("alertTitle").innerHTML = title;
@@ -410,10 +420,12 @@ db.ref("pnc_data").on("value", (snapshot) => {
         document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
     }
     
-    // الحماية السليمة: استدعاء التحديثات فقط إذا كانت الصفحة جاهزة
     if(document.getElementById("mealCardsContainer")) {
         recalculateStats(); renderCards(); updateReports();
     }
+    hideSplash();
+}, (error) => {
+    // في حال حدوث خطأ في الاتصال بقواعد البيانات يتم تمرير الصفحة مباشرة
     hideSplash();
 });
 
@@ -735,5 +747,11 @@ function generateAndSharePDFReport() {
     html2pdf().set(opt).from(element).save().then(() => {
         element.style.display = "none"; playBeep('success');
         
-        let waMessage = `🚨 *التقرير اليومي الختامي لعمليات الفرز - بروتين وكارب* 🚨\n\n📅 *التاريخ:* ${dateStr}\n\n🚚 *1- قسم التوصيل (
-
+        let waMessage = `🚨 *التقرير اليومي الختامي لعمليات الفرز - بروتين وكارب* 🚨\n\n📅 *التاريخ:* ${dateStr}\n\n🚚 *1- قسم التوصيل (المناديب):*\n• إجمالي الحقائب المشحونة: ${deliveryTotalCount} كيس.\n• ملغى من التوصيل اليوم: ${delCancelCount} مشترك.\n📦 *صافي وجبات التوصيل الفعلية الخارِجة:* ${deliveryNetFinal} وجبة (تم تسليم الكل بنجاح).\n\n🏪 *2- فرع البترجي (استلام فرعي):*\n• ✅ تم تسليم: ${batDone} عملاء برقم الاشتراك.\n• ⏳ قيد الانتظار (لم يستلموا بعد): ${batPending} عملاء.\n• ❌ إلغاء اليوم: ${batCancel} وجبة.\n\n🏪 *3- فرع الرحيلي (استلام فرعي):*\n• ✅ تم تسليم: ${ruhDone} عملاء برقم الاشتراك.\n• ⏳ قيد الانتظار (لم يستلموا بعد): ${ruhPending} عملاء.\n• ❌ إلغاء اليوم: ${ruhCancel} وجبة.\n\n📄 _ملف الـ PDF التفصيلي تم تحميله على جهازك ليرفق مع الرسالة لتوثيق العمل وسير الجودة._ ✨`;
+        
+        setTimeout(() => { window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(waMessage)}`, '_blank'); }, 1200);
+    }).catch(err => { element.style.display = "none"; alert(err); });
+}
+</script>
+</body>
+</html>
