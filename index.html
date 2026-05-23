@@ -49,10 +49,12 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 190px; }
 .report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
-/* صندوق التوصيل المخصص لإدخال عدد الحقائب يدوياً */
-.delivery-manual-box { background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.3); padding: 12px; border-radius: 14px; margin-bottom: 15px; }
-.delivery-manual-box label { font-size: 12px; color: #38bdf8; font-weight: 700; display: block; margin-bottom: 6px; }
+/* صندوق التوصيل المخصص لإدخال عدد الحقائب يدوياً وتلقائي الجملة */
+.delivery-manual-box { background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.3); padding: 14px; border-radius: 14px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
+.delivery-manual-box label { font-size: 12px; color: #38bdf8; font-weight: 700; display: block; }
 .delivery-manual-box input { padding: 10px; font-size: 16px; text-align: center; background: rgba(15,23,42,0.8); border: 1px solid rgba(56, 189, 248, 0.2); }
+.bulk-delivery-btn { background: #22c55e; color: #fff; font-weight: bold; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13px; text-align: center; transition: background 0.2s; }
+.bulk-delivery-btn:active { background: #16a34a; }
 
 .delete-archive-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: all 0.2s; }
 
@@ -60,11 +62,17 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
 
-/* أزرار الفروع والتوصيل قبل خانة البحث */
-.branch-filters-container { display: flex; gap: 10px; margin-bottom: 15px; }
-.branch-filter-btn { flex: 1; padding: 14px 10px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 14px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 6px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-.branch-filter-btn.active-branch-delivery { color: #38bdf8; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.3); box-shadow: 0 4px 15px rgba(56, 189, 248, 0.1); }
-.branch-filter-btn.active-branch-batarji { color: #22c55e; background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.3); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1); }
+/* أزرار الفروع الثلاثة - تحول كامل للون الأخضر للقسم النشط */
+.branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
+.branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); transition: all 0.25s ease; display: flex; justify-content: center; align-items: center; gap: 4px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+/* الستايل الموحد للزر النشط باللون الأخضر التحولي الذكي */
+.branch-filter-btn.active-branch-selected { 
+    color: #ffffff !important; 
+    background: rgba(34, 197, 94, 0.85) !important; 
+    border-color: #22c55e !important; 
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important; 
+}
 
 /* البانر والتنسيقات العامة */
 .top-banner { width: 100%; height: 110px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08); }
@@ -111,9 +119,9 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 .pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
 .pdf-meta { font-size: 12px; color: #64748b; text-align: left; }
-.pdf-grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+.pdf-grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 30px; }
 .pdf-sum-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; background: #f8fafc; }
-.pdf-sum-val { font-size: 18px; font-weight: 900; margin-top: 4px; }
+.pdf-sum-val { font-size: 16px; font-weight: 900; margin-top: 4px; }
 .pdf-section-title { font-size: 14px; font-weight: bold; color: #0f172a; border-right: 4px solid #facc15; padding-right: 8px; margin-bottom: 12px; margin-top: 20px; }
 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
 .pdf-table th { background: #0f172a; color: #ffffff; padding: 10px; text-align: right; font-weight: bold; }
@@ -121,6 +129,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .pdf-table tr:nth-child(even) { background: #f8fafc; }
 .badge-pdf-done { color: #16a34a; font-weight: bold; }
 .badge-pdf-cancel { color: #dc2626; font-weight: bold; }
+.badge-pdf-pending { color: #64748b; font-style: italic; }
 </style>
 </head>
 <body>
@@ -165,8 +174,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
         <button class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">❌ الملغيون</button>
         <button class="reports-tab archive-tab" id="tab-archive" onclick="switchTab('archive')">📊 أرشيف الأيام</button>
     </div>
-    <div class="reports-content" id="reportsContent">
-        </div>
+    <div class="reports-content" id="reportsContent"></div>
     
     <div class="reports-footer-stats">
         <div class="reports-footer-grid">
@@ -194,8 +202,9 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
     </div>
 
     <div class="branch-filters-container">
-        <button class="branch-filter-btn active-branch-delivery" id="btn-view-delivery" onclick="switchBranchView('delivery')">🚚 قسم التوصيل</button>
+        <button class="branch-filter-btn active-branch-selected" id="btn-view-delivery" onclick="switchBranchView('delivery')">🚚 قسم التوصيل</button>
         <button class="branch-filter-btn" id="btn-view-batarji" onclick="switchBranchView('batarji')">🏪 فرع البترجي</button>
+        <button class="branch-filter-btn" id="btn-view-ruhaily" onclick="switchBranchView('ruhaily')">🏪 فرع الرحيلي</button>
     </div>
 
     <div class="card">
@@ -243,19 +252,19 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
     <div class="pdf-grid-summary">
         <div class="pdf-sum-box" style="border-top:3px solid #3b82f6;">
             <div style="color:#3b82f6; font-size:11px; font-weight:bold;">إجمالي الكشف الفعلي</div>
-            <div class="pdf-sum-val" id="pdfSumTotal" style="color:#1e293b;">0</div>
+            <div class="pdf-sum-val" id="pdfSumTotal">0</div>
         </div>
         <div class="pdf-sum-box" style="border-top:3px solid #38bdf8;">
-            <div style="color:#38bdf8; font-size:11px; font-weight:bold;" id="pdfDeliveryHeaderLabel">مشحون التوصيل (الصافي)</div>
-            <div class="pdf-sum-val" id="pdfSumDeliveryDone" style="color:#38bdf8;">0</div>
+            <div style="color:#38bdf8; font-size:11px; font-weight:bold;">مشحون التوصيل (الصافي)</div>
+            <div class="pdf-sum-val" id="pdfSumDeliveryDone">0</div>
         </div>
         <div class="pdf-sum-box" style="border-top:3px solid #10b981;">
             <div style="color:#10b981; font-size:11px; font-weight:bold;">مستلمي البترجي</div>
-            <div class="pdf-sum-val" id="pdfSumBatarjiDone" style="color:#10b981;">0</div>
+            <div class="pdf-sum-val" id="pdfSumBatarjiDone">0</div>
         </div>
-        <div class="pdf-sum-box" style="border-top:3px solid #ef4444;">
-            <div style="color:#ef4444; font-size:11px; font-weight:bold;">إجمالي الملغيين</div>
-            <div class="pdf-sum-val" id="pdfSumCancel" style="color:#ef4444;">0</div>
+        <div class="pdf-sum-box" style="border-top:3px solid #a855f7;">
+            <div style="color:#a855f7; font-size:11px; font-weight:bold;">مستلمي الرحيلي</div>
+            <div class="pdf-sum-val" id="pdfSumRuhailyDone">0</div>
         </div>
     </div>
 
@@ -283,6 +292,19 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
             </tr>
         </thead>
         <tbody id="pdfBatarjiTableBody"></tbody>
+    </table>
+
+    <div class="pdf-section-title">🏪 تفاصيل فرز فرع الرحيلي</div>
+    <table class="pdf-table">
+        <thead>
+            <tr>
+                <th style="width:15%">رقم الاشتراك</th>
+                <th style="width:45%">اسم المشترك</th>
+                <th style="width:20%">الحالة</th>
+                <th style="width:20%">الوقت والملحوظة</th>
+            </tr>
+        </thead>
+        <tbody id="pdfRuhailyTableBody"></tbody>
     </table>
     
     <div style="margin-top:40px; border-top:1px dashed #cbd5e1; padding-top:10px; text-align:center; font-size:10px; color:#94a3b8;">
@@ -341,7 +363,7 @@ const db = firebase.database();
 
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery"; 
-var deliveryTotalCount = 80; // القيمة الافتراضية لحسبة المناديب كما طلبت يا إبراهيم
+var deliveryTotalCount = 80; 
 
 function hideSplash() {
     let s = document.getElementById("splashScreen");
@@ -376,9 +398,7 @@ db.ref("pnc_data").on("value", (snapshot) => {
     historyArchive = data.archive || {};
     waNum = data.whatsapp || "966506546313";
     currentBannerUrl = data.bannerUrl || defaultBanner;
-    if(data.deliveryTotalCount !== undefined) {
-        deliveryTotalCount = data.deliveryTotalCount;
-    }
+    if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
     
     document.getElementById("waLink").href = "https://wa.me/" + waNum;
     document.getElementById("whatsappInput").value = waNum;
@@ -415,13 +435,43 @@ function updateDeliveryManualCount(val) {
     db.ref("pnc_data/deliveryTotalCount").set(num);
 }
 
+function deliverAllPendingDelivery() {
+    let count = 0;
+    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+    
+    meals.forEach(m => {
+        if(m.branch === "delivery") {
+            if(!tableStatus[m.number] || tableStatus[m.number].status === undefined) {
+                tableStatus[m.number] = { status: "done", time: timeString };
+                count++;
+            }
+        }
+    });
+    if(count > 0) {
+        db.ref("pnc_data/actions").set(tableStatus);
+        showCustomAlert("✅", "تسليم الجملة ناجح", `تم تسليم جميع وجبات التوصيل المتبقية وعددهم (${count}) بنجاح!`, true);
+    } else {
+        alert("لا توجد وجبات توصيل معلقة لتسليمها!");
+    }
+}
+
+// دالة الانتقال بين الأزرار المحدثة بالتأثير الأخضر التفاعلي الموحد
 function switchBranchView(view) {
     currentBranchView = view;
-    document.getElementById("btn-view-delivery").classList.toggle("active-branch-delivery", view === "delivery");
-    document.getElementById("btn-view-batarji").classList.toggle("active-branch-batarji", view === "batarji");
-    document.getElementById("listTitle").innerHTML = view === "delivery" ? "قائمة فرز التوصيل المباشرة:" : "قائمة فرز البترجي المباشرة:";
     
-    let label = view === 'batarji' ? "فرع البترجي" : "قسم التوصيل";
+    document.getElementById("btn-view-delivery").classList.remove("active-branch-selected");
+    document.getElementById("btn-view-batarji").classList.remove("active-branch-selected");
+    document.getElementById("btn-view-ruhaily").classList.remove("active-branch-selected");
+    
+    if(view === 'delivery') document.getElementById("btn-view-delivery").classList.add("active-branch-selected");
+    if(view === 'batarji') document.getElementById("btn-view-batarji").classList.add("active-branch-selected");
+    if(view === 'ruhaily') document.getElementById("btn-view-ruhaily").classList.add("active-branch-selected");
+    
+    let label = "قسم التوصيل";
+    if(view === 'batarji') label = "فرع البترجي";
+    if(view === 'ruhaily') label = "فرع الرحيلي";
+    
+    document.getElementById("listTitle").innerHTML = `قائمة فرز ${label} المباشرة:`;
     document.getElementById("reportsOverlayTitle").innerHTML = `📋 سجل فرز (${label})`;
     
     recalculateStats(); renderCards(); updateReports();
@@ -433,294 +483,13 @@ function archiveCurrentDayData() {
         if(tableStatus[k].status === "done") doneCount++;
         if(tableStatus[k].status === "cancel") cancelCount++;
     });
-    
     if (doneCount > 0 || cancelCount > 0) {
-        let now = new Date();
-        let options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
+        let now = new Date(), options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
         let dateString = now.toLocaleDateString('ar-SA', options); 
-        let timestamp = now.getTime(); 
-        
-        db.ref("pnc_data/archive/" + timestamp).set({ date: dateString, done: doneCount, cancel: cancelCount });
+        db.ref("pnc_data/archive/" + now.getTime()).set({ date: dateString, done: doneCount, cancel: cancelCount });
     }
 }
 
 function deleteArchiveItem(key) {
-    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) {
-        db.ref("pnc_data/archive/" + key).remove();
-        playBeep('success');
-    }
-}
+    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { db.ref("pnc_data/
 
-async function startReadingPDF(file) {
-    if(!file) return;
-    archiveCurrentDayData();
-    
-    document.getElementById("status").innerHTML = "⏳ فرز وقراءة الملف...";
-    meals = []; searchedNumbers.clear();
-    let reader = new FileReader();
-    reader.onload = async function() {
-        try {
-            let typedarray = new Uint8Array(this.result), pdf = await pdfjsLib.getDocument(typedarray).promise;
-            for (let p = 1; p <= pdf.numPages; p++) {
-                let page = await pdf.getPage(p), content = await page.getTextContent(), lastY = "", lines = [], currentLine = "";
-                for (let item of content.items) {
-                    if (lastY !== "" && item.transform[5] !== lastY) { lines.push(currentLine); currentLine = ""; }
-                    currentLine += " " + item.str; lastY = item.transform[5];
-                }
-                lines.push(currentLine);
-                
-                let pageText = lines.join(" ");
-                let isBatarji = pageText.includes("البترجي") || pageText.includes("(البترجي)");
-                
-                lines.forEach(line => {
-                    let numMatch = line.match(/\b\d{5,8}\b/);
-                    if (numMatch) {
-                        let num = numMatch[0], nameClean = line.replace(num, "").replace(/[:\-\*]/g, "").trim().replace(/\s+/g, " ");
-                        if (nameClean.length < 3) nameClean = "مشترك رقم (" + num + ")";
-                        
-                        meals.push({ number: num, name: nameClean, branch: isBatarji ? "batarji" : "delivery" });
-                    }
-                });
-            }
-            meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
-            db.ref("pnc_data/mealsList").set(meals); 
-            db.ref("pnc_data/actions").set({});
-            showCustomAlert("✅", "نجاح الفرز والأرشفة", "تم تحديث قائمة جديدة بـ " + meals.length + " مشترك", true);
-        } catch(e) {
-            showCustomAlert("❌", "خطأ بالملف", "فشل قراءة ملف الـ PDF.", false);
-        }
-    };
-    reader.readAsArrayBuffer(file);
-}
-
-function checkMeal() {
-    let input = document.getElementById("mealInput"), num = input.value.trim();
-    if (!num) return;
-    if (meals.length === 0) { showCustomAlert("⚠️", "تنبيه", "الرجاء رفع ملف الـ PDF الخاص بالمشتركين أولاً.", false); return; }
-    
-    let meal = meals.find(m => m.number == num);
-    if (!meal) { showCustomAlert("❌", "غير موجود", `رقم الاشتراك [ ${num} ] غير مدرج في كشف اليوم!`, false); input.value = ""; return; }
-    
-    if (meal.branch !== currentBranchView) { switchBranchView(meal.branch); }
-
-    if(tableStatus[num]) {
-        let saved = tableStatus[num];
-        let branchLabel = meal.branch === 'batarji' ? "فرع البترجي" : "قسم التوصيل";
-        if(saved.status === "done") {
-            showCustomAlert("✅", "مستلم مسبقاً", `المشترك: <b>(${meal.name})</b> [${branchLabel}]<br>استلم الوجبة الساعة: ${saved.time}`, false);
-            input.value = ""; return;
-        } else if(saved.status === "cancel") {
-            showCustomAlert("🛑", "اشتراك ملغى", `المشترك: <b>(${meal.name})</b> [${branchLabel}]<br>طلب إلغاء اليوم منذ الساعة: ${saved.time}`, false);
-            input.value = ""; return;
-        }
-    }
-    
-    let branchText = meal.branch === 'batarji' ? "🏪 فرع البترجي" : "🚚 قسم التوصيل";
-    showCustomAlert("👤", "تأكيد حالة الفرز", `اسم المشترك: <b>${meal.name}</b><br>القسم الحالي: <span style="color:#facc15">${branchText}</span><br>رقم الاشتراك: # ${num}`, true, true, num);
-    input.value = "";
-}
-
-function actionMeal(num, type) {
-    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
-    searchedNumbers.delete(num); searchedNumbers.add(num);
-    db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString });
-}
-
-function recalculateStats() {
-    let d = 0, c = 0;
-    Object.keys(tableStatus).forEach(k => {
-        let meal = meals.find(m => m.number == k);
-        let statusData = tableStatus[k];
-        if (meal && meal.branch === currentBranchView) {
-            if(statusData.status === "done") d++; 
-            if(statusData.status === "cancel") c++;
-        }
-    });
-    
-    document.getElementById("doneMeals").innerHTML = d; 
-    document.getElementById("cancelMeals").innerHTML = c;
-    
-    let overlayDone = document.getElementById("overlayDoneCount");
-    let overlayCancel = document.getElementById("overlayCancelCount");
-    if(overlayDone) overlayDone.innerHTML = d;
-    if(overlayCancel) overlayCancel.innerHTML = c;
-}
-
-function renderCards() {
-    let container = document.getElementById("mealCardsContainer"), numbers = Array.from(searchedNumbers);
-    let filteredNumbers = numbers.filter(num => {
-        let meal = meals.find(m => m.number == num);
-        return meal && meal.branch === currentBranchView;
-    });
-
-    if (filteredNumbers.length === 0) { 
-        container.innerHTML = `<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد عمليات فرز في هذا القسم حالياً.</p>`; 
-        return; 
-    }
-    
-    let html = "";
-    filteredNumbers.reverse().forEach(num => {
-        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num] || {};
-        let st = item.status || "pending", tm = item.time || "--:--";
-        let txt = "⏳ معلق", col = "#facc15";
-        if(st === "done") { txt = "✅ مستلم"; col = "#22c55e"; }
-        if(st === "cancel") { txt = "❌ ملغى"; col = "#ef4444"; }
-        
-        html += `<div class="meal-row-card">
-            <div class="meal-card-main-info">
-                <div class="meal-card-info">
-                    <span class="meal-card-num"># ${num}</span>
-                    <span class="meal-card-name">${name}</span>
-                </div>
-                <div style="text-align:left;">
-                    <span style="color:${col}; font-weight:700; font-size:13px;">${txt}</span><br>
-                    <small style="color:#94a3b8; font-size:11px;">${tm}</small>
-                </div>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-
-function openReports() { updateReports(); document.getElementById("reportsOverlay").classList.add("open"); }
-function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
-
-function switchTab(t) { 
-    activeTab = t; 
-    document.getElementById("tab-done").classList.toggle("active-tab", t==="done"); 
-    document.getElementById("tab-cancel").classList.toggle("active-tab", t==="cancel"); 
-    document.getElementById("tab-archive").classList.toggle("active-tab", t==="archive"); 
-    updateReports(); 
-}
-
-function updateReports() {
-    let content = document.getElementById("reportsContent"), html = "";
-    
-    // حقن الخانة اليدوية للتوصيل فقط إذا كنا في قسم التوصيل ولسنا بتبويب الأرشيف التاريخي
-    if(currentBranchView === "delivery" && activeTab !== 'archive') {
-        html += `<div class="delivery-manual-box">
-            <label>📦 إجمالي الحقائب المسلّمة للتوصيل جملةً:</label>
-            <input type="number" id="deliveryManualInput" value="${deliveryTotalCount}" oninput="updateDeliveryManualCount(this.value)" placeholder="مثال: 80">
-        </div>`;
-    }
-    
-    if(activeTab === 'archive') {
-        let archiveKeys = Object.keys(historyArchive);
-        if(archiveKeys.length === 0) { content.innerHTML = html + `<div style="text-align:center; color:#64748b; padding:40px;">لا يوجد أيام مؤرشفة حتى الآن.</div>`; return; }
-        
-        archiveKeys.reverse().forEach(key => {
-            let item = historyArchive[key];
-            html += `<div class="report-card" style="border-right: 4px solid #38bdf8;">
-                <div>
-                    <span style="color:#38bdf8; font-weight:bold; font-size:14px;">📅 ${item.date}</span><br>
-                    <small style="color:#22c55e;">✅ مستلم: ${item.done}</small> | 
-                    <small style="color:#ef4444;">❌ ملغى: ${item.cancel}</small>
-                </div>
-                <div><button class="delete-archive-btn" onclick="deleteArchiveItem('${key}')">🗑️</button></div>
-            </div>`;
-        });
-        content.innerHTML = html; return;
-    }
-    
-    let keys = Object.keys(tableStatus).filter(k => {
-        let meal = meals.find(m => m.number == k);
-        return tableStatus[k].status === activeTab && meal && meal.branch === currentBranchView;
-    });
-    
-    if(keys.length === 0) { content.innerHTML = html + `<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ لهذا القسم حالياً.</div>`; return; }
-    
-    keys.forEach(num => {
-        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num;
-        let branchLabel = meal && meal.branch === 'batarji' ? "🏪 بترجي" : "🚚 توصيل";
-        html += `<div class="report-card"><div><b># ${num}</b> <small style="color:#facc15; padding-right:5px;">[${branchLabel}]</small><br><small style="color:#cbd5e1">${name}</small></div><div style="text-align:left"><span style="color:${activeTab==='done'?'#22c55e':'#ef4444'}">${activeTab==='done'?'✓ مستلم':'✕ ملغى'}</span><br><small style="color:#94a3b8">${tableStatus[num].time}</small></div></div>`;
-    });
-    content.innerHTML = html;
-}
-
-// ================= نظام توليد الـ PDF الذكي المحدث بالحسبة التلقائية لإبراهيم =================
-function generateAndSharePDFReport() {
-    if(meals.length === 0) { alert("لا توجد بيانات مشتركين لتوليد التقرير!"); return; }
-    
-    let now = new Date();
-    let dateStr = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
-    let timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
-    
-    document.getElementById("pdfReportDate").innerText = dateStr;
-    document.getElementById("pdfReportTime").innerText = timeStr;
-    document.getElementById("pdfSumTotal").innerText = meals.length;
-    
-    let delCancelCount = 0, batDone = 0, cancelTotal = 0;
-    let delRowsHtml = "", batRowsHtml = "";
-    
-    meals.forEach(m => {
-        let statusItem = tableStatus[m.number];
-        let statusText = "⏳ لم يفرز مسبقاً", statusClass = "", timeLog = "--";
-        
-        if(statusItem) {
-            timeLog = statusItem.time;
-            if(statusItem.status === 'done') {
-                statusText = "✅ تم التسليم";
-                statusClass = "badge-pdf-done";
-                if(m.branch === 'batarji') batDone++;
-            } else if(statusItem.status === 'cancel') {
-                statusText = "❌ ملغى من العميل";
-                statusClass = "badge-pdf-cancel";
-                cancelTotal++;
-                if(m.branch === 'delivery') delCancelCount++; // حساب الملغيين من التوصيل خصيصاً
-            }
-        }
-        
-        let row = `<tr>
-            <td><b>#${m.number}</b></td>
-            <td>${m.name}</td>
-            <td class="${statusClass}">${statusText}</td>
-            <td>${timeLog}</td>
-        </tr>`;
-        
-        if(m.branch === 'delivery') delRowsHtml += row; else batRowsHtml += row;
-    });
-    
-    // الحسبة الأسطورية: الصافي الفعلي للتوصيل = العدد الكلي المدخل يدوياً - عدد ملغيين التوصيل
-    let deliveryNetFinal = deliveryTotalCount - delCancelCount;
-    if(deliveryNetFinal < 0) deliveryNetFinal = 0; 
-    
-    // تحديث البيانات في هيدر الـ PDF البصري
-    document.getElementById("pdfDeliveryHeaderLabel").innerText = `مشحون التوصيل (الصافي)`;
-    document.getElementById("pdfSumDeliveryDone").innerText = `${deliveryNetFinal} وجبة (من أصل ${deliveryTotalCount})`;
-    document.getElementById("pdfSumBatarjiDone").innerText = batDone;
-    document.getElementById("pdfSumCancel").innerText = cancelTotal;
-    
-    document.getElementById("pdfDeliveryTableBody").innerHTML = delRowsHtml || `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد اشتراكات توصيل اليوم</td></tr>`;
-    document.getElementById("pdfBatarjiTableBody").innerHTML = batRowsHtml || `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد اشتراكات في فرع البترجي اليوم</td></tr>`;
-    
-    let element = document.getElementById("pdfReportTemplate");
-    element.style.display = "block";
-    
-    let filename = `تقرير_فرز_بروتين_وكارب_${now.toISOString().split('T')[0]}.pdf`;
-    let opt = {
-        margin: [10, 10],
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    
-    html2pdf().set(opt).from(element).save().then(() => {
-        element.style.display = "none";
-        playBeep('success');
-        
-        // رسالة الواتساب الاحترافية الجديدة متضمنة الحسبة الذكية للنقص التلقائي
-        let waMessage = `🚨 *التقرير اليومي الختامي لعمليات الفرز - بروتين وكارب* 🚨\n\n📅 *اليوم:* ${dateStr}\n⏰ *الوقت:* ${timeStr}\n\n📊 *ملخص الإحصائيات الشاملة:*\n• إجمالي حقائب التوصيل المشحونة: ${deliveryTotalCount} كيس.\n• ملغى من التوصيل اليوم: ${delCancelCount} مشترك.\n📦 *صافي وجبات التوصيل الفعلية الخارِجة:* ${deliveryNetFinal} وجبة.\n\n🏪 *فرع البترجي (استلام فرعي):*\n• تم تسليم: ${batDone} عملاء برقم الاشتراك.\n• إجمالي الملغى العام: ${cancelTotal} وجبة.\n\n📄 _تم تحميل ملف التقرير التفصيلي بصيغة PDF على جهازك، يرجى إرفاقه وإرساله الآن للجروب لتوثيق العمل وسير الجودة._ ✨`;
-        
-        setTimeout(() => {
-            let encodedMsg = encodeURIComponent(waMessage);
-            window.open(`https://wa.me/${waNum}?text=${encodedMsg}`, '_blank');
-        }, 1200);
-    }).catch(err => {
-        element.style.display = "none";
-        alert("حدث خطأ أثناء إعداد الـ PDF: " + err);
-    });
-}
-</script>
-</body>
-</html>
