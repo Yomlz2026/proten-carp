@@ -49,7 +49,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 190px; }
 .report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 
-/* صندوق التوصيل المخصص لإدخال عدد الحقائب يدوياً وتلقائي الجملة */
+/* صندوق التوصيل المخصص */
 .delivery-manual-box { background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.3); padding: 14px; border-radius: 14px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
 .delivery-manual-box label { font-size: 12px; color: #38bdf8; font-weight: 700; display: block; }
 .delivery-manual-box input { padding: 10px; font-size: 16px; text-align: center; background: rgba(15,23,42,0.8); border: 1px solid rgba(56, 189, 248, 0.2); }
@@ -114,7 +114,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 14s linear infinite; font-size: 13px; font-weight: 700; color: #cbd5e1; }
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-/* ستايل مخفي ومخصص لطباعة ملف التقرير الـ PDF ليظهر باحترافية تامة */
+/* قالب الـ PDF المخفي */
 #pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; font-family: 'Noto Kufi Arabic', sans-serif; }
 .pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 .pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
@@ -306,10 +306,6 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
         </thead>
         <tbody id="pdfRuhailyTableBody"></tbody>
     </table>
-    
-    <div style="margin-top:40px; border-top:1px dashed #cbd5e1; padding-top:10px; text-align:center; font-size:10px; color:#94a3b8;">
-        تم توليد هذا التقرير سحابياً وبشكل تلقائي عبر منصة بروتين وكارب - الإشراف الذكي.
-    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -369,7 +365,9 @@ function hideSplash() {
     let s = document.getElementById("splashScreen");
     if(s) { s.style.opacity = "0"; setTimeout(() => { s.style.display = "none"; }, 400); }
 }
-window.addEventListener('DOMContentLoaded', () => { setTimeout(hideSplash, 600); });
+
+// أمان إضافي: إخفاء الشاشة الترحيبية تلقائياً بعد ثانيتين كحد أقصى لمنع أي تعليق نهائياً
+setTimeout(hideSplash, 2000);
 
 function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
     document.getElementById("alertIcon").innerHTML = icon;
@@ -400,16 +398,22 @@ db.ref("pnc_data").on("value", (snapshot) => {
     currentBannerUrl = data.bannerUrl || defaultBanner;
     if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
     
-    document.getElementById("waLink").href = "https://wa.me/" + waNum;
-    document.getElementById("whatsappInput").value = waNum;
-    document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
-    document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
+    if(document.getElementById("waLink")) document.getElementById("waLink").href = "https://wa.me/" + waNum;
+    if(document.getElementById("whatsappInput")) document.getElementById("whatsappInput").value = waNum;
+    if(document.getElementById("bannerUrlInput")) document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
+    if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
     
     searchedNumbers.clear();
     Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
     
-    document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
-    recalculateStats(); renderCards(); updateReports();
+    if(document.getElementById("status")) {
+        document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
+    }
+    
+    // الحماية السليمة: استدعاء التحديثات فقط إذا كانت الصفحة جاهزة
+    if(document.getElementById("mealCardsContainer")) {
+        recalculateStats(); renderCards(); updateReports();
+    }
     hideSplash();
 });
 
@@ -455,7 +459,6 @@ function deliverAllPendingDelivery() {
     }
 }
 
-// دالة الانتقال بين الأزرار المحدثة بالتأثير الأخضر التفاعلي الموحد
 function switchBranchView(view) {
     currentBranchView = view;
     
@@ -491,5 +494,246 @@ function archiveCurrentDayData() {
 }
 
 function deleteArchiveItem(key) {
-    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { db.ref("pnc_data/
+    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { db.ref("pnc_data/archive/" + key).remove(); playBeep('success'); }
+}
+
+async function startReadingPDF(file) {
+    if(!file) return;
+    archiveCurrentDayData();
+    document.getElementById("status").innerHTML = "⏳ فرز وقراءة الملف...";
+    meals = []; searchedNumbers.clear();
+    let reader = new FileReader();
+    reader.onload = async function() {
+        try {
+            let typedarray = new Uint8Array(this.result), pdf = await pdfjsLib.getDocument(typedarray).promise;
+            for (let p = 1; p <= pdf.numPages; p++) {
+                let page = await pdf.getPage(p), content = await page.getTextContent(), lastY = "", lines = [], currentLine = "";
+                for (let item of content.items) {
+                    if (lastY !== "" && item.transform[5] !== lastY) { lines.push(currentLine); currentLine = ""; }
+                    currentLine += " " + item.str; lastY = item.transform[5];
+                }
+                lines.push(currentLine);
+                let pageText = lines.join(" ");
+                
+                let targetBranch = "delivery";
+                if(pageText.includes("البترجي") || pageText.includes("(البترجي)")) targetBranch = "batarji";
+                else if(pageText.includes("الرحيلي") || pageText.includes("(الرحيلي)")) targetBranch = "ruhaily";
+                
+                lines.forEach(line => {
+                    let numMatch = line.match(/\b\d{5,8}\b/);
+                    if (numMatch) {
+                        let num = numMatch[0], nameClean = line.replace(num, "").replace(/[:\-\*]/g, "").trim().replace(/\s+/g, " ");
+                        if (nameClean.length < 3) nameClean = "مشترك رقم (" + num + ")";
+                        meals.push({ number: num, name: nameClean, branch: targetBranch });
+                    }
+                });
+            }
+            meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
+            db.ref("pnc_data/mealsList").set(meals); 
+            db.ref("pnc_data/actions").set({});
+            showCustomAlert("✅", "نجاح الفرز والأرشفة", "تم تحديث قائمة جديدة بـ " + meals.length + " مشترك", true);
+        } catch(e) { showCustomAlert("❌", "خطأ بالملف", "فشل قراءة ملف الـ PDF.", false); }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function checkMeal() {
+    let input = document.getElementById("mealInput"), num = input.value.trim();
+    if (!num) return;
+    if (meals.length === 0) { showCustomAlert("⚠️", "تنبيه", "الرجاء رفع ملف الـ PDF الخاص بالمشتركين أولاً.", false); return; }
+    
+    let meal = meals.find(m => m.number == num);
+    if (!meal) { showCustomAlert("❌", "غير موجود", `رقم الاشتراك [ ${num} ] غير مدرج في كشف اليوم!`, false); input.value = ""; return; }
+    
+    if (meal.branch !== currentBranchView) { switchBranchView(meal.branch); }
+
+    if(tableStatus[num]) {
+        let saved = tableStatus[num];
+        let branchLabel = "قسم التوصيل";
+        if(meal.branch === 'batarji') branchLabel = "فرع البترجي";
+        if(meal.branch === 'ruhaily') branchLabel = "فرع الرحيلي";
+        if(saved.status === "done") {
+            showCustomAlert("✅", "مستلم مسبقاً", `المشترك: <b>(${meal.name})</b> [${branchLabel}]<br>استلم الوجبة الساعة: ${saved.time}`, false);
+            input.value = ""; return;
+        } else if(saved.status === "cancel") {
+            showCustomAlert("🛑", "اشتراك ملغى", `المشترك: <b>(${meal.name})</b> [${branchLabel}]<br>طلب إلغاء اليوم منذ الساعة: ${saved.time}`, false);
+            input.value = ""; return;
+        }
+    }
+    
+    let branchText = "🚚 قسم التوصيل";
+    if(meal.branch === 'batarji') branchText = "🏪 فرع البترجي";
+    if(meal.branch === 'ruhaily') branchText = "🏪 فرع الرحيلي";
+    showCustomAlert("👤", "تأكيد حالة الفرز", `اسم المشترك: <b>${meal.name}</b><br>القسم الحالي: <span style="color:#facc15">${branchText}</span><br>رقم الاشتراك: # ${num}`, true, true, num);
+    input.value = "";
+}
+
+function actionMeal(num, type) {
+    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+    searchedNumbers.delete(num); searchedNumbers.add(num);
+    db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString });
+}
+
+function recalculateStats() {
+    let d = 0, c = 0;
+    Object.keys(tableStatus).forEach(k => {
+        let meal = meals.find(m => m.number == k);
+        let statusData = tableStatus[k];
+        if (meal && meal.branch === currentBranchView) {
+            if(statusData.status === "done") d++; 
+            if(statusData.status === "cancel") c++;
+        }
+    });
+    document.getElementById("doneMeals").innerHTML = d; 
+    document.getElementById("cancelMeals").innerHTML = c;
+    if(document.getElementById("overlayDoneCount")) document.getElementById("overlayDoneCount").innerHTML = d;
+    if(document.getElementById("overlayCancelCount")) document.getElementById("overlayCancelCount").innerHTML = c;
+}
+
+function renderCards() {
+    let container = document.getElementById("mealCardsContainer"), numbers = Array.from(searchedNumbers);
+    let filteredNumbers = numbers.filter(num => {
+        let meal = meals.find(m => m.number == num);
+        return meal && meal.branch === currentBranchView;
+    });
+    if (filteredNumbers.length === 0) { 
+        container.innerHTML = `<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد عمليات فرز في هذا القسم حالياً.</p>`; return; 
+    }
+    let html = "";
+    filteredNumbers.reverse().forEach(num => {
+        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num] || {};
+        let st = item.status || "pending", tm = item.time || "--:--";
+        let txt = "⏳ معلق"; col = "#facc15";
+        if(st === "done") { txt = "✅ مستلم"; col = "#22c55e"; }
+        if(st === "cancel") { txt = "❌ ملغى"; col = "#ef4444"; }
+        html += `<div class="meal-row-card">
+            <div class="meal-card-main-info">
+                <div class="meal-card-info">
+                    <span class="meal-card-num"># ${num}</span>
+                    <span class="meal-card-name">${name}</span>
+                </div>
+                <div style="text-align:left;">
+                    <span style="color:${col}; font-weight:700; font-size:13px;">${txt}</span><br>
+                    <small style="color:#94a3b8; font-size:11px;">${tm}</small>
+                </div>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function openReports() { updateReports(); document.getElementById("reportsOverlay").classList.add("open"); }
+function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
+function switchTab(t) { activeTab = t; updateReports(); }
+
+function updateReports() {
+    document.getElementById("tab-done").className = "reports-tab " + (activeTab==="done"?"active-tab":"");
+    document.getElementById("tab-cancel").className = "reports-tab cancel-tab " + (activeTab==="cancel"?"active-tab":"");
+    document.getElementById("tab-archive").className = "reports-tab archive-tab " + (activeTab==="archive"?"active-tab":"");
+    
+    let content = document.getElementById("reportsContent"), html = "";
+    
+    if(currentBranchView === "delivery" && activeTab !== 'archive') {
+        html += `<div class="delivery-manual-box">
+            <label>📦 إجمالي الحقائب المسلّمة للتوصيل جملةً:</label>
+            <input type="number" id="deliveryManualInput" value="${deliveryTotalCount}" oninput="updateDeliveryManualCount(this.value)" placeholder="مثال: 80">
+            <button class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">✅ تسليم باقي وجبات التوصيل جملة واحدة</button>
+        </div>`;
+    }
+    
+    if(activeTab === 'archive') {
+        let archiveKeys = Object.keys(historyArchive);
+        if(archiveKeys.length === 0) { content.innerHTML = html + `<div style="text-align:center; color:#64748b; padding:40px;">لا يوجد أيام مؤرشفة حتى الآن.</div>`; return; }
+        archiveKeys.reverse().forEach(key => {
+            let item = historyArchive[key];
+            html += `<div class="report-card" style="border-right: 4px solid #38bdf8;">
+                <div><span style="color:#38bdf8; font-weight:bold; font-size:14px;">📅 ${item.date}</span><br><small style="color:#22c55e;">✅ مستلم: ${item.done}</small> | <small style="color:#ef4444;">❌ ملغى: ${item.cancel}</small></div>
+                <div><button class="delete-archive-btn" onclick="deleteArchiveItem('${key}')">🗑️</button></div>
+            </div>`;
+        });
+        content.innerHTML = html; return;
+    }
+    
+    let keys = Object.keys(tableStatus).filter(k => {
+        let meal = meals.find(m => m.number == k);
+        return tableStatus[k].status === activeTab && meal && meal.branch === currentBranchView;
+    });
+    if(keys.length === 0) { content.innerHTML = html + `<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ لهذا القسم حالياً.</div>`; return; }
+    
+    keys.forEach(num => {
+        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num;
+        let lbl = "🚚 توصيل"; if(meal && meal.branch==='batarji') lbl="🏪 بترجي"; if(meal && meal.branch==='ruhaily') lbl="🏪 رحيلي";
+        html += `<div class="report-card"><div><b># ${num}</b> <small style="color:#facc15; padding-right:5px;">[${lbl}]</small><br><small style="color:#cbd5e1">${name}</small></div><div style="text-align:left"><span style="color:${activeTab==='done'?'#22c55e':'#ef4444'}">${activeTab==='done'?'✓ مستلم':'✕ ملغى'}</span><br><small style="color:#94a3b8">${tableStatus[num].time}</small></div></div>`;
+    });
+    content.innerHTML = html;
+}
+
+function generateAndSharePDFReport() {
+    if(meals.length === 0) { alert("لا توجد بيانات مشتركين لتوليد التقرير!"); return; }
+    let now = new Date();
+    let dateStr = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
+    let timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    
+    document.getElementById("pdfReportDate").innerText = dateStr;
+    document.getElementById("pdfReportTime").innerText = timeStr;
+    document.getElementById("pdfSumTotal").innerText = meals.length;
+    
+    let delCancelCount = 0, batDone = 0, batPending = 0, batCancel = 0;
+    let ruhDone = 0, ruhPending = 0, ruhCancel = 0, cancelTotal = 0;
+    let delRowsHtml = "", batRowsHtml = "", ruhRowsHtml = "";
+    
+    meals.forEach(m => {
+        let statusItem = tableStatus[m.number];
+        let statusText = "⏳ قيد الانتظار", statusClass = "badge-pdf-pending", timeLog = "--";
+        
+        if(m.branch === 'delivery') { statusText = "مستلم"; statusClass = "badge-pdf-done"; }
+        
+        if(statusItem) {
+            timeLog = statusItem.time;
+            if(statusItem.status === 'done') {
+                statusText = "مستلم"; statusClass = "badge-pdf-done";
+                if(m.branch === 'batarji') batDone++;
+                if(m.branch === 'ruhaily') ruhDone++;
+            } else if(statusItem.status === 'cancel') {
+                statusText = "❌ ملغى"; statusClass = "badge-pdf-cancel";
+                cancelTotal++;
+                if(m.branch === 'delivery') delCancelCount++;
+                if(m.branch === 'batarji') batCancel++;
+                if(m.branch === 'ruhaily') ruhCancel++;
+            }
+        } else {
+            if(m.branch === 'batarji') batPending++;
+            if(m.branch === 'ruhaily') ruhPending++;
+        }
+        
+        let row = `<tr><td><b>#${m.number}</b></td><td>${m.name}</td><td class="${statusClass}">${statusText}</td><td>${timeLog}</td></tr>`;
+        if(m.branch === 'delivery') delRowsHtml += row;
+        else if(m.branch === 'batarji') batRowsHtml += row;
+        else if(m.branch === 'ruhaily') ruhRowsHtml += row;
+    });
+    
+    let deliveryNetFinal = deliveryTotalCount - delCancelCount;
+    if(deliveryNetFinal < 0) deliveryNetFinal = 0;
+    
+    document.getElementById("pdfSumDeliveryDone").innerText = `${deliveryNetFinal} وجبة`;
+    document.getElementById("pdfSumBatarjiDone").innerText = batDone;
+    document.getElementById("pdfSumRuhailyDone").innerText = ruhDone;
+    
+    document.getElementById("pdfDeliveryTableBody").innerHTML = delRowsHtml;
+    document.getElementById("pdfBatarjiTableBody").innerHTML = batRowsHtml;
+    document.getElementById("pdfRuhailyTableBody").innerHTML = ruhRowsHtml;
+    
+    let element = document.getElementById("pdfReportTemplate");
+    element.style.display = "block";
+    
+    let opt = {
+        margin: [10, 10], filename: `تقرير_فرز_بروتين_وكارب_${now.toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+        element.style.display = "none"; playBeep('success');
+        
+        let waMessage = `🚨 *التقرير اليومي الختامي لعمليات الفرز - بروتين وكارب* 🚨\n\n📅 *التاريخ:* ${dateStr}\n\n🚚 *1- قسم التوصيل (
 
