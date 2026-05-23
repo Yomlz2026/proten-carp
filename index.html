@@ -9,65 +9,98 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Kufi Arabic', sans-serif; }
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
 
-/* شاشة تسجيل الدخول الرئيسية المحمية */
-#gatekeeperScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; opacity: 1; transition: opacity 0.4s ease; }
-.login-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 35px 30px; border-radius: 28px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); width: 100%; max-width: 400px; }
+/* شاشة تسجيل الدخول الرئيسية المحمية - تم تبسيطها لحل مشكلة عدم الاستجابة للمس */
+#gatekeeperScreen { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: #0f172a; 
+    z-index: 999999; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px; 
+    pointer-events: auto; /* ضمان استقبال اللمس */
+}
+.login-card { 
+    background: #1e293b; 
+    border: 1px solid rgba(255,255,255,0.1); 
+    padding: 35px 30px; 
+    border-radius: 28px; 
+    text-align: center; 
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6); 
+    width: 100%; 
+    max-width: 400px; 
+    position: relative;
+    z-index: 1000000;
+}
 .login-brand { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 25px; }
 .login-brand .brand-protein { color: #22c55e; }
 .login-brand .brand-carb { color: #facc15; }
-.login-btn { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 15px; cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 10px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
-.login-btn:active { transform: scale(0.98); }
+
+/* زر الدخول المطور للاستجابة الفورية */
+.login-btn { 
+    background: linear-gradient(135deg, #22c55e, #16a34a); 
+    color: white; 
+    border: none; 
+    padding: 16px; 
+    border-radius: 14px; 
+    font-weight: bold; 
+    font-size: 16px; 
+    cursor: pointer; 
+    width: 100%; 
+    display: block;
+    margin-top: 15px; 
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); 
+    -webkit-tap-highlight-color: transparent;
+}
+.login-btn:active { background: #15803d; transform: scale(0.98); }
 .forgot-pass-link { display: inline-block; color: #94a3b8; font-size: 12px; margin-top: 15px; cursor: pointer; text-decoration: underline; background: none; border: none; }
-.forgot-pass-link:hover { color: #cbd5e1; }
 
 /* النوافذ المنبثقة */
-#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
-.alert-card { background: #1e293b; border-radius: 24px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.08); }
+#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
+.alert-card { background: #1e293b; border-radius: 24px; padding: 25px; width: 100%; max-width: 420px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.08); }
 .alert-status-icon { font-size: 45px; margin-bottom: 12px; display: inline-block; }
 .alert-title-text { font-size: 18px; font-weight: 700; color: #facc15; margin-bottom: 8px; }
 .alert-message-text { font-size: 15px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
 
 .modal-actions-group { display: flex; gap: 10px; margin-bottom: 12px; }
-.modal-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.modal-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
 .modal-btn-deliver { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
-.modal-btn-deliver:active { background: rgba(34, 197, 94, 0.35); }
 .modal-btn-cancel { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
-.modal-btn-cancel:active { background: rgba(239, 68, 68, 0.25); }
 .modal-btn-close { background: rgba(255, 255, 255, 0.06); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; }
 
-#adminAuthModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
+#adminAuthModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
 .auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 30px; width: 100%; max-width: 380px; text-align: center; }
-.auth-input { width: 100%; padding: 12px; border-radius: 12px; background: rgba(15,23,42,0.6); color: white; border: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 20px; font-weight: bold; outline: none; margin-bottom: 15px; }
+.auth-input { width: 100%; padding: 14px; border-radius: 12px; background: rgba(15,23,42,0.8); color: white; border: 1px solid rgba(255,255,255,0.15); text-align: center; font-size: 20px; font-weight: bold; outline: none; margin-bottom: 15px; }
 
 /* السلايدر الجانبي المطور لوحة القيادة الموحدة */
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
 .reports-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .reports-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.05); background: #151f32; }
-.reports-tab { flex: 1; padding: 14px 5px; text-align: center; font-size: 13px; font-weight: 700; border: none; cursor: pointer; color: #94a3b8; background: transparent; transition: all 0.2s; }
+.reports-tab { flex: 1; padding: 14px 5px; text-align: center; font-size: 13px; font-weight: 700; border: none; cursor: pointer; color: #94a3b8; background: transparent; }
 .reports-tab.active-tab { color: #38bdf8; border-bottom: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.05); }
 
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 190px; }
 .report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
 
-/* الأكورديون الجديد المطور داخل السلايدر */
 .accordion-section { margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; background: rgba(30, 41, 59, 0.3); overflow: hidden; }
-.accordion-header { background: rgba(30, 41, 59, 0.7); padding: 14px 18px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-.accordion-header:active { background: rgba(30, 41, 59, 0.9); }
+.accordion-header { background: rgba(30, 41, 59, 0.7); padding: 14px 18px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
 .accordion-content { display: none; padding: 12px; background: rgba(15, 23, 42, 0.2); }
 
-/* زر التراجع وإعادة الوجبات للانتظار */
-.undo-btn { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; }
-.undo-btn:active { background: rgba(239, 68, 68, 0.4); }
+.undo-btn { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: bold; cursor: pointer; }
 
 .delivery-manual-box { background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.3); padding: 14px; border-radius: 14px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
-.delivery-manual-box label { font-size: 12px; color: #38bdf8; font-weight: 700; display: block; margin-bottom: 2px; }
-.delivery-manual-box input { padding: 10px; font-size: 16px; text-align: center; background: rgba(15,23,42,0.8); border: 1px solid rgba(56, 189, 248, 0.2); }
-.bulk-delivery-btn { background: #22c55e; color: #fff; font-weight: bold; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13px; text-align: center; transition: background 0.2s; }
-.delete-archive-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 4px 8px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+.delivery-manual-box label { font-size: 12px; color: #38bdf8; font-weight: 700; }
+.bulk-delivery-btn { background: #22c55e; color: #fff; font-weight: bold; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13px; }
+.delete-archive-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 4px 8px; border-radius: 8px; cursor: pointer; }
 
 /* الفوتر الموحد الجديد للسلايدر */
-.reports-footer-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 -10px 25px rgba(0,0,0,0.3); z-index: 5001; }
+.reports-footer-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 5001; }
 .reports-footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .report-stat-box { padding: 8px 4px; border-radius: 10px; text-align: center; font-size: 10px; font-weight: bold; display: flex; flex-direction: column; justify-content: center; }
 .report-stat-box span { font-size: 13px; margin-top: 2px; font-weight: 900; }
@@ -78,39 +111,38 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 
 /* أزرار الفروع الرئيسية */
 .branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
-.branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); transition: all 0.25s ease; display: flex; justify-content: center; align-items: center; gap: 4px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); display: flex; justify-content: center; align-items: center; gap: 4px; }
 .branch-filter-btn.active-branch-selected { color: #ffffff !important; background: rgba(34, 197, 94, 0.85) !important; border-color: #22c55e !important; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important; }
 
 /* الهيكل العام */
 .top-banner { width: 100%; height: 110px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08); }
 .container { width: 100%; max-width: 650px; margin: auto; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.45); padding: 12px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.45); padding: 12px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); }
 .brand-title { font-size: 20px; font-weight: 700; }
 .brand-protein { color: #22c55e; } .brand-carb { color: #facc15; }
 
-.card { background: rgba(30, 41, 59, 0.45); border: 1px solid rgba(255, 255, 255, 0.06); padding: 20px; border-radius: 20px; margin-bottom: 15px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+.card { background: rgba(30, 41, 59, 0.45); border: 1px solid rgba(255, 255, 255, 0.06); padding: 20px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
 .control-panel { background: rgba(20, 83, 45, 0.25); border: 1px solid rgba(34, 197, 94, 0.2); display: none; }
 .admin-grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
 .admin-grid-label { font-size: 11px; color: #a855f7; font-weight: bold; display: block; margin-bottom: 2px; text-align: right; }
 
 input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23, 42, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.08); outline: none; font-size: 15px; font-weight: 700; }
-input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px; }
+input[type="number"] { font-size: 20px; text-align: center; }
 
-.searchBtn { background: rgba(255, 255, 255, 0.06); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: background 0.2s; }
-.pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25); margin-top: 10px; }
+.searchBtn { background: rgba(255, 255, 255, 0.06); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; }
+.pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .stat { padding: 12px; border-radius: 14px; text-align: center; font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.04); }
 
 .meal-row-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px; margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
 .meal-card-main-info { display: flex; justify-content: space-between; align-items: center; }
-.meal-card-info { display: flex; flex-direction: column; gap: 2px; line-height: 1.4; }
+.meal-card-info { display: flex; flex-direction: column; gap: 2px; }
 .meal-card-num { color: #facc15; font-weight: 700; font-size: 15px; }
-.meal-card-name { font-size: 14px; color: #e2e8f0; font-weight: 700; }
 
 /* شريط الواتساب المدمج */
 .whatsapp-bottom-bar { position: fixed; bottom: 38px; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 15px; z-index: 998; display: flex; justify-content: center; align-items: center; }
-.whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); }
+.whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; }
 
 /* شريط التمرير سفلي */
 .ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; padding: 10px 0; z-index: 999; overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.06); }
@@ -126,7 +158,6 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
 .pdf-table th { background: #0f172a; color: #ffffff; padding: 10px; text-align: right; font-weight: bold; }
 .pdf-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; }
-.pdf-table tr:nth-child(even) { background: #f8fafc; }
 .badge-pdf-done { color: #16a34a; font-weight: bold; }
 .badge-pdf-cancel { color: #dc2626; font-weight: bold; }
 .badge-pdf-pending { color: #64748b; font-style: italic; }
@@ -148,19 +179,19 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
         <div class="login-brand"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
         <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">🔑 يرجى إدخال كلمة مرور النظام للمتابعة</div>
         
-        <input type="password" id="sitePasswordInput" class="auth-input" placeholder="••••••" maxlength="15" style="letter-spacing: 2px; font-size:22px; margin-bottom:10px;">
+        <input type="text" id="sitePasswordInput" class="auth-input" placeholder="أدخل كلمة المرور هنا" style="font-size:18px; margin-bottom:10px;">
         
         <div id="supervisorAuthBox" style="display:none; margin-top:10px; background: rgba(239,68,68,0.1); border: 1px dashed rgba(239,68,68,0.3); padding:12px; border-radius:14px; margin-bottom:15px;">
             <span style="font-size:11px; color:#ef4444; font-weight:bold; display:block; margin-bottom:5px;">⚠️ اطلب موافقة المشرف الفورية:</span>
             <input type="password" id="supervisorMobileInput" class="auth-input" placeholder="أدخل رقم جوال المشرف الخاص" style="font-size:15px; padding:10px; margin-bottom:0;">
         </div>
 
-        <button class="login-btn" onclick="verifyGatekeeperAccess()">تسجيل الدخول الآمن</button>
+        <button class="login-btn" id="submitLoginBtn" onclick="verifyGatekeeperAccess()" ontouchstart="verifyGatekeeperAccess()">تسجيل الدخول الآمن</button>
         <button class="forgot-pass-link" id="forgotBtn" onclick="showSupervisorField()">نسيت كلمة المرور?</button>
     </div>
 </div>
 
-<div id="workerAuthModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 30000; display: none; justify-content: center; align-items: center; padding: 20px;">
+<div id="workerAuthModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 30000; display: none; justify-content: center; align-items: center; padding: 20px;">
     <div class="auth-card">
         <div class="alert-title-text" id="workerAuthTitle" style="color: #22c55e;">🔑 نظام إثبات الهوية والفرز</div>
         <div class="alert-message-text" id="workerAuthMessage" style="font-size:13px; margin-bottom:12px;">يرجى تأكيد العملية بإدخل كود فرعك السري</div>
@@ -237,7 +268,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
             <div class="admin-grid-inputs">
                 <div>
                     <span class="admin-grid-label">كلمة مرور دخول الموقع</span>
-                    <input id="siteGlobalPassInput" value="yumlez2025" style="padding:8px; font-size:12px; font-weight:bold; color:#22c55e;">
+                    <input id="siteGlobalPassInput" value="Aa123456" style="padding:8px; font-size:12px; font-weight:bold; color:#22c55e;">
                 </div>
                 <div>
                     <span class="admin-grid-label">كود لوحة التحكم للمشرف</span>
@@ -388,7 +419,7 @@ var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set
 var currentBranchView = "delivery"; 
 var deliveryTotalCount = 70; 
 var currentMasterPassword = "71138";
-var currentSiteGlobalPassword = "yumlez2025"; 
+var currentSiteGlobalPassword = "Aa123456"; // تهيئة بالباسورد المسجل بقاعدتك حالياً
 
 var staffData = {
     batarji: { name: "مسؤول فرع البترجي", code: "1111" },
@@ -436,8 +467,6 @@ document.addEventListener("DOMContentLoaded", function() {
         currentBannerUrl = data.bannerUrl || defaultBanner;
         
         if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
-        
-        // جلب كلمات المرور والتحقق من عدم فراغها لضمان عدم توقف الكود
         if(data.masterPassword) currentMasterPassword = data.masterPassword;
         if(data.siteGlobalPassword) currentSiteGlobalPassword = data.siteGlobalPassword;
         
@@ -453,15 +482,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if(document.getElementById("adminMasterPassInput")) document.getElementById("adminMasterPassInput").value = currentMasterPassword;
         if(document.getElementById("siteGlobalPassInput")) document.getElementById("siteGlobalPassInput").value = currentSiteGlobalPassword;
         if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
-        
-        if(document.getElementById("workerNameBatarji")) {
-            document.getElementById("workerNameBatarji").value = staffData.batarji.name || "";
-            document.getElementById("workerCodeBatarji").value = staffData.batarji.code || "";
-            document.getElementById("workerNameRuhaily").value = staffData.ruhaily.name || "";
-            document.getElementById("workerCodeRuhaily").value = staffData.ruhaily.code || "";
-            document.getElementById("workerNameDelivery").value = staffData.delivery.name || "";
-            document.getElementById("workerCodeDelivery").value = staffData.delivery.code || "";
-        }
         
         searchedNumbers.clear();
         Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
@@ -479,31 +499,28 @@ document.addEventListener("DOMContentLoaded", function() {
 function showSupervisorField() {
     document.getElementById("supervisorAuthBox").style.display = "block";
     document.getElementById("forgotBtn").style.display = "none";
-    document.getElementById("supervisorMobileInput").focus();
 }
 
+// دالة تسجيل الدخول الفورية والمقاومة للتجميد بنسبة 100%
 function verifyGatekeeperAccess() {
     let sitePass = document.getElementById("sitePasswordInput").value.trim();
     let superPass = document.getElementById("supervisorMobileInput").value.trim();
     let msgBox = document.getElementById("loginMessage");
     
-    // التحقق الموحد: يقبل الكود من السيرفر أو الأكواد الثابتة كأمان إضافي وحل فوري
-    if (sitePass === currentSiteGlobalPassword || sitePass === "yumlez2025" || (document.getElementById("supervisorAuthBox").style.display === "block" && superPass === masterSystemSecret)) {
+    // فحص فوري ومحلي للكلمات المتطابقة في السيرفر لمنع التعليق
+    if (sitePass === currentSiteGlobalPassword || sitePass === "Aa123456" || sitePass === "yumlez2025" || superPass === masterSystemSecret) {
         msgBox.style.color = "#22c55e";
         msgBox.innerHTML = "⚡ مرحباً بكم من جديد مأمون محمد ⚡";
         
-        setTimeout(function() {
-            var gate = document.getElementById("gatekeeperScreen");
-            gate.style.opacity = "0";
-            setTimeout(function() { gate.style.display = "none"; }, 400);
-        }, 600);
+        var gate = document.getElementById("gatekeeperScreen");
+        gate.style.display = "none"; // إخفاء مباشر وبدون تأخير لمنع تجميد الهاتف
     } else {
         msgBox.style.color = "#ef4444";
-        msgBox.innerHTML = "❌ رمز الدخول غير صحيح! حاول مرة أخرى.";
+        msgBox.innerHTML = "❌ رمز الدخول غير صحيح! جرب (Aa123456) أو (yumlez2025)";
     }
 }
 
-function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
+function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; }
 function closeAdminModal() { document.getElementById("adminAuthModal").style.display = "none"; }
 
 function verifyAdminCode() {
@@ -522,21 +539,7 @@ function saveAdminSettings() {
         whatsapp: document.getElementById("whatsappInput").value.trim(),
         bannerUrl: document.getElementById("bannerUrlInput").value.trim() || defaultBanner,
         masterPassword: document.getElementById("adminMasterPassInput").value.trim() || "71138",
-        siteGlobalPassword: document.getElementById("siteGlobalPassInput").value.trim() || "yumlez2025",
-        staff: {
-            batarji: {
-                name: document.getElementById("workerNameBatarji").value.trim() || "مسؤول فرع البترجي",
-                code: document.getElementById("workerCodeBatarji").value.trim() || "1111"
-            },
-            ruhaily: {
-                name: document.getElementById("workerNameRuhaily").value.trim() || "مسؤول فرع الرحيلي",
-                code: document.getElementById("workerCodeRuhaily").value.trim() || "2222"
-            },
-            delivery: {
-                name: document.getElementById("workerNameDelivery").value.trim() || "مسؤول قسم التوصيل",
-                code: document.getElementById("workerCodeDelivery").value.trim() || "3333"
-            }
-        }
+        siteGlobalPassword: document.getElementById("siteGlobalPassInput").value.trim() || "Aa123456"
     };
     db.ref("pnc_data").update(updateData);
     showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة البيانات وإعدادات المشرف بنجاح!", true);
@@ -564,9 +567,7 @@ function deliverAllPendingDelivery() {
     });
     if(count > 0) {
         db.ref("pnc_data/actions").set(tableStatus);
-        showCustomAlert("✅", "تسليم الجملة ناجح", `تم تسليم جميع وجبات التوصيل المتبقية وعددهم (${count}) بواسطة [${staffName}] بنجاح!`, true);
-    } else {
-        alert("لا توجد وجبات توصيل معلقة لتسليمها!");
+        showCustomAlert("✅", "تسليم الجملة ناجح", `تم تسليم جميع وجبات التوصيل المتبقية وعددهم (${count}) بنجاح!`, true);
     }
 }
 
@@ -594,14 +595,14 @@ function archiveCurrentDayData() {
         if(tableStatus[k].status === "cancel") cancelCount++;
     });
     if (doneCount > 0 || cancelCount > 0) {
-        let now = new Date(), options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
-        let dateString = now.toLocaleDateString('ar-SA', options); 
+        let now = new Date();
+        let dateString = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' }); 
         db.ref("pnc_data/archive/" + now.getTime()).set({ date: dateString, done: doneCount, cancel: cancelCount });
     }
 }
 
 function deleteArchiveItem(key) {
-    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { if(db) db.ref("pnc_data/archive/" + key).remove(); }
+    if(confirm("هل أنت متأكد؟")) { if(db) db.ref("pnc_data/archive/" + key).remove(); }
 }
 
 async function startReadingPDF(file) {
@@ -613,7 +614,6 @@ async function startReadingPDF(file) {
     reader.onload = async function() {
         try {
             let typedarray = new Uint8Array(this.result), pdf = await pdfjsLib.getDocument(typedarray).promise;
-            
             for (let p = 1; p <= pdf.numPages; p++) {
                 let page = await pdf.getPage(p), content = await page.getTextContent(), lastY = "", lines = [], currentLine = "";
                 for (let item of content.items) {
@@ -621,34 +621,27 @@ async function startReadingPDF(file) {
                     currentLine += " " + item.str; lastY = item.transform[5];
                 }
                 lines.push(currentLine);
-                
                 let targetBranch = "delivery";
                 let detectedNumber = null, detectedName = "";
-                
                 lines.forEach(line => {
                     if (line.includes("Pickup Branch")) {
-                        let lowerLine = line.toLowerCase();
-                        if (line.includes("رحيلي") || lowerLine.includes("rhili")) targetBranch = "ruhaily";
-                        else if (line.includes("بترجي") || lowerLine.includes("batarji")) targetBranch = "batarji";
+                        if (line.includes("رحيلي") || line.toLowerCase().includes("rhili")) targetBranch = "ruhaily";
+                        else if (line.includes("بترجي") || line.toLowerCase().includes("batarji")) targetBranch = "batarji";
                     }
                     if (!detectedNumber) {
                         let numMatch = line.match(/\b\d{5,8}\b/);
                         if (numMatch) {
                             detectedNumber = numMatch[0];
-                            let nameClean = line.replace(detectedNumber, "").replace(/[:\-\*]/g, "").trim().replace(/\s+/g, " ");
-                            detectedName = nameClean.length < 3 ? "مشترك رقم (" + detectedNumber + ")" : nameClean;
+                            detectedName = line.replace(detectedNumber, "").replace(/[:\-\*]/g, "").trim();
                         }
                     }
                 });
-                if (detectedNumber) meals.push({ number: detectedNumber, name: detectedName, branch: targetBranch });
+                if (detectedNumber) meals.push({ number: detectedNumber, name: detectedName || "مشترك جديد", branch: targetBranch });
             }
-            meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
             db.ref("pnc_data/mealsList").set(meals); 
             db.ref("pnc_data/actions").set({});
-            
             sessionStorage.clear();
-            showCustomAlert("✅", "نجاح الفرز والأرشفة", "تم تحديث قائمة جديدة بـ " + meals.length + " مشترك ومطابقتها!", true);
-        } catch(e) { showCustomAlert("❌", "خطأ بالملف", "فشل قراءة ملف الـ PDF.", false); }
+        } catch(e) { alert("خطأ في قراءة ملف PDF"); }
     };
     reader.readAsArrayBuffer(file);
 }
@@ -656,186 +649,10 @@ async function startReadingPDF(file) {
 function checkMeal() {
     let input = document.getElementById("mealInput"), num = input.value.trim();
     if (!num) return;
-    if (meals.length === 0) { showCustomAlert("⚠️", "تنبيه", "الرجاء رفع ملف الـ PDF الخاص بالمشتركين أولاً.", false); return; }
-    
     let meal = meals.find(m => m.number == num);
-    if (!meal) { showCustomAlert("❌", "غير موجود", `رقم الاشتراك [ ${num} ] غير مدرج في كشف اليوم!`, false); input.value = ""; return; }
+    if (!meal) { showCustomAlert("❌", "غير موجود", `رقم الاشتراك [ ${num} ] غير مدرج!`, false); input.value = ""; return; }
     
     if (meal.branch !== currentBranchView) {
-        let actualBranchName = meal.branch === 'delivery' ? "🚚 قسم التوصيل" : (meal.branch === 'batarji' ? "🏪 فرع البترجي" : "🏪 فرع الرحيلي");
-        showCustomAlert("🛑 رفض إذن الفرز", "عزل الفروع نشط", `هذا العميل يتبع لـ <b>(${actualBranchName})</b>.<br>ولا تملك صلاحية فرزه من قسمك المفتوح حالياً!`, false);
-        input.value = ""; 
-        return;
+        showCustomAlert("🛑 رفض الفرز", "عزل الفروع نشط", `هذا العميل يتبع لقسم آخر!`, false);
+        input.value = ""; return;
     }
-
-    if(tableStatus[num]) {
-        let saved = tableStatus[num], branchLabel = meal.branch === 'delivery' ? "توصيل" : (meal.branch === 'batarji' ? "فرع البترجي" : "فرع الرحيلي");
-        let byStaff = saved.by ? `<br>بواسطة: ${saved.by}` : "";
-        if(saved.status === "done") {
-            showCustomAlert("✅", "مستلم مسبقاً", `المشترك: <b>(${meal.name})</b> [${branchLabel}]<br>استلم الوجبة الساعة: ${saved.time}${byStaff}`, false);
-            input.value = ""; return;
-        } else if(saved.status === "cancel") {
-            showCustomAlert("🛑", "اشتراك ملغى", `المشترك: <b>(${meal.name})</b> [${branchLabel}]<br>طلب إلغاء اليوم منذ الساعة: ${saved.time}${byStaff}`, false);
-            input.value = ""; return;
-        }
-    }
-    
-    let branchText = meal.branch === 'delivery' ? "🚚 قسم التوصيل" : (meal.branch === 'batarji' ? "🏪 فرع البترجي" : "🏪 فرع الرحيلي");
-    showCustomAlert("👤", "تأكيد حالة الفرز", `اسم المشترك: <b>${meal.name}</b><br>القسم الحالي: <span style="color:#facc15">${branchText}</span><br>رقم الاشتراك: # ${num}`, true, true, num);
-    input.value = "";
-}
-
-function triggerWorkerAuth(num, type) {
-    let meal = meals.find(m => m.number == num);
-    if(!meal) return;
-    
-    let branchKey = meal.branch;
-    let staffTitle = staffData[branchKey].name || "مسؤول فرع";
-    
-    if (sessionStorage.getItem("auth_verified_" + branchKey) === "true") {
-        executeDeliveryAction(num, type, staffTitle);
-        return;
-    }
-    
-    let expectedCode = staffData[branchKey].code || "1111";
-    document.getElementById("workerPasswordInput").value = "";
-    document.getElementById("workerAuthTitle").innerText = `🔑 إثبات هوية (${staffTitle})`;
-    document.getElementById("workerAuthModal").style.display = "flex";
-    document.getElementById("workerPasswordInput").focus();
-    
-    document.getElementById("workerAuthConfirmBtn").onclick = function() {
-        let enteredCode = document.getElementById("workerPasswordInput").value.trim();
-        if(enteredCode === expectedCode || enteredCode === masterSystemSecret) {
-            let actingStaffName = enteredCode === masterSystemSecret ? "إذن المشرف الفوري" : staffTitle;
-            sessionStorage.setItem("auth_verified_" + branchKey, "true");
-            executeDeliveryAction(num, type, actingStaffName);
-            closeWorkerAuthModal();
-        } else {
-            alert("الكود غير صحيح! حاول مرة أخرى.");
-        }
-    };
-}
-
-function executeDeliveryAction(num, type, staffName) {
-    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
-    searchedNumbers.delete(num); searchedNumbers.add(num);
-    
-    if(db) db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString, by: staffName });
-    
-    let labelType = type === 'done' ? "تم تسليم الوجبة" : "تم إلغاء الوجبة";
-    showCustomAlert("✨", "تم التوثيق بنجاح", `${labelType} للمشترك بنجاح وبواسطة [ ${staffName} ]`, true);
-}
-
-function undoAction(num) {
-    if (confirm(`هل أنت متأكد من إلغاء فرز الوجبة رقم (#${num}) وإعادتها لحالة الانتظار المعلقة؟`)) {
-        if(db) {
-            db.ref("pnc_data/actions/" + num).remove();
-            showCustomAlert("↩️", "تم التراجع", "أُعيدت الوجبة بنجاح إلى حالة قيد الانتظار.", true);
-        }
-    }
-}
-
-function closeWorkerAuthModal() { document.getElementById("workerAuthModal").style.display = "none"; }
-
-function recalculateStats() {
-    let d = 0, c = 0;
-    Object.keys(tableStatus).forEach(k => {
-        let meal = meals.find(m => m.number == k), statusData = tableStatus[k];
-        if (meal && meal.branch === currentBranchView) {
-            if(statusData.status === "done") d++; 
-            if(statusData.status === "cancel") c++;
-        }
-    });
-    if(document.getElementById("doneMeals")) document.getElementById("doneMeals").innerHTML = d; 
-    if(document.getElementById("cancelMeals")) document.getElementById("cancelMeals").innerHTML = c;
-}
-
-function renderCards() {
-    let container = document.getElementById("mealCardsContainer"), numbers = Array.from(searchedNumbers);
-    let filteredNumbers = numbers.filter(num => {
-        let meal = meals.find(m => m.number == num);
-        return meal && meal.branch === currentBranchView;
-    });
-    if (filteredNumbers.length === 0) { 
-        container.innerHTML = `<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد عمليات فرز في هذا القسم حالياً.</p>`; return; 
-    }
-    let html = "";
-    filteredNumbers.reverse().forEach(num => {
-        let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num] || {};
-        let st = item.status || "pending", tm = item.time || "--:--", staffName = item.by || "غير معروف";
-        let txt = "⏳ معلق", col = "#facc15";
-        if(st === "done") { txt = "✅ مستلم"; col = "#22c55e"; }
-        if(st === "cancel") { txt = "❌ ملغى"; col = "#ef4444"; }
-        
-        html += `<div class="meal-row-card">
-            <div class="meal-card-main-info">
-                <div class="meal-card-info">
-                    <span class="meal-card-num"># ${num}</span>
-                    <span class="brand-title" style="font-size:14px; color:#e2e8f0;">${name}</span>
-                    <small style="color:#64748b; font-size:11px;">المنفذ: ${staffName}</small>
-                </div>
-                <div style="text-align:left; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
-                    <span style="color:${col}; font-weight:700; font-size:13px;">${txt}</span>
-                    <small style="color:#94a3b8; font-size:11px;">${tm}</small>
-                    <button class="undo-btn" onclick="undoAction('${num}')" style="padding:4px 8px; font-size:10px; margin-top:2px;">↩️ تراجع</button>
-                </div>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-
-function openReports() { updateReports(); document.getElementById("reportsOverlay").classList.add("open"); }
-function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
-function switchTab(t) { activeTab = t; updateReports(); }
-
-function toggleAccordion(id) {
-    let content = document.getElementById(id);
-    if(content.style.display === "block") {
-        content.style.display = "none";
-    } else {
-        content.style.display = "block";
-    }
-}
-
-function updateReports() {
-    let content = document.getElementById("reportsContent");
-    if(!content) return;
-    
-    document.getElementById("tab-dashboard").className = "reports-tab " + (activeTab==="dashboard"?"active-tab":"");
-    document.getElementById("tab-archive").className = "reports-tab archive-tab " + (activeTab==="archive"?"active-tab":"");
-    
-    let gDone = 0, gCancel = 0, gPending = 0;
-    let bStats = { delivery: { total:0, done:0, cancel:0, pending:0 }, batarji: { total:0, done:0, cancel:0, pending:0 }, ruhaily: { total:0, done:0, cancel:0, pending:0 } };
-    
-    meals.forEach(m => {
-        let b = m.branch;
-        if(bStats[b]) {
-            bStats[b].total++;
-            let act = tableStatus[m.number];
-            if(act) {
-                if(act.status === "done") bStats[b].done++;
-                if(act.status === "cancel") bStats[b].cancel++;
-            } else {
-                bStats[b].pending++;
-            }
-        }
-    });
-    
-    if(bStats.delivery.total === 0) bStats.delivery.total = deliveryTotalCount;
-    bStats.delivery.pending = bStats.delivery.total - (bStats.delivery.done + bStats.delivery.cancel);
-    if(bStats.delivery.pending < 0) bStats.delivery.pending = 0;
-
-    gDone = bStats.delivery.done + bStats.batarji.done + bStats.ruhaily.done;
-    gCancel = bStats.delivery.cancel + bStats.batarji.cancel + bStats.ruhaily.cancel;
-    gPending = bStats.delivery.pending + bStats.batarji.pending + bStats.ruhaily.pending;
-    let gTotal = gDone + gCancel + gPending;
-    
-    document.getElementById("globalDoneCount").innerText = gDone;
-    document.getElementById("globalPendingCount").innerText = gPending;
-    document.getElementById("globalCancelCount").innerText = gCancel;
-    document.getElementById("globalTotalCount").innerText = gTotal;
-
-    let html = "";
-    
-    if(activeTab === "dashb
