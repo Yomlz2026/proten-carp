@@ -57,7 +57,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 
 .reports-footer-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -10px 25px rgba(0,0,0,0.3); z-index: 5001; }
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
+.report-stat-box report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
 
 /* أزرار الفروع الثلاثة التفاعلية */
 .branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
@@ -149,7 +149,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 <div id="workerAuthModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 30000; display: none; justify-content: center; align-items: center; padding: 20px;">
     <div class="auth-card">
         <div class="alert-title-text" id="workerAuthTitle" style="color: #22c55e;">🔑 نظام إثبات الهوية والفرز</div>
-        <div class="alert-message-text" id="workerAuthMessage" style="font-size:13px; margin-bottom:12px;">يرجى تأكيد العملية بإدخال كود فرعك السري</div>
+        <div class="alert-message-text" id="workerAuthMessage" style="font-size:13px; margin-bottom:12px;">يرجى تأكيد العملية بإدخل كود فرعك السري</div>
         <input type="password" id="workerPasswordInput" class="auth-input" placeholder="••••" maxlength="10" inputmode="numeric" style="letter-spacing: 4px; font-size:24px;">
         <div class="modal-actions-group">
             <button class="modal-btn modal-btn-deliver" id="workerAuthConfirmBtn">تأكيد العملية</button>
@@ -196,8 +196,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
     
     <div class="reports-footer-stats">
         <div class="reports-footer-grid">
-            <div class="report-stat-box greenBox">مستلمي القسم: <span id="overlayDoneCount">0</span></div>
-            <div class="report-stat-box red">ملغي القسم: <span id="overlayCancelCount">0</span></div>
+            <div class="report-stat-box greenBox" style="padding:10px; border-radius:10px; text-align:center;">مستلمي القسم: <span id="overlayDoneCount">0</span></div>
+            <div class="report-stat-box red" style="padding:10px; border-radius:10px; text-align:center;">ملغي القسم: <span id="overlayCancelCount">0</span></div>
         </div>
         <button class="pdfShareBtn" onclick="generateAndSharePDFReport()">📄 تحميل وإرسال تقرير PDF الإجمالي</button>
     </div>
@@ -393,7 +393,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 </div>
 
 <script>
-// كود التهيئة البرمجي المعزول والآمن لمنع أي تجميد للصفحة
 const firebaseConfig = {
   apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
   authDomain: "protencarp.firebaseapp.com",
@@ -423,8 +422,16 @@ var staffData = {
 
 function hideSplash() {
     var s = document.getElementById("splashScreen");
-    if(s) { s.style.opacity = "0"; setTimeout(() => { s.style.display = "none"; }, 400); }
+    if(s && s.style.display !== "none") { 
+        s.style.opacity = "0"; 
+        setTimeout(() => { s.style.display = "none"; }, 400); 
+    }
 }
+
+// 🟢 حارس الأمان المانع للتعليق: لو تأخر جلب البيانات لأكثر من ثانيتين، يتم تخطي الشاشة فورا لتجنب الوقوف
+setTimeout(function() {
+    hideSplash();
+}, 2200);
 
 function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
     document.getElementById("alertIcon").innerHTML = icon;
@@ -444,7 +451,6 @@ function showCustomAlert(icon, title, message, isSuccess = true, showActions = f
 
 function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
-// ربط ومزامنة فايربيس فوري وآمن عند تحميل الصفحة
 document.addEventListener("DOMContentLoaded", function() {
     db.ref("pnc_data").on("value", (snapshot) => {
         let data = snapshot.val() || {};
@@ -820,10 +826,4 @@ function generateAndSharePDFReport() {
             } else if(statusItem.status === 'cancel') {
                 statusText = "❌ ملغى"; statusClass = "badge-pdf-cancel";
                 if(m.branch === 'delivery') delCancelCount++;
-                if(m.branch === 'batarji') batCancel++;
-                if(m.branch === 'ruhaily') ruhCancel++;
-            }
-        } else {
-            if(m.branch === 'batarji') batPending++;
-            if(m.branch === 'ruhaily') ruhPending++;
-        
+                
