@@ -106,7 +106,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 .pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
 .pdf-meta { font-size: 12px; color: #64748b; text-align: left; }
-.pdf-grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 30px; }
+.pdf-grid-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
 .pdf-sum-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; background: #f8fafc; }
 .pdf-sum-val { font-size: 16px; font-weight: 900; margin-top: 4px; }
 .pdf-section-title { font-size: 14px; font-weight: bold; color: #0f172a; border-right: 4px solid #facc15; padding-right: 8px; margin-bottom: 12px; margin-top: 20px; }
@@ -418,7 +418,6 @@ function hideSplash() {
     }
 }
 
-// 🟢 حارس أمان شاشة الترحيب: يفتح الشاشة فوراً خلال ثانية واحدة بدون انتظار السيرفر
 setTimeout(function() {
     hideSplash();
 }, 1000);
@@ -442,7 +441,6 @@ function showCustomAlert(icon, title, message, isSuccess = true, showActions = f
 function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
 document.addEventListener("DOMContentLoaded", function() {
-    // جلب البيانات من فايربيس مع حماية كاملة من الـ Undefined والحقول الممسوحة
     db.ref("pnc_data").on("value", (snapshot) => {
         let data = snapshot.val() || {};
         meals = data.mealsList || [];
@@ -453,7 +451,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
         if(data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
         
-        // 🔒 الحماية هنا: التحقق من وجود الكائن الرئيسي وطبقاته قبل القراءة لتجنب كسر الكود
         if(data.staff) {
             if(data.staff.batarji) staffData.batarji = data.staff.batarji;
             if(data.staff.ruhaily) staffData.ruhaily = data.staff.ruhaily;
@@ -723,7 +720,7 @@ function renderCards() {
     filteredNumbers.reverse().forEach(num => {
         let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num] || {};
         let st = item.status || "pending", tm = item.time || "--:--", staffName = item.by || "غير معروف";
-        let txt = "⏳ معلق", col = "#facc15";
+        let txt = "⏳ معلق"; col = "#facc15";
         if(st === "done") { txt = "✅ مستلم"; col = "#22c55e"; }
         if(st === "cancel") { txt = "❌ ملغى"; col = "#ef4444"; }
         html += `<div class="meal-row-card">
@@ -804,24 +801,93 @@ function generateAndSharePDFReport() {
     document.getElementById("pdfLabelStaffRuhaily").innerText = `المسؤول: ${staffData.ruhaily.name || ''}`;
     document.getElementById("pdfLabelStaffDelivery").innerText = `المسؤول: ${staffData.delivery.name || ''}`;
     
-    let delCancelCount = 0, batDone = 0, batPending = 0, batCancel = 0;
-    let ruhDone = 0, ruhPending = 0, ruhCancel = 0;
+    let delDone = 0, delCancel = 0, delPending = 0;
+    let batDone = 0, batCancel = 0, batPending = 0;
+    let ruhDone = 0, ruhCancel = 0, ruhPending = 0;
+    
     let delRowsHtml = "", batRowsHtml = "", ruhRowsHtml = "";
     
     meals.forEach(m => {
         let statusItem = tableStatus[m.number];
-        let statusText = "⏳ قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = "--";
+        let statusText = "⏳ قيد الانتظار";
+        let statusClass = "badge-pdf-pending";
+        let staffLog = "--";
         
-        if(m.branch === 'delivery') { statusText = "مشحون"; statusClass = "badge-pdf-done"; staffLog = staffData.delivery.name || ""; }
-        
-        if(statusItem) {
+        if (statusItem) {
             staffLog = `${statusItem.by || '--'} / ${statusItem.time}`;
-            if(statusItem.status === 'done') {
-                statusText = "مستلم"; statusClass = "badge-pdf-done";
-                if(m.branch === 'batarji') batDone++;
-                if(m.branch === 'ruhaily') ruhDone++;
-            } else if(statusItem.status === 'cancel') {
-                statusText = "❌ ملغى"; statusClass = "badge-pdf-cancel";
-                if(m.branch === 'delivery') delCancelCount++;
-                if(m.branch === 'batarji') batCancel++;
-                if(m.
+            if (statusItem.status === 'done') {
+                statusText = "✅ مستلم";
+                statusClass = "badge-pdf-done";
+                if (m.branch === 'delivery') delDone++;
+                if (m.branch === 'batarji') batDone++;
+                if (m.branch === 'ruhaily') ruhDone++;
+            } else if (statusItem.status === 'cancel') {
+                statusText = "❌ ملغى";
+                statusClass = "badge-pdf-cancel";
+                if (m.branch === 'delivery') delCancel++;
+                if (m.branch === 'batarji') batCancel++;
+                if (m.branch === 'ruhaily') ruhCancel++;
+            }
+        } else {
+            if (m.branch === 'delivery') {
+                statusText = "🚚 تم الشحن تلقائياً";
+                statusClass = "badge-pdf-done";
+                staffLog = staffData.delivery.name || "قسم التوصيل";
+                delDone++;
+            } else {
+                if (m.branch === 'batarji') batPending++;
+                if (m.branch === 'ruhaily') ruhPending++;
+            }
+        }
+        
+        let rowHtml = `<tr>
+            <td><b># ${m.number}</b></td>
+            <td>${m.name}</td>
+            <td><span class="${statusClass}">${statusText}</span></td>
+            <td><small>${staffLog}</small></td>
+        </tr>`;
+        
+        if (m.branch === 'delivery') delRowsHtml += rowHtml;
+        else if (m.branch === 'batarji') batRowsHtml += rowHtml;
+        else if (m.branch === 'ruhaily') ruhRowsHtml += rowHtml;
+    });
+    
+    document.getElementById("pdfDeliveryTableBody").innerHTML = delRowsHtml || '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد بيانات لهذا القسم اليوم</td></tr>';
+    document.getElementById("pdfBatarjiTableBody").innerHTML = batRowsHtml || '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد بيانات لهذا الفرع اليوم</td></tr>';
+    document.getElementById("pdfRuhailyTableBody").innerHTML = ruhRowsHtml || '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">لا توجد بيانات لهذا الفرع اليوم</td></tr>';
+    
+    let totalGlobal = meals.length;
+    let totalDone = delDone + batDone + ruhDone;
+    let totalCancel = delCancel + batCancel + ruhCancel;
+    let totalPending = batPending + ruhPending;
+    
+    document.getElementById("pdfMetaGlobalTotal").innerText = totalGlobal;
+    document.getElementById("pdfMetaGlobalDone").innerText = totalDone;
+    document.getElementById("pdfMetaGlobalPending").innerText = totalPending;
+    document.getElementById("pdfMetaGlobalCancel").innerText = totalCancel;
+    
+    document.getElementById("pdfSumDeliveryDone").innerText = delDone;
+    document.getElementById("pdfSumBatarjiDone").innerText = batDone;
+    document.getElementById("pdfSumRuhailyDone").innerText = ruhDone;
+    
+    let element = document.getElementById('pdfReportTemplate');
+    element.style.display = 'block';
+    
+    let opt = {
+        margin: [10, 10, 10, 10],
+        filename: `تقرير_فرز_بروتين_وكارب_${now.toISOString().slice(0,10)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+        element.style.display = 'none';
+    }).catch(err => {
+        console.error(err);
+        element.style.display = 'none';
+    });
+}
+</script>
+</body>
+</html>
