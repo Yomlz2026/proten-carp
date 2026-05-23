@@ -57,7 +57,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 
 .reports-footer-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -10px 25px rgba(0,0,0,0.3); z-index: 5001; }
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.report-stat-box report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
+.report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
 
 /* أزرار الفروع الثلاثة التفاعلية */
 .branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
@@ -403,6 +403,7 @@ const firebaseConfig = {
   databaseURL: "https://protencarp-default-rtdb.firebaseio.com/"
 };
 
+// تهيئة المشروع
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -422,16 +423,16 @@ var staffData = {
 
 function hideSplash() {
     var s = document.getElementById("splashScreen");
-    if(s && s.style.display !== "none") { 
+    if(s) { 
         s.style.opacity = "0"; 
         setTimeout(() => { s.style.display = "none"; }, 400); 
     }
 }
 
-// 🟢 حارس الأمان المانع للتعليق: لو تأخر جلب البيانات لأكثر من ثانيتين، يتم تخطي الشاشة فورا لتجنب الوقوف
+// 🟢 حارس الأمان المعزول تماماً: مستحيل يمنعه خطأ شبكة أو تأخير سيرفر
 setTimeout(function() {
     hideSplash();
-}, 2200);
+}, 1500);
 
 function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
     document.getElementById("alertIcon").innerHTML = icon;
@@ -452,6 +453,7 @@ function showCustomAlert(icon, title, message, isSuccess = true, showActions = f
 function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
 document.addEventListener("DOMContentLoaded", function() {
+    // جلب البيانات مع حارس أمان داخلي
     db.ref("pnc_data").on("value", (snapshot) => {
         let data = snapshot.val() || {};
         meals = data.mealsList || [];
@@ -490,9 +492,14 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
         }
         
-        recalculateStats(); renderCards(); updateReports();
+        recalculateStats(); 
+        renderCards(); 
+        updateReports();
         hideSplash();
-    }, (error) => { hideSplash(); });
+    }, (error) => { 
+        console.log("Firebase error handled safely.");
+        hideSplash(); 
+    });
 });
 
 function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
@@ -825,5 +832,4 @@ function generateAndSharePDFReport() {
                 if(m.branch === 'ruhaily') ruhDone++;
             } else if(statusItem.status === 'cancel') {
                 statusText = "❌ ملغى"; statusClass = "badge-pdf-cancel";
-                if(m.branch === 'delivery') delCancelCount++;
-                
+                i
