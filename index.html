@@ -11,15 +11,13 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 
 /* شاشة الترحيب */
 #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
-.splash-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 30px 40px; border-radius: 24px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: splashFadeIn 0.5s ease; max-width: 85%; }
-@keyframes splashFadeIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.splash-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 30px 40px; border-radius: 24px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); max-width: 85%; }
 .splash-text { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
 .splash-text .brand-carb { color: #facc15; }
 
 /* النوافذ المنبثقة */
 #customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
-.alert-card { background: #1e293b; border-radius: 24px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); animation: alertScaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid rgba(255, 255, 255, 0.08); }
-@keyframes alertScaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.alert-card { background: #1e293b; border-radius: 24px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.08); }
 .alert-status-icon { font-size: 45px; margin-bottom: 12px; display: inline-block; }
 .alert-title-text { font-size: 18px; font-weight: 700; color: #facc15; margin-bottom: 8px; }
 .alert-message-text { font-size: 15px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
@@ -36,7 +34,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 30px; width: 100%; max-width: 380px; text-align: center; }
 .auth-input { width: 100%; padding: 12px; border-radius: 12px; background: rgba(15,23,42,0.6); color: white; border: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 20px; font-weight: bold; outline: none; margin-bottom: 15px; }
 
-/* السलाيدر الجانبي للإحصائيات والأرشيف */
+/* السلايدر الجانبي للإحصائيات والأرشيف */
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
 .reports-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -54,7 +52,6 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .delivery-manual-box label { font-size: 12px; color: #38bdf8; font-weight: 700; display: block; }
 .delivery-manual-box input { padding: 10px; font-size: 16px; text-align: center; background: rgba(15,23,42,0.8); border: 1px solid rgba(56, 189, 248, 0.2); }
 .bulk-delivery-btn { background: #22c55e; color: #fff; font-weight: bold; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13px; text-align: center; transition: background 0.2s; }
-.bulk-delivery-btn:active { background: #16a34a; }
 
 .delete-archive-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: all 0.2s; }
 
@@ -90,18 +87,15 @@ input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23
 input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px; }
 
 .searchBtn { background: rgba(255, 255, 255, 0.06); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: background 0.2s; }
-.searchBtn:active { background: rgba(255, 255, 255, 0.12); }
 
-.pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25); transition: all 0.2s; }
-.pdfShareBtn:active { transform: scale(0.99); box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2); }
+.pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25); }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .stat { padding: 12px; border-radius: 14px; text-align: center; font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.04); }
 .greenBox { background: rgba(34, 197, 94, 0.12); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); } 
 .red { background: rgba(239, 68, 68, 0.12); color: #ef4444; border-color: rgba(239, 68, 68, 0.18); }
 
-.meal-row-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px; margin-top: 10px; display: flex; flex-direction: column; gap: 12px; animation: slideIn 0.2s ease-out; }
-@keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+.meal-row-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px; margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
 .meal-card-main-info { display: flex; justify-content: space-between; align-items: center; }
 .meal-card-info { display: flex; flex-direction: column; gap: 2px; }
 .meal-card-num { color: #facc15; font-weight: 700; font-size: 15px; }
@@ -109,7 +103,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 
 /* شريط الواتساب المدمج */
 .whatsapp-bottom-bar { position: fixed; bottom: 38px; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 15px; z-index: 998; display: flex; justify-content: center; align-items: center; }
-.whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); transition: transform 0.2s; }
+.whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); }
 
 /* شريط مأمون محمد */
 .ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; padding: 10px 0; z-index: 999; overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.06); }
@@ -117,7 +111,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
 /* قالب الـ PDF المخفي */
-#pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; font-family: 'Noto Kufi Arabic', sans-serif; }
+#pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; }
 .pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 .pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
 .pdf-meta { font-size: 12px; color: #64748b; text-align: left; }
@@ -134,16 +128,14 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 .badge-pdf-pending { color: #64748b; font-style: italic; }
 </style>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <script>
-function forceHideSplash() {
-    var s = document.getElementById("splashScreen");
-    if(s && s.style.display !== "none") {
-        s.style.opacity = "0";
-        setTimeout(function() { s.style.display = "none"; }, 400);
-    }
-}
-setTimeout(forceHideSplash, 1800);
-window.addEventListener('load', forceHideSplash);
+// تهيئة عامل قراءة الـ PDF سلفاً لمنع التجمد
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 </script>
 </head>
 <body>
@@ -326,7 +318,7 @@ window.addEventListener('load', forceHideSplash);
                 <div style="font-size:16px; font-weight:900; color:#0f172a;" id="pdfMetaGlobalTotal">0</div>
             </div>
             <div>
-                <small style="color:#16a34a; font-weight:bold; font-size:11px;">إجمالي المستلم والمشحون</small>
+                <small style="color:#16a34a; font-weight:bold; font-size:11px;">إجمالي المشحون والمستلم</small>
                 <div style="font-size:16px; font-weight:900; color:#16a34a;" id="pdfMetaGlobalDone">0</div>
             </div>
             <div>
@@ -357,6 +349,8 @@ window.addEventListener('load', forceHideSplash);
             <div style="font-size:9px; color:#64748b; margin-top:2px;" id="pdfLabelStaffRuhaily">المسؤول: --</div>
         </div>
     </div>
+
+    <div style="display:none;" id="pdfSumTotal">0</div>
 
     <div class="pdf-section-title">🚚 تفاصيل فرز قسم التوصيل</div>
     <table class="pdf-table">
@@ -398,42 +392,8 @@ window.addEventListener('load', forceHideSplash);
     </table>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
-let audioCtx = null;
-function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-
-function playBeep(type) {
-    try {
-        initAudio(); if (!audioCtx) return;
-        let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        if (type === 'success') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.25);
-        } else {
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(165, audioCtx.currentTime + 0.08);
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        }
-    } catch(e) { console.log(e); }
-}
-
-window.addEventListener('click', () => { initAudio(); }, { once: true });
-window.addEventListener('touchstart', () => { initAudio(); }, { once: true });
-
-const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
+// كود التهيئة البرمجي المعزول والآمن لمنع أي تجميد للصفحة
 const firebaseConfig = {
   apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
   authDomain: "protencarp.firebaseapp.com",
@@ -447,20 +407,24 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// منفذ الطوارئ السري المثبت داخلياً
 const masterSystemSecret = "0506546313";
+const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery"; 
 var deliveryTotalCount = 70; 
 var currentMasterPassword = "71138";
 
-// بيانات الموظفين الافتراضية
 var staffData = {
     batarji: { name: "مسؤول فرع البترجي", code: "1111" },
     ruhaily: { name: "مسؤول فرع الرحيلي", code: "2222" },
     delivery: { name: "مسؤول قسم التوصيل", code: "3333" }
 };
+
+function hideSplash() {
+    var s = document.getElementById("splashScreen");
+    if(s) { s.style.opacity = "0"; setTimeout(() => { s.style.display = "none"; }, 400); }
+}
 
 function showCustomAlert(icon, title, message, isSuccess = true, showActions = false, num = null) {
     document.getElementById("alertIcon").innerHTML = icon;
@@ -475,65 +439,63 @@ function showCustomAlert(icon, title, message, isSuccess = true, showActions = f
     } else {
         actionsBox.style.display = "none";
     }
-    
-    playBeep(isSuccess ? 'success' : 'error');
     document.getElementById("customAlertModal").style.display = "flex";
 }
 
 function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
-db.ref("pnc_data").on("value", (snapshot) => {
-    let data = snapshot.val() || {};
-    meals = data.mealsList || [];
-    tableStatus = data.actions || {};
-    historyArchive = data.archive || {};
-    waNum = data.whatsapp || "966506546313";
-    currentBannerUrl = data.bannerUrl || defaultBanner;
-    if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
-    if(data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
-    
-    if(data.staff) {
-        if(data.staff.batarji) staffData.batarji = data.staff.batarji;
-        if(data.staff.ruhaily) staffData.ruhaily = data.staff.ruhaily;
-        if(data.staff.delivery) staffData.delivery = data.staff.delivery;
-    }
-    
-    if(document.getElementById("waLink")) document.getElementById("waLink").href = "https://wa.me/" + waNum;
-    if(document.getElementById("whatsappInput")) document.getElementById("whatsappInput").value = waNum;
-    if(document.getElementById("bannerUrlInput")) document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
-    if(document.getElementById("adminMasterPassInput")) document.getElementById("adminMasterPassInput").value = currentMasterPassword;
-    if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
-    
-    // تعبئة لوحة الإدارة ببيانات الموظفين والأكواد
-    if(document.getElementById("workerNameBatarji")) {
-        document.getElementById("workerNameBatarji").value = staffData.batarji.name;
-        document.getElementById("workerCodeBatarji").value = staffData.batarji.code;
-        document.getElementById("workerNameRuhaily").value = staffData.ruhaily.name;
-        document.getElementById("workerCodeRuhaily").value = staffData.ruhaily.code;
-        document.getElementById("workerNameDelivery").value = staffData.delivery.name;
-        document.getElementById("workerCodeDelivery").value = staffData.delivery.code;
-    }
-    
-    searchedNumbers.clear();
-    Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
-    
-    if(document.getElementById("status")) {
-        document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
-    }
-    
-    if(document.getElementById("mealCardsContainer")) {
+// ربط ومزامنة فايربيس فوري وآمن عند تحميل الصفحة
+document.addEventListener("DOMContentLoaded", function() {
+    db.ref("pnc_data").on("value", (snapshot) => {
+        let data = snapshot.val() || {};
+        meals = data.mealsList || [];
+        tableStatus = data.actions || {};
+        historyArchive = data.archive || {};
+        waNum = data.whatsapp || "966506546313";
+        currentBannerUrl = data.bannerUrl || defaultBanner;
+        if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
+        if(data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
+        
+        if(data.staff) {
+            if(data.staff.batarji) staffData.batarji = data.staff.batarji;
+            if(data.staff.ruhaily) staffData.ruhaily = data.staff.ruhaily;
+            if(data.staff.delivery) staffData.delivery = data.staff.delivery;
+        }
+        
+        if(document.getElementById("waLink")) document.getElementById("waLink").href = "https://wa.me/" + waNum;
+        if(document.getElementById("whatsappInput")) document.getElementById("whatsappInput").value = waNum;
+        if(document.getElementById("bannerUrlInput")) document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
+        if(document.getElementById("adminMasterPassInput")) document.getElementById("adminMasterPassInput").value = currentMasterPassword;
+        if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
+        
+        if(document.getElementById("workerNameBatarji")) {
+            document.getElementById("workerNameBatarji").value = staffData.batarji.name;
+            document.getElementById("workerCodeBatarji").value = staffData.batarji.code;
+            document.getElementById("workerNameRuhaily").value = staffData.ruhaily.name;
+            document.getElementById("workerCodeRuhaily").value = staffData.ruhaily.code;
+            document.getElementById("workerNameDelivery").value = staffData.delivery.name;
+            document.getElementById("workerCodeDelivery").value = staffData.delivery.code;
+        }
+        
+        searchedNumbers.clear();
+        Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
+        
+        if(document.getElementById("status")) {
+            document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
+        }
+        
         recalculateStats(); renderCards(); updateReports();
-    }
-    hideSplash();
-}, (error) => { hideSplash(); });
+        hideSplash();
+    }, (error) => { hideSplash(); });
+});
 
 function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
 function closeAdminModal() { document.getElementById("adminAuthModal").style.display = "none"; }
 function verifyAdminCode() {
     if(document.getElementById("adminPasswordInput").value.trim() === currentMasterPassword) {
-        playBeep('success'); document.getElementById("adminAuthModal").style.display = "none"; document.getElementById("adminPanel").style.display = "block";
+        document.getElementById("adminAuthModal").style.display = "none"; document.getElementById("adminPanel").style.display = "block";
     } else {
-        playBeep('error'); alert("الرمز غير صحيح!");
+        alert("الرمز غير صحيح!");
     }
 }
 
@@ -557,7 +519,6 @@ function saveAdminSettings() {
             }
         }
     };
-    
     db.ref("pnc_data").update(updateData);
     showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة بيانات الموظفين والأكواد بنجاح!", true);
 }
@@ -620,7 +581,7 @@ function archiveCurrentDayData() {
 }
 
 function deleteArchiveItem(key) {
-    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { db.ref("pnc_data/archive/" + key).remove(); playBeep('success'); }
+    if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { db.ref("pnc_data/archive/" + key).remove(); }
 }
 
 async function startReadingPDF(file) {
@@ -697,7 +658,6 @@ function checkMeal() {
     input.value = "";
 }
 
-// 🔐 نظام إثبات شخصية العامل عند الفرز مع منفذ الطوارئ السري
 function triggerWorkerAuth(num, type) {
     let meal = meals.find(m => m.number == num);
     if(!meal) return;
@@ -712,7 +672,6 @@ function triggerWorkerAuth(num, type) {
     
     document.getElementById("workerAuthConfirmBtn").onclick = function() {
         let enteredCode = document.getElementById("workerPasswordInput").value.trim();
-        // التحقق بالكود الصحيح للفرع، أو عبر منفذ الطوارئ السري "إذن المشرف" المقيد برقم جوالك كإذن قاطع
         if(enteredCode === expectedCode || enteredCode === masterSystemSecret) {
             let actingStaffName = enteredCode === masterSystemSecret ? "إذن المشرف الفوري" : staffTitle;
             let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -724,7 +683,6 @@ function triggerWorkerAuth(num, type) {
             let labelType = type === 'done' ? "تم تسليم الوجبة" : "تم إلغاء الوجبة";
             showCustomAlert("✨", "تم التوثيق بنجاح", `${labelType} للمشترك بنجاح وبواسطة [ ${actingStaffName} ]`, true);
         } else {
-            playBeep('error');
             alert("الكود أو إذن المشرف غير صحيح! حاول مرة أخرى.");
         }
     };
@@ -741,10 +699,12 @@ function recalculateStats() {
             if(statusData.status === "cancel") c++;
         }
     });
-    document.getElementById("doneMeals").innerHTML = d; 
-    document.getElementById("cancelMeals").innerHTML = c;
-    if(document.getElementById("overlayDoneCount")) document.getElementById("overlayDoneCount").innerHTML = d;
-    if(document.getElementById("overlayCancelCount")) document.getElementById("overlayCancelCount").innerHTML = c;
+    let dEl = document.getElementById("doneMeals"), cEl = document.getElementById("cancelMeals");
+    if(dEl) dEl.innerHTML = d; 
+    if(cEl) cEl.innerHTML = c;
+    let od = document.getElementById("overlayDoneCount"), oc = document.getElementById("overlayCancelCount");
+    if(od) od.innerHTML = d;
+    if(oc) oc.innerHTML = c;
 }
 
 function renderCards() {
@@ -785,12 +745,14 @@ function closeReports() { document.getElementById("reportsOverlay").classList.re
 function switchTab(t) { activeTab = t; updateReports(); }
 
 function updateReports() {
+    let content = document.getElementById("reportsContent");
+    if(!content) return;
+    
     document.getElementById("tab-done").className = "reports-tab " + (activeTab==="done"?"active-tab":"");
     document.getElementById("tab-cancel").className = "reports-tab cancel-tab " + (activeTab==="cancel"?"active-tab":"");
     document.getElementById("tab-archive").className = "reports-tab archive-tab " + (activeTab==="archive"?"active-tab":"");
     
-    let content = document.getElementById("reportsContent"), html = "";
-    
+    let html = "";
     if(currentBranchView === "delivery" && activeTab !== 'archive') {
         html += `<div class="delivery-manual-box">
             <label>📦 إجمالي الحقائب المسلّمة للتوصيل جملةً:</label>
@@ -821,4 +783,47 @@ function updateReports() {
     keys.forEach(num => {
         let meal = meals.find(m => m.number == num), name = meal ? meal.name : "مشترك #" + num, item = tableStatus[num];
         let lbl = meal.branch === 'delivery' ? "🚚 توصيل" : (meal.branch==='batarji'?'🏪 بترجي':'🏪 رحيلي');
-        html += `<div class="report-card"><div><b># ${num}</b> <small style="color:#facc15; padding-right:5px;">[${lbl}]</small><br><small style="color:#cbd5e1">${name}</small><br><small style="color:#64748b; font-size:10px;">بواسطة: ${item.by || 'غير معروف'}</small></div><div style
+        html += `<div class="report-card"><div><b># ${num}</b> <small style="color:#facc15; padding-right:5px;">[${lbl}]</small><br><small style="color:#cbd5e1">${name}</small><br><small style="color:#64748b; font-size:10px;">بواسطة: ${item.by || 'غير معروف'}</small></div><div style="text-align:left"><span style="color:${activeTab==='done'?'#22c55e':'#ef4444'}">${activeTab==='done'?'✓ مستلم':'✕ ملغى'}</span><br><small style="color:#94a3b8">${item.time}</small></div></div>`;
+    });
+    content.innerHTML = html;
+}
+
+function generateAndSharePDFReport() {
+    if(meals.length === 0) { alert("لا توجد بيانات مشتركين لتوليد التقرير!"); return; }
+    let now = new Date();
+    let dateStr = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
+    let timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    
+    document.getElementById("pdfReportDate").innerText = dateStr;
+    document.getElementById("pdfReportTime").innerText = timeStr;
+    
+    document.getElementById("pdfLabelStaffBatarji").innerText = `المسؤول: ${staffData.batarji.name}`;
+    document.getElementById("pdfLabelStaffRuhaily").innerText = `المسؤول: ${staffData.ruhaily.name}`;
+    document.getElementById("pdfLabelStaffDelivery").innerText = `المسؤول: ${staffData.delivery.name}`;
+    
+    let delCancelCount = 0, batDone = 0, batPending = 0, batCancel = 0;
+    let ruhDone = 0, ruhPending = 0, ruhCancel = 0;
+    let delRowsHtml = "", batRowsHtml = "", ruhRowsHtml = "";
+    
+    meals.forEach(m => {
+        let statusItem = tableStatus[m.number];
+        let statusText = "⏳ قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = "--";
+        
+        if(m.branch === 'delivery') { statusText = "مشحون"; statusClass = "badge-pdf-done"; staffLog = staffData.delivery.name; }
+        
+        if(statusItem) {
+            staffLog = `${statusItem.by || '--'} / ${statusItem.time}`;
+            if(statusItem.status === 'done') {
+                statusText = "مستلم"; statusClass = "badge-pdf-done";
+                if(m.branch === 'batarji') batDone++;
+                if(m.branch === 'ruhaily') ruhDone++;
+            } else if(statusItem.status === 'cancel') {
+                statusText = "❌ ملغى"; statusClass = "badge-pdf-cancel";
+                if(m.branch === 'delivery') delCancelCount++;
+                if(m.branch === 'batarji') batCancel++;
+                if(m.branch === 'ruhaily') ruhCancel++;
+            }
+        } else {
+            if(m.branch === 'batarji') batPending++;
+            if(m.branch === 'ruhaily') ruhPending++;
+        
