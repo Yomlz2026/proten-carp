@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام فرز وتسليم الوجبات الذكي</title>
-    <!-- Tailwind CSS (النسخة المستقرة الأصلية) -->
+    <!-- Tailwind CSS النسخة المستقرة الأصلية -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts (Cairo) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -133,7 +133,7 @@
     </main>
 
     <!-- ========================================== -->
-    <!-- السلايدر الجانبي بالتصميم المعتمد المريح والأقسام المفصلة -->
+    <!-- السلايدر الجانبي الأصلي - تم حذف زر الإضافة وترتيب التقارير -->
     <!-- ========================================== -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-50 hidden opacity-0 transition-opacity duration-300"></div>
     <aside id="sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-55 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
@@ -148,7 +148,7 @@
             </button>
         </div>
 
-        <!-- الأقسام الثلاثة مع العنونة الواضحة -->
+        <!-- الأقسام الثلاثة المفرزة داخل السلايدر فقط -->
         <div class="flex-1 overflow-y-auto p-4 space-y-6">
             
             <!-- 📌 1. قسم التوصيل -->
@@ -164,7 +164,7 @@
                 </div>
             </div>
 
-            <!-- 📌 2. قسم البترجي -->
+            <!-- 📌 2. فرع البترجي -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between border-b border-gray-200 pb-1">
                     <h4 class="font-bold text-gray-900 flex items-center gap-2">
@@ -177,7 +177,7 @@
                 </div>
             </div>
 
-            <!-- 📌 3. قسم الرحيلي -->
+            <!-- 📌 3. فرع الرحيلي -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between border-b border-gray-200 pb-1">
                     <h4 class="font-bold text-gray-900 flex items-center gap-2">
@@ -192,7 +192,7 @@
 
         </div>
 
-        <!-- 📊 كرت الخلاصة الإحصائية المجمعة بالأسفل -->
+        <!-- 📊 كرت الخلاصة الإحصائية المجمعة في أسفل السلايدر -->
         <div class="p-4 bg-gray-900 text-white border-t border-gray-800 space-y-3">
             <h5 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1">
                 <i class="fa-solid fa-calculator"></i> الخلاصة الإجمالية لكافة الأقسام
@@ -218,7 +218,7 @@
         </div>
     </aside>
 
-    <!-- مودال المشرف لتغيير الـ Password -->
+    <!-- مودال المشرف الأصلي بنفس الأكواد وكلمات المرور السابقة -->
     <div id="adminModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-gray-100">
             <div class="text-center">
@@ -250,7 +250,7 @@
     </footer>
 
     <script>
-        // داتا المحاكاة
+        // داتا المشتركين الأصلية
         let subscribers = [
             { id: "101", phone: "0501111111", name: "أحمد محمد العتيبي", section: "التوصيل", meal: "وجبة كيتو - دجاج غداء", status: "انتظار" },
             { id: "102", phone: "0502222222", name: "خالد عبد الله البقمي", section: "البترجي", meal: "وجبة دايت - لحم وعيش", status: "انتظار" },
@@ -263,7 +263,7 @@
         const VALID_ADMIN_CODE = "71138";
         let currentActiveSubscriber = null;
 
-        // ربط العناصر
+        // ربط العناصر الأصلية بالصفحة
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const subscriberCard = document.getElementById('subscriberCard');
@@ -302,7 +302,7 @@
         const adminCodeInput = document.getElementById('adminCodeInput');
         const siteGlobalPassInput = document.getElementById('siteGlobalPassInput');
 
-        // السلايدر الجانبي
+        // أحداث السلايدر الجانبي
         openSidebarBtn.addEventListener('click', () => {
             sidebarOverlay.classList.remove('hidden');
             setTimeout(() => sidebarOverlay.classList.add('opacity-100'), 10);
@@ -318,7 +318,7 @@
         closeSidebarBtn.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // مودال المشرف
+        // أحداث لوحة المشرف
         adminLoginBtn.addEventListener('click', () => adminModal.classList.remove('hidden'));
         closeAdminBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
         saveAdminBtn.addEventListener('click', () => {
@@ -331,7 +331,7 @@
             }
         });
 
-        // عمليات البحث والتسليم
+        // أحداث وظائف الفحص والبحث الأساسية
         searchBtn.addEventListener('click', performSearch);
         searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
 
@@ -422,7 +422,7 @@
             recentActivitiesTable.insertBefore(row, recentActivitiesTable.firstChild);
         }
 
-        // محرك التقارير المجمعة للسلايدر الجانبي الأصلي
+        // محرك التقارير الذكي والفرز التلقائي بداخل السلايدر فقط
         function updateSidebarReports() {
             const deliveryMeals = subscribers.filter(s => s.section === "التوصيل");
             const batarkiMeals = subscribers.filter(s => s.section === "البترجي");
@@ -472,7 +472,9 @@
             });
         }
 
+        // تشغيل الجرد الإحصائي عند البداية
         updateSidebarReports();
     </script>
 </body>
 </html>
+
