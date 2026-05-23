@@ -62,7 +62,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
 
-/* أزرار الفروع الثلاثة */
+/* أزرار الفروع الثلاثة التفاعلية */
 .branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
 .branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); transition: all 0.25s ease; display: flex; justify-content: center; align-items: center; gap: 4px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
@@ -133,7 +133,7 @@ input[type="number"] { font-size: 20px; text-align: center; letter-spacing: 1px;
 </style>
 
 <script>
-// كود الحماية الفوري (Fail-safe): يضمن إخفاء الشاشة الترحيبية تلقائياً حتى لو تعطلت السيرفرات الخارجية أو لم تفتح بالكامل
+// كود الحماية الفوري (Fail-safe) للشاشة الترحيبية
 function forceHideSplash() {
     var s = document.getElementById("splashScreen");
     if(s && s.style.display !== "none") {
@@ -141,7 +141,7 @@ function forceHideSplash() {
         setTimeout(function() { s.style.display = "none"; }, 400);
     }
 }
-setTimeout(forceHideSplash, 1800); // إخفاء إجباري بعد ثانية و 800 جزء من الثانية كأقصى حد
+setTimeout(forceHideSplash, 1800);
 window.addEventListener('load', forceHideSplash);
 </script>
 </head>
@@ -207,7 +207,7 @@ window.addEventListener('load', forceHideSplash);
     </div>
 
     <div class="card control-panel" id="adminPanel">
-        <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:10px; font-size:12px;"/>
+        <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:10px; font-size:12px Pap;"/>
         <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب المشرف للتوجيه..." style="margin-bottom:10px;"/>
         <input id="bannerUrlInput" type="url" placeholder="رابط صورة البانر العلوية..." style="margin-bottom:10px;"/>
         <button class="uploadBtn" onclick="saveAdminSettings()" style="margin-bottom:5px;">💾 حفظ الإعدادات السحابية</button>
@@ -425,7 +425,6 @@ db.ref("pnc_data").on("value", (snapshot) => {
     }
     hideSplash();
 }, (error) => {
-    // في حال حدوث خطأ في الاتصال بقواعد البيانات يتم تمرير الصفحة مباشرة
     hideSplash();
 });
 
@@ -509,6 +508,7 @@ function deleteArchiveItem(key) {
     if(confirm("هل أنت متأكد من حذف هذا اليوم من الأرشيف؟")) { db.ref("pnc_data/archive/" + key).remove(); playBeep('success'); }
 }
 
+// 🟢 التحديث الاحترافي لقراءة الـ PDF (قاعدة صفحة واحدة = مشترك واحد + ربط الفروع بـ Pickup Branch حصرياً)
 async function startReadingPDF(file) {
     if(!file) return;
     archiveCurrentDayData();
@@ -518,6 +518,7 @@ async function startReadingPDF(file) {
     reader.onload = async function() {
         try {
             let typedarray = new Uint8Array(this.result), pdf = await pdfjsLib.getDocument(typedarray).promise;
+            
             for (let p = 1; p <= pdf.numPages; p++) {
                 let page = await pdf.getPage(p), content = await page.getTextContent(), lastY = "", lines = [], currentLine = "";
                 for (let item of content.items) {
@@ -525,25 +526,44 @@ async function startReadingPDF(file) {
                     currentLine += " " + item.str; lastY = item.transform[5];
                 }
                 lines.push(currentLine);
-                let pageText = lines.join(" ");
                 
-                let targetBranch = "delivery";
-                if(pageText.includes("البترجي") || pageText.includes("(البترجي)")) targetBranch = "batarji";
-                else if(pageText.includes("الرحيلي") || pageText.includes("(الرحيلي)")) targetBranch = "ruhaily";
+                let targetBranch = "delivery"; // الفرع الافتراضي للمشترك في هذه الصفحة هو التوصيل
+                let detectedNumber = null;
+                let detectedName = "";
                 
+                // 1. استخراج الفرع بدقة بالاعتماد الكلي والحصري على سطر الـ Pickup Branch لمنع تداخل الأسماء والعناوين
                 lines.forEach(line => {
-                    let numMatch = line.match(/\b\d{5,8}\b/);
-                    if (numMatch) {
-                        let num = numMatch[0], nameClean = line.replace(num, "").replace(/[:\-\*]/g, "").trim().replace(/\s+/g, " ");
-                        if (nameClean.length < 3) nameClean = "مشترك رقم (" + num + ")";
-                        meals.push({ number: num, name: nameClean, branch: targetBranch });
+                    if (line.includes("Pickup Branch")) {
+                        let lowerLine = line.toLowerCase();
+                        if (line.includes("رحيلي") || lowerLine.includes("rhili")) {
+                            targetBranch = "ruhaily";
+                        } else if (line.includes("بترجي") || lowerLine.includes("batarji")) {
+                            targetBranch = "batarji";
+                        }
+                    }
+                    
+                    // البحث عن رقم الاشتراك في السطر لحفظه (يمسك أول رقم يطابق الشروط في الصفحة)
+                    if (!detectedNumber) {
+                        let numMatch = line.match(/\b\d{5,8}\b/);
+                        if (numMatch) {
+                            detectedNumber = numMatch[0];
+                            let nameClean = line.replace(detectedNumber, "").replace(/[:\-\*]/g, "").trim().replace(/\s+/g, " ");
+                            detectedName = nameClean.length < 3 ? "مشترك رقم (" + detectedNumber + ")" : nameClean;
+                        }
                     }
                 });
+                
+                // 2. تطبيق حماية (صفحة واحدة = مشترك واحد)، لحفظ فقط المشترك الحقيقي الموجود بالصفحة
+                if (detectedNumber) {
+                    meals.push({ number: detectedNumber, name: detectedName, branch: targetBranch });
+                }
             }
+            
+            // إزالة أي تكرار نادر قد يحدث ومزامنة القائمة النظيفة مع قاعدة البيانات
             meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
             db.ref("pnc_data/mealsList").set(meals); 
             db.ref("pnc_data/actions").set({});
-            showCustomAlert("✅", "نجاح الفرز والأرشفة", "تم تحديث قائمة جديدة بـ " + meals.length + " مشترك", true);
+            showCustomAlert("✅", "نجاح الفرز والأرشفة", "تم تحديث قائمة جديدة بـ " + meals.length + " مشترك ومطابقتها مع عدد الصفحات!", true);
         } catch(e) { showCustomAlert("❌", "خطأ بالملف", "فشل قراءة ملف الـ PDF.", false); }
     };
     reader.readAsArrayBuffer(file);
