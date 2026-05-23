@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام فرز وتسليم الوجبات الذكي</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Tailwind CSS (النسخة المستقرة الأصلية) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts (Cairo) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,22 +16,22 @@
         body { font-family: 'Cairo', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
-    <!-- شريط التنقل العلوي -->
-    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-40">
+    <!-- شريط التنقل العلوي الأصلي -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <button id="openSidebarBtn" class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg text-xl transition-colors">
+                <button id="openSidebarBtn" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg text-xl transition-colors">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-                <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
                     <i class="fa-solid fa-utensils text-emerald-600"></i>
                     نظام الفرز والتسليم الذكي
                 </h1>
             </div>
             <div class="flex items-center gap-3">
-                <button id="adminLoginBtn" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center gap-2 transition-colors">
+                <button id="adminLoginBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-2 transition-colors">
                     <i class="fa-solid fa-lock"></i>
                     لوحة المشرف
                 </button>
@@ -39,58 +39,56 @@
         </div>
     </header>
 
-    <!-- الشاشة الرئيسية (تظل على حالتها السريعة للتسليم والتعديل المباشر) -->
+    <!-- الشاشة الرئيسية السريعة -->
     <main class="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6 space-y-6">
         
-        <!-- قسم البحث -->
-        <section class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200">
-            <h2 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <!-- قسم البحث الأصلي -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-magnifying-glass text-emerald-600"></i>
                 البحث عن مشترك وتأكيد الهوية
             </h2>
             <div class="flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
-                    <input type="text" id="searchInput" placeholder="أدخل رقم المشترك أو رقم الجوال..." class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-emerald-500 focus:bg-white font-mono text-center text-lg transition-all">
-                    <i class="fa-solid fa-user absolute right-3.5 top-4 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="أدخل رقم المشترك أو رقم الجوال..." class="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white font-mono text-center text-lg transition-all">
+                    <i class="fa-solid fa-user absolute right-3.5 top-4 text-gray-400"></i>
                 </div>
-                <button id="searchBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-xs">
+                <button id="searchBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm">
                     <i class="fa-solid fa-search"></i>
                     بحث وفحص
                 </button>
             </div>
         </section>
 
-        <!-- نافذة عرض بيانات المشترك و أزرار الإجراء السريع (تظهر عند البحث) -->
-        <section id="subscriberCard" class="hidden bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden transition-all">
-            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+        <!-- كرت عرض بيانات المشترك والتسليم -->
+        <section id="subscriberCard" class="hidden bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden transition-all">
+            <div class="bg-gray-900 text-white p-4 flex justify-between items-center">
                 <span class="font-bold flex items-center gap-2"><i class="fa-solid fa-id-card text-emerald-400"></i> ملف المشترك الحالي</span>
                 <span id="subStatusBadge" class="px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-400">قيد الانتظار</span>
             </div>
             <div class="p-6 space-y-6">
-                <!-- داتا المشترك -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span class="text-xs text-slate-500 block mb-1">الاسم الثلاثي</span>
-                        <span id="subName" class="font-bold text-slate-800">-</span>
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <span class="text-xs text-gray-500 block mb-1">الاسم الثلاثي</span>
+                        <span id="subName" class="font-bold text-gray-800">-</span>
                     </div>
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span class="text-xs text-slate-500 block mb-1">القسم / الفرع</span>
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <span class="text-xs text-gray-500 block mb-1">القسم / الفرع</span>
                         <span id="subSection" class="font-bold text-emerald-700">-</span>
                     </div>
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span class="text-xs text-slate-500 block mb-1">نوع الوجبة والاشتراك</span>
-                        <span id="subMealType" class="font-bold text-slate-800">-</span>
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <span class="text-xs text-gray-500 block mb-1">نوع الوجبة والاشتراك</span>
+                        <span id="subMealType" class="font-bold text-gray-800">-</span>
                     </div>
                 </div>
 
-                <!-- التحقق عبر كود الفرع وأزرار الإجراء والالغاء -->
-                <div class="bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200 space-y-4">
+                <div class="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-200 space-y-4">
                     <div class="max-w-xs mx-auto">
-                        <label class="block text-xs font-medium text-slate-600 text-center mb-2">أدخل كود التحقق للفرع لإتمام العملية</label>
-                        <input type="password" id="branchCodeInput" placeholder="••••" class="w-full text-center py-2 border border-slate-200 rounded-lg bg-white tracking-widest text-lg font-mono focus:outline-hidden focus:border-emerald-500">
+                        <label class="block text-xs font-medium text-gray-600 text-center mb-2">أدخل كود التحقق للفرع لإتمام العملية</label>
+                        <input type="password" id="branchCodeInput" placeholder="••••" class="w-full text-center py-2 border border-gray-200 rounded-lg bg-white text-lg font-mono focus:outline-none focus:border-emerald-500">
                     </div>
                     <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-                        <button id="actionDeliverBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-2.5 rounded-xl flex items-center gap-2 transition-colors shadow-xs">
+                        <button id="actionDeliverBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-2.5 rounded-xl flex items-center gap-2 transition-colors shadow-sm">
                             <i class="fa-solid fa-circle-check"></i> تأكيد الهوية وتسليم الوجبة
                         </button>
                         <button id="actionCancelBtn" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-medium px-4 py-2.5 rounded-xl flex items-center gap-2 transition-colors">
@@ -99,27 +97,24 @@
                     </div>
                 </div>
 
-                <!-- التعديل بعد التسليم (يظهر فقط إذا كان مفرزاً مسبقاً في الشاشة الرئيسية) -->
                 <div id="postActionPanel" class="hidden bg-amber-50 border border-amber-200 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3">
                     <span class="text-sm text-amber-800 flex items-center gap-2">
-                        <i class="fa-solid fa-circle-info"></i> تم فرز هذا الطلب مسبقاً، يمكنك تصحيح الحالة أو التعديل من هنا:
+                        <i class="fa-solid fa-circle-info"></i> تم فرز هذا الطلب مسبقاً، يمكنك التعديل وإعادته للانتظار:
                     </span>
-                    <div class="flex items-center gap-2">
-                        <button id="resetToPendingBtn" class="px-3 py-1.5 text-xs font-semibold bg-white border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors">إرجاع لانتظار</button>
-                    </div>
+                    <button id="resetToPendingBtn" class="px-3 py-1.5 text-xs font-semibold bg-white border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors">إرجاع لانتظار</button>
                 </div>
             </div>
         </section>
 
-        <!-- قائمة الفرز اللحظية السريعة بالشاشة الرئيسية -->
-        <section class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200">
-            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <!-- قائمة آخر العمليات في الصفحة الرئيسية -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i>
                 آخر العمليات المنفذة (الشاشة الرئيسية)
             </h3>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-right text-slate-600">
-                    <thead class="bg-slate-50 text-xs uppercase text-slate-700 border-b border-slate-100">
+                <table class="w-full text-sm text-right text-gray-600">
+                    <thead class="bg-gray-50 text-xs uppercase text-gray-700 border-b border-gray-100">
                         <tr>
                             <th class="px-4 py-3 font-semibold">المشترك</th>
                             <th class="px-4 py-3 font-semibold">القسم</th>
@@ -129,7 +124,7 @@
                     </thead>
                     <tbody id="recentActivitiesTable">
                         <tr>
-                            <td colspan="4" class="text-center py-6 text-slate-400">لا توجد عمليات منفذة حالياً.</td>
+                            <td colspan="4" class="text-center py-6 text-gray-400">لا توجد عمليات منفذة حالياً.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -138,127 +133,124 @@
     </main>
 
     <!-- ========================================== -->
-    <!-- السلايدر الجانبي الجديد والمطور (غرفة التحكم والتقارير المجمعة) -->
+    <!-- السلايدر الجانبي بالتصميم المعتمد المريح والأقسام المفصلة -->
     <!-- ========================================== -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-50 hidden opacity-0 transition-opacity duration-300"></div>
     <aside id="sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-55 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
         
-        <!-- هيدر السلايدر الجانبي -->
-        <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-900 text-white">
             <span class="font-bold flex items-center gap-2 text-lg">
                 <i class="fa-solid fa-chart-pie text-emerald-400"></i>
                 شاشة التقارير وجرد الأقسام
             </span>
-            <button id="closeSidebarBtn" class="p-2 text-slate-400 hover:text-white rounded-lg transition-colors">
+            <button id="closeSidebarBtn" class="p-2 text-gray-400 hover:text-white rounded-lg transition-colors">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
 
-        <!-- محتوى السلايدر الجانبي (عرض منفصل للأقسام الثلاثة متتالية) -->
+        <!-- الأقسام الثلاثة مع العنونة الواضحة -->
         <div class="flex-1 overflow-y-auto p-4 space-y-6">
             
             <!-- 📌 1. قسم التوصيل -->
             <div class="space-y-2">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-1">
-                    <h4 class="font-bold text-slate-900 flex items-center gap-2">
+                <div class="flex items-center justify-between border-b border-gray-200 pb-1">
+                    <h4 class="font-bold text-gray-900 flex items-center gap-2">
                         <i class="fa-solid fa-truck text-blue-600"></i> قسم التوصيل
                     </h4>
                     <span id="countDelivery" class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-bold">0 وجبة</span>
                 </div>
-                <div class="bg-slate-50 rounded-xl p-2 max-h-40 overflow-y-auto border border-slate-100 text-xs space-y-1" id="listDelivery">
-                    <p class="text-slate-400 text-center py-3">لا توجد بيانات مفرزة</p>
+                <div class="bg-gray-50 rounded-xl p-2 max-h-40 overflow-y-auto border border-gray-100 text-xs space-y-1" id="listDelivery">
+                    <p class="text-gray-400 text-center py-3">لا توجد بيانات مفرزة</p>
                 </div>
             </div>
 
             <!-- 📌 2. قسم البترجي -->
             <div class="space-y-2">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-1">
-                    <h4 class="font-bold text-slate-900 flex items-center gap-2">
+                <div class="flex items-center justify-between border-b border-gray-200 pb-1">
+                    <h4 class="font-bold text-gray-900 flex items-center gap-2">
                         <i class="fa-solid fa-building text-indigo-600"></i> فرع البترجي
                     </h4>
                     <span id="countBatarki" class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-bold">0 وجبة</span>
                 </div>
-                <div class="bg-slate-50 rounded-xl p-2 max-h-40 overflow-y-auto border border-slate-100 text-xs space-y-1" id="listBatarki">
-                    <p class="text-slate-400 text-center py-3">لا توجد بيانات مفرزة</p>
+                <div class="bg-gray-50 rounded-xl p-2 max-h-40 overflow-y-auto border border-gray-100 text-xs space-y-1" id="listBatarki">
+                    <p class="text-gray-400 text-center py-3">لا توجد بيانات مفرزة</p>
                 </div>
             </div>
 
             <!-- 📌 3. قسم الرحيلي -->
             <div class="space-y-2">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-1">
-                    <h4 class="font-bold text-slate-900 flex items-center gap-2">
+                <div class="flex items-center justify-between border-b border-gray-200 pb-1">
+                    <h4 class="font-bold text-gray-900 flex items-center gap-2">
                         <i class="fa-solid fa-shop text-purple-600"></i> فرع الرحيلي
                     </h4>
                     <span id="countRehili" class="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-bold">0 وجبة</span>
                 </div>
-                <div class="bg-slate-50 rounded-xl p-2 max-h-40 overflow-y-auto border border-slate-100 text-xs space-y-1" id="listRehili">
-                    <p class="text-slate-400 text-center py-3">لا توجد بيانات مفرزة</p>
+                <div class="bg-gray-50 rounded-xl p-2 max-h-40 overflow-y-auto border border-gray-100 text-xs space-y-1" id="listRehili">
+                    <p class="text-gray-400 text-center py-3">لا توجد بيانات مفرزة</p>
                 </div>
             </div>
 
         </div>
 
-        <!-- 📊 التقرير الإحصائي الختامي والمجمع (أسفل السلايدر ثابت) -->
-        <div class="p-4 bg-slate-900 text-white border-t border-slate-800 space-y-3">
-            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+        <!-- 📊 كرت الخلاصة الإحصائية المجمعة بالأسفل -->
+        <div class="p-4 bg-gray-900 text-white border-t border-gray-800 space-y-3">
+            <h5 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1">
                 <i class="fa-solid fa-calculator"></i> الخلاصة الإجمالية لكافة الأقسام
             </h5>
             <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                <div class="bg-emerald-950/50 border border-emerald-500/30 p-2 rounded-lg">
+                <div class="bg-emerald-950/40 border border-emerald-500/20 p-2 rounded-lg">
                     <span class="text-emerald-400 block mb-0.5"><i class="fa-solid fa-circle-check"></i> تسلموا</span>
                     <span id="totalDelivered" class="text-base font-bold">0</span>
                 </div>
-                <div class="bg-amber-950/50 border border-amber-500/30 p-2 rounded-lg">
+                <div class="bg-amber-950/40 border border-amber-500/20 p-2 rounded-lg">
                     <span class="text-amber-400 block mb-0.5"><i class="fa-solid fa-clock"></i> انتظار</span>
                     <span id="totalPending" class="text-base font-bold">0</span>
                 </div>
-                <div class="bg-rose-950/50 border border-rose-500/30 p-2 rounded-lg">
+                <div class="bg-rose-950/40 border border-rose-500/20 p-2 rounded-lg">
                     <span class="text-rose-400 block mb-0.5"><i class="fa-solid fa-ban"></i> ملغي</span>
                     <span id="totalCanceled" class="text-base font-bold">0</span>
                 </div>
             </div>
-            <div class="bg-slate-800 p-2.5 rounded-lg flex justify-between items-center text-sm font-bold border border-slate-700">
-                <span><i class="fa-solid fa-layer-group text-slate-400 mr-1"></i> المجموع الإجمالي العام:</span>
+            <div class="bg-gray-800 p-2.5 rounded-lg flex justify-between items-center text-sm font-bold border border-gray-700">
+                <span><i class="fa-solid fa-layer-group text-gray-400 mr-1"></i> المجموع الإجمالي العام:</span>
                 <span id="grandTotal" class="text-emerald-400 text-base">0 وجبة</span>
             </div>
         </div>
     </aside>
 
-    <!-- نافذة منبثقة لتغيير الـ Global Password للمشرف عبر السيرفر السحابي -->
+    <!-- مودال المشرف لتغيير الـ Password -->
     <div id="adminModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-slate-100">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl border border-gray-100">
             <div class="text-center">
                 <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
                     <i class="fa-solid fa-key"></i>
                 </div>
-                <h3 class="font-bold text-slate-900 text-lg">لوحة تحكم المشرف الذكية</h3>
-                <p class="text-xs text-slate-500">تحديث كلمة المرور السحابية لجميع الأجهزة</p>
+                <h3 class="font-bold text-gray-900 text-lg">لوحة تحكم المشرف الذكية</h3>
+                <p class="text-xs text-gray-500">تحديث كلمة المرور السحابية لجميع الأجهزة</p>
             </div>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">رمز التحقق للمشرف</label>
-                    <input type="password" id="adminCodeInput" placeholder="أدخل كود المشرف (71138)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-center font-mono">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">رمز التحقق للمشرف</label>
+                    <input type="password" id="adminCodeInput" placeholder="أدخل كود المشرف (71138)" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-center font-mono focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">كلمة المرور العامة الحالية للاستخدام</label>
-                    <input type="text" id="siteGlobalPassInput" value="yumlez2025" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-center font-mono bg-slate-50 text-slate-700">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">كلمة المرور العامة الحالية للاستخدام</label>
+                    <input type="text" id="siteGlobalPassInput" value="yumlez2025" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-center font-mono bg-gray-50 text-gray-700 focus:outline-none">
                 </div>
             </div>
             <div class="flex gap-2 pt-2">
-                <button id="saveAdminBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg text-sm transition-colors shadow-xs">حفظ وتحديث سحابي</button>
-                <button id="closeAdminBtn" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-2 rounded-lg text-sm transition-colors">إغلاق</button>
+                <button id="saveAdminBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg text-sm transition-colors shadow-sm">حفظ وتحديث سحابي</button>
+                <button id="closeAdminBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 rounded-lg text-sm transition-colors">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- فوتر بسيط -->
-    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-400 mt-auto">
+    <footer class="bg-white border-t border-gray-200 py-3 text-center text-xs text-gray-400 mt-auto">
         جميع الحقوق محفوظة © 2026 • نظام جرد الوجبات الموحد
     </footer>
 
-    <!-- منطق وتفاعلات النظام بالـ JavaScript المحدث بالكامل -->
     <script>
-        // داتا تجريبية تحاكي قاعدة البيانات الحقيقية
+        // داتا المحاكاة
         let subscribers = [
             { id: "101", phone: "0501111111", name: "أحمد محمد العتيبي", section: "التوصيل", meal: "وجبة كيتو - دجاج غداء", status: "انتظار" },
             { id: "102", phone: "0502222222", name: "خالد عبد الله البقمي", section: "البترجي", meal: "وجبة دايت - لحم وعيش", status: "انتظار" },
@@ -267,13 +259,11 @@
             { id: "105", phone: "0505555555", name: "محمد علي الشمراني", section: "البترجي", meal: "وجبة متوازنة - دجاج مسحب", status: "انتظار" }
         ];
 
-        // الرموز الثابتة المعتمدة
         const VALID_BRANCH_CODE = "yumlez2025";
         const VALID_ADMIN_CODE = "71138";
-
         let currentActiveSubscriber = null;
 
-        // عناصر الواجهة الأساسية
+        // ربط العناصر
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const subscriberCard = document.getElementById('subscriberCard');
@@ -288,13 +278,11 @@
         const resetToPendingBtn = document.getElementById('resetToPendingBtn');
         const recentActivitiesTable = document.getElementById('recentActivitiesTable');
 
-        // عناصر السلايدر الجانبي
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const openSidebarBtn = document.getElementById('openSidebarBtn');
         const closeSidebarBtn = document.getElementById('closeSidebarBtn');
         
-        // قوائم فرز السلايدر
         const listDelivery = document.getElementById('listDelivery');
         const listBatarki = document.getElementById('listBatarki');
         const listRehili = document.getElementById('listRehili');
@@ -302,13 +290,11 @@
         const countBatarki = document.getElementById('countBatarki');
         const countRehili = document.getElementById('countRehili');
 
-        // عناصر الإحصائيات المجمعة في السلايدر
         const totalDelivered = document.getElementById('totalDelivered');
         const totalPending = document.getElementById('totalPending');
         const totalCanceled = document.getElementById('totalCanceled');
         const grandTotal = document.getElementById('grandTotal');
 
-        // عناصر مودال المشرف
         const adminLoginBtn = document.getElementById('adminLoginBtn');
         const adminModal = document.getElementById('adminModal');
         const closeAdminBtn = document.getElementById('closeAdminBtn');
@@ -316,12 +302,12 @@
         const adminCodeInput = document.getElementById('adminCodeInput');
         const siteGlobalPassInput = document.getElementById('siteGlobalPassInput');
 
-        // فتح وإغلاق السلايدر الجانبي للتقارير
+        // السلايدر الجانبي
         openSidebarBtn.addEventListener('click', () => {
             sidebarOverlay.classList.remove('hidden');
             setTimeout(() => sidebarOverlay.classList.add('opacity-100'), 10);
             sidebar.classList.remove('translate-x-full');
-            updateSidebarReports(); // تحديث فوري وجرد التقارير عند الفتح
+            updateSidebarReports();
         });
 
         const closeSidebar = () => {
@@ -332,12 +318,12 @@
         closeSidebarBtn.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // مودال المشرف لتحديث الباسورد السحابي
+        // مودال المشرف
         adminLoginBtn.addEventListener('click', () => adminModal.classList.remove('hidden'));
         closeAdminBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
         saveAdminBtn.addEventListener('click', () => {
             if(adminCodeInput.value === VALID_ADMIN_CODE) {
-                alert(`تم تحديث كلمة المرور العامة إلى: [ ${siteGlobalPassInput.value} ] وتعميمها سحابياً بنجاح!`);
+                alert(`تم تحديث كلمة المرور العامة إلى: [ ${siteGlobalPassInput.value} ] بنجاح!`);
                 adminModal.classList.add('hidden');
                 adminCodeInput.value = "";
             } else {
@@ -345,7 +331,7 @@
             }
         });
 
-        // منطق البحث المباشر
+        // عمليات البحث والتسليم
         searchBtn.addEventListener('click', performSearch);
         searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
 
@@ -354,18 +340,16 @@
             if(!query) return;
 
             const found = subscribers.find(s => s.id === query || s.phone === query);
-
             if(found) {
                 currentActiveSubscriber = found;
                 subName.textContent = found.name;
                 subSection.textContent = found.section;
                 subMealType.textContent = found.meal;
                 branchCodeInput.value = "";
-                
                 updateCardStatusUI(found.status);
                 subscriberCard.classList.remove('hidden');
             } else {
-                alert('خطأ: المشترك غير موجود أو أن الرقم غير صحيح في نظام اليوم!');
+                alert('خطأ: المشترك غير موجود!');
                 subscriberCard.classList.add('hidden');
                 currentActiveSubscriber = null;
             }
@@ -373,19 +357,19 @@
 
         function updateCardStatusUI(status) {
             if(status === 'انتظار') {
-                subStatusBadge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-400";
+                subStatusBadge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/20 text-amber-500";
                 subStatusBadge.textContent = "قيد الانتظار";
                 postActionPanel.classList.add('hidden');
                 actionDeliverBtn.disabled = false;
                 actionCancelBtn.disabled = false;
             } else if(status === 'مستلم') {
-                subStatusBadge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-400";
+                subStatusBadge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-600";
                 subStatusBadge.textContent = "تم التسليم بنجاح";
                 postActionPanel.classList.remove('hidden');
                 actionDeliverBtn.disabled = true;
                 actionCancelBtn.disabled = true;
             } else if(status === 'ملغي') {
-                subStatusBadge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-rose-500/20 text-rose-400";
+                subStatusBadge.className = "px-3 py-1 text-xs font-semibold rounded-full bg-rose-500/20 text-rose-500";
                 subStatusBadge.textContent = "ملغي اليوم";
                 postActionPanel.classList.remove('hidden');
                 actionDeliverBtn.disabled = true;
@@ -393,114 +377,94 @@
             }
         }
 
-        // تنفيذ إجراء: تسليم أو إلغاء (الشاشة الرئيسية)
         actionDeliverBtn.addEventListener('click', () => processAction('مستلم'));
         actionCancelBtn.addEventListener('click', () => processAction('ملغي'));
 
         function processAction(newStatus) {
             if(!currentActiveSubscriber) return;
-            
-            // التحقق من كود الفرع المدخل
             if(branchCodeInput.value !== VALID_BRANCH_CODE) {
-                alert('رمز التحقق الخاص بالفرع غير صحيح! يرجى إعادة المحاولة.');
+                alert('رمز التحقق الخاص بالفرع غير صحيح!');
                 return;
             }
-
             currentActiveSubscriber.status = newStatus;
-            alert(newStatus === 'مستلم' ? 'تم تأكيد الهوية وتسليم الوجبة بنجاح!' : 'تم إلغاء الوجبة لليوم بنجاح.');
-            
+            alert(newStatus === 'مستلم' ? 'تم تسليم الوجبة بنجاح!' : 'تم إلغاء الوجبة لليوم.');
             updateCardStatusUI(newStatus);
             addToRecentActivities(currentActiveSubscriber);
             updateSidebarReports();
         }
 
-        // زر الإرجاع لانتظار (التعديل من الشاشة الرئيسية بعد التسليم)
         resetToPendingBtn.addEventListener('click', () => {
             if(!currentActiveSubscriber) return;
             currentActiveSubscriber.status = 'انتظار';
-            alert('تم إعادة حالة الوجبة إلى [ قيد الانتظار ] بنجاح.');
+            alert('تم إعادة الطلب لقيد الانتظار.');
             updateCardStatusUI('انتظار');
             addToRecentActivities(currentActiveSubscriber);
             updateSidebarReports();
         });
 
-        // إضافة وتحديث اللوحة السريعة بأسفل الصفحة الرئيسية
         function addToRecentActivities(sub) {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-            
-            // إزالة نص الفراغ
-            if(recentActivitiesTable.innerHTML.includes('لا توجد عمليات')) {
-                recentActivitiesTable.innerHTML = '';
-            }
+            if(recentActivitiesTable.innerHTML.includes('لا توجد عمليات')) recentActivitiesTable.innerHTML = '';
 
             let badgeClass = sub.status === 'مستلم' ? 'bg-emerald-100 text-emerald-800' : (sub.status === 'ملغي' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800');
 
             const row = document.createElement('tr');
-            row.className = "border-b border-slate-100 hover:bg-slate-50 transition-colors";
+            row.className = "border-b border-gray-100 hover:bg-gray-50 transition-colors";
             row.innerHTML = `
-                <td class="px-4 py-3 font-semibold text-slate-900">${sub.name}</td>
-                <td class="px-4 py-3 text-slate-500">${sub.section}</td>
-                <td class="px-4 py-3 text-xs font-mono text-slate-400">${timeStr}</td>
+                <td class="px-4 py-3 font-semibold text-gray-900">${sub.name}</td>
+                <td class="px-4 py-3 text-gray-500">${sub.section}</td>
+                <td class="px-4 py-3 text-xs font-mono text-gray-400">${timeStr}</td>
                 <td class="px-4 py-3 text-center">
-                    <span class="px-2.5 py-1 rounded-sm text-xs font-bold ${badgeClass}">${sub.status}</span>
+                    <span class="px-2.5 py-1 rounded text-xs font-bold ${badgeClass}">${sub.status}</span>
                 </td>
             `;
             recentActivitiesTable.insertBefore(row, recentActivitiesTable.firstChild);
         }
 
-        // ==========================================
-        // محرك بناء وتحديث التقارير المجمعة للسلايدر الجانبي
-        // ==========================================
+        // محرك التقارير المجمعة للسلايدر الجانبي الأصلي
         function updateSidebarReports() {
-            // تصفية داتا الفروع الثلاثة
             const deliveryMeals = subscribers.filter(s => s.section === "التوصيل");
             const batarkiMeals = subscribers.filter(s => s.section === "البترجي");
             const rehiliMeals = subscribers.filter(s => s.section === "الرحيلي");
 
-            // عرض عدد الوجبات بجانب عناوين الأقسام بالسلايدر
             countDelivery.textContent = `${deliveryMeals.length} وجبة`;
             countBatarki.textContent = `${batarkiMeals.length} وجبة`;
             countRehili.textContent = `${rehiliMeals.length} وجبة`;
 
-            // بناء القوائم التفصيلية الفرعية
             renderSectionList(listDelivery, deliveryMeals);
             renderSectionList(listBatarki, batarkiMeals);
             renderSectionList(listRehili, rehiliMeals);
 
-            // حساب الإحصائيات الختامية المجمعة من جميع الأقسام معاً
             let deliveredCount = subscribers.filter(s => s.status === 'مستلم').length;
             let pendingCount = subscribers.filter(s => s.status === 'انتظار').length;
             let canceledCount = subscribers.filter(s => s.status === 'ملغي').length;
             let totalCount = subscribers.length;
 
-            // حقن الأرقام بداخل الكرت الإحصائي المجمع
             totalDelivered.textContent = deliveredCount;
             totalPending.textContent = pendingCount;
             totalCanceled.textContent = canceledCount;
             grandTotal.textContent = `${totalCount} وجبة`;
         }
 
-        // دالة مساعدة لطباعة أسطر البيانات تحت كل عنوان فرع
         function renderSectionList(containerElement, mealsArray) {
             if(mealsArray.length === 0) {
-                containerElement.innerHTML = `<p class="text-slate-400 text-center py-3">لا توجد بيانات مفرزة</p>`;
+                containerElement.innerHTML = `<p class="text-gray-400 text-center py-3">لا توجد بيانات مفرزة</p>`;
                 return;
             }
-
             containerElement.innerHTML = '';
             mealsArray.forEach(m => {
                 let statusColor = m.status === 'مستلم' ? 'text-emerald-600' : (m.status === 'ملغي' ? 'text-rose-500' : 'text-amber-500');
                 let statusIcon = m.status === 'مستلم' ? 'fa-circle-check' : (m.status === 'ملغي' ? 'fa-ban' : 'fa-clock');
 
                 const item = document.createElement('div');
-                item.className = "flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200/60 shadow-xs";
+                item.className = "flex justify-between items-center bg-white p-2 rounded-lg border border-gray-200 shadow-sm mb-1";
                 item.innerHTML = `
-                    <div class="flex flex-col">
-                        <span class="font-semibold text-slate-800">${m.name}</span>
-                        <span class="text-[10px] text-slate-400">${m.meal}</span>
+                    <div class="flex flex-col text-right">
+                        <span class="font-semibold text-gray-800">${m.name}</span>
+                        <span class="text-[10px] text-gray-400">${m.meal}</span>
                     </div>
-                    <span class="font-bold flex items-center gap-1 ${statusColor}">
+                    <span class="font-bold flex items-center gap-1 text-xs ${statusColor}">
                         <i class="fa-solid ${statusIcon}"></i> ${m.status}
                     </span>
                 `;
@@ -508,7 +472,6 @@
             });
         }
 
-        // تشغيل الجرد الإحصائي المبدئي عند تحميل الصفحة لأول مرة
         updateSidebarReports();
     </script>
 </body>
