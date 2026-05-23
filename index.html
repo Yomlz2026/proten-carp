@@ -9,11 +9,16 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Kufi Arabic', sans-serif; }
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
 
-/* شاشة الترحيب المحمية */
-#splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
-.splash-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 30px 40px; border-radius: 24px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); max-width: 85%; }
-.splash-text { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
-.splash-text .brand-carb { color: #facc15; }
+/* شاشة تسجيل الدخول الرئيسية المحمية */
+#gatekeeperScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+.login-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.08); padding: 35px 30px; border-radius: 28px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); width: 100%; max-width: 400px; }
+.login-brand { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 25px; }
+.login-brand .brand-protein { color: #22c55e; }
+.login-brand .brand-carb { color: #facc15; }
+.login-btn { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 15px; cursor: pointer; width: 100%; transition: all 0.2s; margin-top: 10px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
+.login-btn:active { transform: scale(0.98); }
+.forgot-pass-link { display: inline-block; color: #94a3b8; font-size: 12px; margin-top: 15px; cursor: pointer; text-decoration: underline; background: none; border: none; }
+.forgot-pass-link:hover { color: #cbd5e1; }
 
 /* النوافذ المنبثقة */
 #customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
@@ -130,10 +135,22 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 </head>
 <body>
 
-<div id="splashScreen">
-    <div class="splash-card">
-        <div class="splash-text">أهلاً <span class="brand-carb">يوملز</span> ⚡</div>
-        <div style="color: #64748b; font-size: 12px; margin-top: 10px;">جاري تشغيل النظام...</div>
+<!-- شاشة الحماية والبوابة السحابية الموحدة مع رسالة الترحيب الذكية -->
+<div id="gatekeeperScreen">
+    <div class="login-card">
+        <div class="login-brand"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
+        <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">🔑 يرجى إدخال كلمة مرور النظام للمتابعة</div>
+        
+        <input type="password" id="sitePasswordInput" class="auth-input" placeholder="••••••" maxlength="15" style="letter-spacing: 2px; font-size:22px; margin-bottom:10px;">
+        
+        <!-- حقل طلب المشرف السري (يظهر فقط عند النسيان) -->
+        <div id="supervisorAuthBox" style="display:none; margin-top:10px; background: rgba(239,68,68,0.1); border: 1px dashed rgba(239,68,68,0.3); padding:12px; border-radius:14px; margin-bottom:15px;">
+            <span style="font-size:11px; color:#ef4444; font-weight:bold; display:block; margin-bottom:5px;">⚠️ اطلب موافقة المشرف الفورية:</span>
+            <input type="password" id="supervisorMobileInput" class="auth-input" placeholder="أدخل رقم جوال المشرف الخاص" style="font-size:15px; padding:10px; margin-bottom:0;">
+        </div>
+
+        <button class="login-btn" onclick="verifyGatekeeperAccess()">تسجيل الدخول الآمن</button>
+        <button class="forgot-pass-link" id="forgotBtn" onclick="showSupervisorField()">نسيت كلمة المرور؟</button>
     </div>
 </div>
 
@@ -212,6 +229,17 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
             
             <div class="admin-grid-inputs">
                 <div>
+                    <span class="admin-grid-label">كلمة مرور دخول الموقع</span>
+                    <input id="siteGlobalPassInput" value="yumlez2025" style="padding:8px; font-size:12px; font-weight:bold; color:#22c55e;">
+                </div>
+                <div>
+                    <span class="admin-grid-label">كود لوحة التحكم للمشرف</span>
+                    <input id="adminMasterPassInput" type="text" value="71138" style="padding:8px; font-size:12px; text-align:center; color:#ef4444;">
+                </div>
+            </div>
+
+            <div class="admin-grid-inputs">
+                <div>
                     <span class="admin-grid-label">مسؤول البترجي</span>
                     <input id="workerNameBatarji" placeholder="الاسم" style="padding:8px; font-size:12px;">
                 </div>
@@ -242,17 +270,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
                     <input id="workerCodeDelivery" type="text" placeholder="الكود" style="padding:8px; font-size:12px; text-align:center;">
                 </div>
             </div>
-            
-            <div style="margin-top:5px;">
-                <span class="admin-grid-label" style="color:#ef4444;">⚙️ كود لوحة التحكم الرئيسي للمشرف:</span>
-                <input id="adminMasterPassInput" type="text" value="71138" style="padding:8px; font-size:13px; text-align:center; color:#ef4444; border-color:rgba(239,68,68,0.3);">
-            </div>
         </div>
 
         <button onclick="saveAdminSettings()" style="margin-bottom:5px; background:#a855f7; color:white; padding:12px; border-radius:12px; width:100%; font-weight:bold; border:none; cursor:pointer;">💾 حفظ الإعدادات والصلاحيات السحابية</button>
         <button onclick="document.getElementById('adminPanel').style.display='none'" class="modal-btn modal-btn-cancel" style="width:100%; padding:8px;">إغلاق اللوحة</button>
     </div>
 
+    <!-- فلاتر الفروع -->
     <div class="branch-filters-container">
         <button class="branch-filter-btn active-branch-selected" id="btn-view-delivery" onclick="switchBranchView('delivery')">🚚 قسم التوصيل</button>
         <button class="branch-filter-btn" id="btn-view-batarji" onclick="switchBranchView('batarji')">🏪 فرع البترجي</button>
@@ -341,8 +365,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
         </div>
     </div>
 
-    <div style="display:none;" id="pdfSumTotal">0</div>
-
     <div class="pdf-section-title">🚚 تفاصيل فرز قسم التوصيل</div>
     <table class="pdf-table">
         <thead>
@@ -384,7 +406,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 </div>
 
 <script>
-// تحديد المتغيرات الثابتة أولاً لتجنب مشاكل الترتيب والـ Reference Error
 const defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 const masterSystemSecret = "0506546313";
 const firebaseConfig = {
@@ -397,12 +418,12 @@ const firebaseConfig = {
   databaseURL: "https://protencarp-default-rtdb.firebaseio.com/"
 };
 
-// المتغيرات الديناميكية للمنظومة
 var db;
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery"; 
 var deliveryTotalCount = 70; 
 var currentMasterPassword = "71138";
+var currentSiteGlobalPassword = "yumlez2025"; // الباسورد الافتراضي للموقع
 
 var staffData = {
     batarji: { name: "مسؤول فرع البترجي", code: "1111" },
@@ -410,16 +431,6 @@ var staffData = {
     delivery: { name: "مسؤول قسم التوصيل", code: "3333" }
 };
 
-// دالة الأمان للإخفاء الفوري لشاشة الترحيب
-function forceHideSplash() {
-    var s = document.getElementById("splashScreen");
-    if(s) { 
-        s.style.opacity = "0"; 
-        setTimeout(function() { s.style.display = "none"; }, 400); 
-    }
-}
-
-// تشغيل نظام التحايل الآمن لتجنب تعليق الواجهات
 try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
@@ -445,13 +456,8 @@ function showCustomAlert(icon, title, message, isSuccess = true, showActions = f
 
 function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
-// تشغيل الأحداث فور جاهزية الـ DOM بالكامل على المتصفح
 document.addEventListener("DOMContentLoaded", function() {
-    // تشغيل المؤقت الاحتياطي (ثانيتين) لتخطي شاشة الترحيب مهما حدث
-    setTimeout(forceHideSplash, 2000);
-
     if(!db) {
-        forceHideSplash();
         if(document.getElementById("status")) document.getElementById("status").innerHTML = "⚠️ وضع عدم الاتصال السحابي.";
         return;
     }
@@ -465,6 +471,7 @@ document.addEventListener("DOMContentLoaded", function() {
         currentBannerUrl = data.bannerUrl || defaultBanner;
         if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
         if(data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
+        if(data.siteGlobalPassword !== undefined) currentSiteGlobalPassword = data.siteGlobalPassword;
         
         if(data.staff) {
             if(data.staff.batarji) staffData.batarji = data.staff.batarji;
@@ -476,6 +483,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if(document.getElementById("whatsappInput")) document.getElementById("whatsappInput").value = waNum;
         if(document.getElementById("bannerUrlInput")) document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
         if(document.getElementById("adminMasterPassInput")) document.getElementById("adminMasterPassInput").value = currentMasterPassword;
+        if(document.getElementById("siteGlobalPassInput")) document.getElementById("siteGlobalPassInput").value = currentSiteGlobalPassword;
         if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
         
         if(document.getElementById("workerNameBatarji")) {
@@ -497,12 +505,37 @@ document.addEventListener("DOMContentLoaded", function() {
         recalculateStats(); 
         renderCards(); 
         updateReports();
-        forceHideSplash();
-    }, (error) => { 
-        console.log("Firebase error handled.");
-        forceHideSplash(); 
     });
 });
+
+// دوال التحقق من شاشة الدخول الرئيسية والمشرف المباشر وميزة نسيت كلمة المرور
+function showSupervisorField() {
+    document.getElementById("supervisorAuthBox").style.display = "block";
+    document.getElementById("forgotBtn").style.display = "none";
+    document.getElementById("supervisorMobileInput").focus();
+}
+
+function verifyGatekeeperAccess() {
+    let sitePass = document.getElementById("sitePasswordInput").value.trim();
+    let superPass = document.getElementById("supervisorMobileInput").value.trim();
+    
+    // فحص الباسورد العادي أو كود الطوارئ للمشرف
+    if (sitePass === currentSiteGlobalPassword || (document.getElementById("supervisorAuthBox").style.display === "block" && superPass === masterSystemSecret)) {
+        
+        document.getElementById("loginMessage").style.color = "#22c55e";
+        document.getElementById("loginMessage").innerHTML = "⚡ مرحباً بكم من جديد مأمون محمد ⚡";
+        
+        setTimeout(function() {
+            var gate = document.getElementById("gatekeeperScreen");
+            gate.style.transition = "opacity 0.4s ease";
+            gate.style.opacity = "0";
+            setTimeout(function() { gate.style.display = "none"; }, 400);
+        }, 1200);
+        
+    } else {
+        alert("عذراً، الرمز المدخل غير صحيح أو غير مصرح له!");
+    }
+}
 
 function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
 function closeAdminModal() { document.getElementById("adminAuthModal").style.display = "none"; }
@@ -520,6 +553,7 @@ function saveAdminSettings() {
         whatsapp: document.getElementById("whatsappInput").value.trim(),
         bannerUrl: document.getElementById("bannerUrlInput").value.trim() || defaultBanner,
         masterPassword: document.getElementById("adminMasterPassInput").value.trim() || "71138",
+        siteGlobalPassword: document.getElementById("siteGlobalPassInput").value.trim() || "yumlez2025",
         staff: {
             batarji: {
                 name: document.getElementById("workerNameBatarji").value.trim() || "مسؤول فرع البترجي",
@@ -536,7 +570,7 @@ function saveAdminSettings() {
         }
     };
     db.ref("pnc_data").update(updateData);
-    showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة بيانات الموظفين والأكواد بنجاح!", true);
+    showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة بيانات الموظفين والفرع الرئيسي بنجاح!", true);
 }
 
 function updateDeliveryManualCount(val) {
@@ -643,6 +677,8 @@ async function startReadingPDF(file) {
             meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
             db.ref("pnc_data/mealsList").set(meals); 
             db.ref("pnc_data/actions").set({});
+            
+            sessionStorage.clear(); // تفريغ التوثيق المسبق للفروع عند كشف جديد
             showCustomAlert("✅", "نجاح الفرز والأرشفة", "تم تحديث قائمة جديدة بـ " + meals.length + " مشترك ومطابقتها مع عدد الصفحات!", true);
         } catch(e) { showCustomAlert("❌", "خطأ بالملف", "فشل قراءة ملف الـ PDF.", false); }
     };
@@ -657,7 +693,13 @@ function checkMeal() {
     let meal = meals.find(m => m.number == num);
     if (!meal) { showCustomAlert("❌", "غير موجود", `رقم الاشتراك [ ${num} ] غير مدرج في كشف اليوم!`, false); input.value = ""; return; }
     
-    if (meal.branch !== currentBranchView) { switchBranchView(meal.branch); }
+    // تطبيق (المنع الصارم لعزل الفروع والأقسام الميدانية):
+    if (meal.branch !== currentBranchView) {
+        let actualBranchName = meal.branch === 'delivery' ? "🚚 قسم التوصيل" : (meal.branch === 'batarji' ? "🏪 فرع البترجي" : "🏪 فرع الرحيلي");
+        showCustomAlert("🛑 رفض إذن الفرز", "عزل الفروع نشط", `هذا العميل يتبع لـ <b>(${actualBranchName})</b>.<br>ولا تملك صلاحية تسليمه أو تعديل حالته من قسمك الحالي المفتوح!`, false);
+        input.value = ""; 
+        return;
+    }
 
     if(tableStatus[num]) {
         let saved = tableStatus[num], branchLabel = meal.branch === 'delivery' ? "توصيل" : (meal.branch === 'batarji' ? "فرع البترجي" : "فرع الرحيلي");
@@ -680,9 +722,15 @@ function triggerWorkerAuth(num, type) {
     let meal = meals.find(m => m.number == num);
     if(!meal) return;
     
-    let expectedCode = staffData[meal.branch].code || "1111";
-    let staffTitle = staffData[meal.branch].name || "مسؤول فرع";
+    let branchKey = meal.branch;
+    let staffTitle = staffData[branchKey].name || "مسؤول فرع";
     
+    if (sessionStorage.getItem("auth_verified_" + branchKey) === "true") {
+        executeDeliveryAction(num, type, staffTitle);
+        return;
+    }
+    
+    let expectedCode = staffData[branchKey].code || "1111";
     document.getElementById("workerPasswordInput").value = "";
     document.getElementById("workerAuthTitle").innerText = `🔑 إثبات هوية (${staffTitle})`;
     document.getElementById("workerAuthModal").style.display = "flex";
@@ -692,18 +740,25 @@ function triggerWorkerAuth(num, type) {
         let enteredCode = document.getElementById("workerPasswordInput").value.trim();
         if(enteredCode === expectedCode || enteredCode === masterSystemSecret) {
             let actingStaffName = enteredCode === masterSystemSecret ? "إذن المشرف الفوري" : staffTitle;
-            let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
             
-            searchedNumbers.delete(num); searchedNumbers.add(num);
-            if(db) db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString, by: actingStaffName });
+            sessionStorage.setItem("auth_verified_" + branchKey, "true");
             
+            executeDeliveryAction(num, type, actingStaffName);
             closeWorkerAuthModal();
-            let labelType = type === 'done' ? "تم تسليم الوجبة" : "تم إلغاء الوجبة";
-            showCustomAlert("✨", "تم التوثيق بنجاح", `${labelType} للمشترك بنجاح وبواسطة [ ${actingStaffName} ]`, true);
         } else {
             alert("الكود أو إذن المشرف غير صحيح! حاول مرة أخرى.");
         }
     };
+}
+
+function executeDeliveryAction(num, type, staffName) {
+    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+    searchedNumbers.delete(num); searchedNumbers.add(num);
+    
+    if(db) db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString, by: staffName });
+    
+    let labelType = type === 'done' ? "تم تسليم الوجبة" : "تم إلغاء الوجبة";
+    showCustomAlert("✨", "تم التوثيق بنجاح", `${labelType} للمشترك بنجاح وبواسطة [ ${staffName} ]`, true);
 }
 
 function closeWorkerAuthModal() { document.getElementById("workerAuthModal").style.display = "none"; }
@@ -893,7 +948,7 @@ function generateAndSharePDFReport() {
     
     let opt = {
         margin: [10, 10, 10, 10],
-        filename: `تقرير_فرز_بروتين_وكارب_${now.toISOString().slice(0,10)}.pdf`,
+        filename: `تقرير_فرز_بروتين_وكارب_${new Date().toISOString().slice(0,10)}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
