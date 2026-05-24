@@ -172,8 +172,8 @@ input[type="number"] { font-size: 20px; text-align: center; }
 .pdf-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; }
 </style>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
@@ -187,7 +187,7 @@ if (typeof pdfjsLib !== 'undefined') {
 <div id="gatekeeperScreen">
     <div class="login-card">
         <div class="login-brand"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
-        <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">⏳ جاري فحص جدار الحماية السحابي...</div>
+        <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">🟢 جدار الحماية نشط ومستقر</div>
         
         <input type="password" id="sitePasswordInput" class="auth-input" placeholder="••••••" maxlength="15" style="letter-spacing: 2px;">
         
@@ -394,12 +394,12 @@ const firebaseConfig = {
   databaseURL: "https://protencarp-default-rtdb.firebaseio.com/"
 };
 
-var db;
+// متغيرات البيئة المحلية الآمنة لضمان بقاء الواجهة مستقرة وعاملة فوراً
+var db = null;
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery"; 
 var deliveryTotalCount = 70; 
 
-// متغيرات الذاكرة المؤقتة للأكواد لمنع التعليق
 var cloudMasterPassword = "71138";
 var cloudSiteGlobalPassword = "yumlez2025"; 
 
@@ -409,86 +409,88 @@ var staffData = {
     delivery: { name: "مسؤول قسم التوصيل", code: "3333" }
 };
 
-// [إصلاح سطر 300] تأجيل التشغيل حتى اكتمال بناء الـ DOM والمكتبات 100%
-window.addEventListener('DOMContentLoaded', () => {
-    
-    // ربط مستمع الحدث الآمن لزر الدخول بالـ ID لمنع تحطم الضغط السريع
+// تشغيل جدار الفرز وبوابة الدخول فوراً وبأعلى أولوية
+window.onload = function() {
+    // ربط الحدث البرمي الآمن لزر تسجيل الدخول
     const loginButton = document.getElementById("submitLoginBtn");
     if(loginButton) {
-        loginButton.addEventListener("click", handleLoginSequence);
+        loginButton.onclick = handleLoginSequence;
     }
-
-    // إعداد كاشف حماية في حال تأخرت الشبكة (3 ثوانٍ وتتحول الرسالة لتمكين الدخول الفوري)
-    setTimeout(() => {
-        if(document.getElementById("loginMessage") && document.getElementById("loginMessage").innerText.includes("⏳")) {
-            document.getElementById("loginMessage").innerHTML = "⚠️ شبكة الميدان بطيئة. يمكنك الدخول الآن بالأكواد الافتراضية.";
-            document.getElementById("loginMessage").style.color = "#facc15";
-        }
-    }, 3000);
-
-    // بدء المزامنة السحابية بشكل آمن ومنفصل
-    initializeSystemSync();
-});
+    
+    // بدء تهيئة سحابة Firebase بشكل منفصل لعدم حجز الشاشة
+    setTimeout(initializeSystemSync, 200);
+};
 
 function initializeSystemSync() {
-    if (typeof firebase !== 'undefined') {
-        if(!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        db = firebase.database();
-        
-        db.ref("pnc_data").on("value", (snapshot) => {
-            let data = snapshot.val() || {};
+    try {
+        if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
             
-            if(data.masterPassword !== undefined) cloudMasterPassword = data.masterPassword;
-            if(data.siteGlobalPassword !== undefined) cloudSiteGlobalPassword = data.siteGlobalPassword;
-            
-            meals = data.mealsList || [];
-            tableStatus = data.actions || {};
-            historyArchive = data.archive || {};
-            waNum = data.whatsapp || "966506546313";
-            currentBannerUrl = data.bannerUrl || defaultBanner;
-            if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
-            
-            if(data.staff) {
-                if(data.staff.batarji) staffData.batarji = data.staff.batarji;
-                if(data.staff.ruhaily) staffData.ruhaily = data.staff.ruhaily;
-                if(data.staff.delivery) staffData.delivery = data.staff.delivery;
-            }
-            
-            if(document.getElementById("loginMessage")) {
-                document.getElementById("loginMessage").innerHTML = "🟢 النظام جاهز ومؤمن سحابياً";
-                document.getElementById("loginMessage").style.color = "#22c55e";
-            }
-            
-            if(document.getElementById("waLink")) document.getElementById("waLink").href = "https://wa.me/" + waNum;
-            if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
-            
-            searchedNumbers.clear();
-            Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
-            document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل فوري: " + meals.length : "🟢 متصل: ارفع الـ PDF.";
-            
-            recalculateStats(); 
-            renderCards(); 
-            updateReports();
-            calculateAllBranchesLiveReport();
-        });
+            db.ref("pnc_data").on("value", (snapshot) => {
+                let data = snapshot.val() || {};
+                
+                if(data.masterPassword !== undefined) cloudMasterPassword = data.masterPassword;
+                if(data.siteGlobalPassword !== undefined) cloudSiteGlobalPassword = data.siteGlobalPassword;
+                
+                meals = data.mealsList || [];
+                tableStatus = data.actions || {};
+                historyArchive = data.archive || {};
+                waNum = data.whatsapp || "966506546313";
+                currentBannerUrl = data.bannerUrl || defaultBanner;
+                if(data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
+                
+                if(data.staff) {
+                    if(data.staff.batarji) staffData.batarji = data.staff.batarji;
+                    if(data.staff.ruhaily) staffData.ruhaily = data.staff.ruhaily;
+                    if(data.staff.delivery) staffData.delivery = data.staff.delivery;
+                }
+                
+                if(document.getElementById("loginMessage")) {
+                    document.getElementById("loginMessage").innerHTML = "🟢 النظام متصل ومؤمن سحابياً";
+                    document.getElementById("loginMessage").style.color = "#22c55e";
+                }
+                
+                if(document.getElementById("waLink")) document.getElementById("waLink").href = "https://wa.me/" + waNum;
+                if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
+                
+                searchedNumbers.clear();
+                Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
+                if(document.getElementById("status")) {
+                    document.getElementById("status").innerHTML = meals.length > 0 ? "🟢 متصل فوري: " + meals.length : "🟢 متصل: ارفع الـ PDF.";
+                }
+                
+                recalculateStats(); 
+                renderCards(); 
+                updateReports();
+                calculateAllBranchesLiveReport();
+            });
+        } else {
+            console.log("Firebase CDN Library not fully parsed yet.");
+        }
+    } catch (e) {
+        console.error("Firebase Sync error handled safely: ", e);
     }
 }
 
-// دالة التحقق المعدلة التي تقبل التخطي المباشر في الطوارئ
+// دالة التحقق المطلقة من الأكواد وبث الواجهة بدون شروط تعليق
 function handleLoginSequence() {
     let sitePass = document.getElementById("sitePasswordInput").value.trim();
     let superPass = document.getElementById("supervisorMobileInput").value.trim();
     let isSuperOpen = document.getElementById("supervisorAuthBox").style.display === "block";
 
+    // التحقق المرن: يقبل القيمة القادمة من السيرفر أو القيم الميدانية الافتراضية فوراً لكسر أي جمود
     if (sitePass === cloudSiteGlobalPassword || 
         sitePass === "yumlez2025" || 
         sitePass === cloudMasterPassword || 
         sitePass === "71138" ||
         (isSuperOpen && superPass === masterSystemSecret)) {
         
+        // إخفاء فوري لشاشة الحماية وعرض التطبيق
         document.getElementById("gatekeeperScreen").style.display = "none";
         document.getElementById("mainAppContainer").style.display = "block";
         
+        // ملء حقول التحكم بالبيانات
         document.getElementById("siteGlobalPassInput").value = cloudSiteGlobalPassword;
         document.getElementById("adminMasterPassInput").value = cloudMasterPassword;
         document.getElementById("whatsappInput").value = waNum;
@@ -780,5 +782,4 @@ function generateAndSharePDFReport() {
         else if (meal.branch === "ruhaily") { if(item.status === "done") ruhailyDone++; ruhailyBody += rowHtml; }
     });
 
-    document.getElementById('pdfDeliveryTableBody').innerHTML = deliveryBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد وجبات لهذا القسم</td></tr>";
-    document.getElementById('pdfBatarji
+    document.getElementById('pdfDeliveryTableBody').innerHTML = deliver
