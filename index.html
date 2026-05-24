@@ -318,20 +318,17 @@ function showSupervisorField() {
     document.getElementById("supervisorMobileInput").focus();
 }
 
-// 1. نظام الاتصال السحابي المباشر وحل التعليق
 function startFirebaseConnection() {
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.database();
     
-    // سحب البيانات مرة واحدة للتأكد من الأكواد قبل السماح بالدخول
     db.ref("pnc_data").once("value").then(snapshot => {
         isFirebaseReady = true;
         document.getElementById("loginMessage").innerHTML = "🟢 متصل بالسحابة: يرجى إدخال الرمز السري";
         applyCloudData(snapshot.val());
-        // تشغيل الاستماع الدائم بعد النجاح
         db.ref("pnc_data").on("value", snap => { applyCloudData(snap.val()); });
     }).catch(e => {
-        isFirebaseReady = true; // تفعيل كود الطوارئ
+        isFirebaseReady = true;
         document.getElementById("loginMessage").innerHTML = "⚠️ وضع الطوارئ: الرجاء إدخال الرمز الاحتياطي";
     });
 }
@@ -378,7 +375,6 @@ function handleLoginSequence() {
     } else { alert("عذراً، الرمز المدخل غير صحيح!"); }
 }
 
-// 2. استقلالية السلايدر الإحصائي
 function calculateAllBranchesLiveReport() {
     let stats = { delivery: {d:0, c:0, p:0}, batarji: {d:0, c:0, p:0}, ruhaily: {d:0, c:0, p:0} };
     meals.forEach(m => {
@@ -400,7 +396,6 @@ function verifyAdminCode() {
     } else { alert("الرمز غير صحيح!"); }
 }
 
-// 3. التفعيل الفعلي للأكواد في السحابة
 function saveAdminSettings() {
     if(!db) return;
     let updateData = {
@@ -430,7 +425,6 @@ function switchBranchView(view) {
     recalculateStats(); renderCards(); updateReports();
 }
 
-// 4. استخراج الاسم الحقيقي بدقة من الـ PDF
 async function startReadingPDF(file) {
     if(!file || !db) return;
     showCustomAlert("⏳", "جاري الفرز", "يتم الآن قراءة وتحليل ملف المشتركين...", false, false, null);
@@ -456,8 +450,11 @@ async function startReadingPDF(file) {
                         let numMatch = line.match(/\b\d{5,8}\b/);
                         if (numMatch) { 
                             detectedNumber = numMatch[0]; 
-                            // تنظيف السطر لاستخراج الاسم الصافي
-                            let rawName = line.replace(detectedNumber, "").replace(/Pickup Branch.*/gi, "").replace(/بترجي|رحيلي/gi, "").replace(/[:\-\*]/g, "").trim();
+                            let rawName = line.replace(detectedNumber, "")
+                                              .replace(/Pickup Branch/gi, "")
+                                              .replace(/بترجي|رحيلي|batarji|rhili/gi, "")
+                                              .replace(/[:\-\*#]/g, "")
+                                              .trim();
                             detectedName = rawName || "مشترك"; 
                         }
                     }
@@ -502,7 +499,6 @@ function triggerWorkerAuth(num, type) {
     };
 }
 
-// 5. توثيق المسؤول عن العملية
 function executeDeliveryAction(num, type, staffName) {
     let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
     searchedNumbers.delete(num); searchedNumbers.add(num);
@@ -510,7 +506,6 @@ function executeDeliveryAction(num, type, staffName) {
 }
 function closeWorkerAuthModal() { document.getElementById("workerAuthModal").style.display = "none"; }
 
-// 6. عرض الإحصائيات مع حالة الانتظار
 function recalculateStats() {
     let d = 0, c = 0, p = 0;
     meals.forEach(m => {
@@ -637,4 +632,3 @@ window.onload = function() {
 </script>
 </body>
 </html>
-
