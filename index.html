@@ -263,6 +263,7 @@ if (typeof pdfjsLib !== 'undefined') {
     <div class="reports-tabs">
         <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">✅ المستلمون</button>
         <button class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">❌ الملغيون</button>
+        <button class="reports-tab active-tab" style="color:#e2e8f0; border-bottom-color:#e2e8f0;" id="tab-pending" onclick="switchTab('pending')">⏳ قيد الانتظار</button>
         <button class="reports-tab archive-tab" id="tab-archive" onclick="switchTab('archive')">📊 أرشيف الأيام</button>
     </div>
     <div class="reports-content" id="reportsContent"></div>
@@ -367,9 +368,9 @@ if (typeof pdfjsLib !== 'undefined') {
         <div class="pdf-sum-box"><div style="color:#a855f7;">مستلمي الرحيلي</div><div class="pdf-sum-val" id="pdfSumRuhailyDone">0</div><div id="pdfLabelStaffRuhaily">--</div></div>
     </div>
     <div style="text-align:center; font-weight:bold; margin-bottom:10px;">الإجمالي: مستلم <span id="pdfMetaGlobalDone">0</span> | ملغى <span id="pdfMetaGlobalCancel">0</span> | كلي <span id="pdfMetaGlobalTotal">0</span> | معلق <span id="pdfMetaGlobalPending">0</span></div>
-    <div class="pdf-section-title">🚚 تفاصيل فرز قسم التوصيل</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>الوقت</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
-    <div class="pdf-section-title">🏪 تفاصيل فرز فرع البترجي</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>الوقت</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
-    <div class="pdf-section-title">🏪 تفاصيل فرز فرع الرحيلي</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>الوقت</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
+    <div class="pdf-section-title">🚚 تفاصيل فرز قسم التوصيل</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>الموقع (المسؤول)</th><th>الوقت</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
+    <div class="pdf-section-title">🏪 تفاصيل فرز فرع البترجي</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>الموقع (المسؤول)</th><th>الوقت</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
+    <div class="pdf-section-title">🏪 تفاصيل فرز فرع الرحيلي</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>الموقع (المسؤول)</th><th>الوقت</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
 </div>
 
 <script>
@@ -508,9 +509,11 @@ function calculateAllBranchesLiveReport() {
             if(item.status === "cancel") stats[meal.branch].c++;
         }
     });
-    if(document.getElementById("drawerDeliveryReport")) document.getElementById("drawerDeliveryReport").innerHTML = `✅ مستلم: ${stats.delivery.d} | ❌ ملغى: ${stats.delivery.c}`;
-    if(document.getElementById("drawerBatarjiReport")) document.getElementById("drawerBatarjiReport").innerHTML = `✅ مستلم: ${stats.batarji.d} | ❌ ملغى: ${stats.batarji.c}`;
-    if(document.getElementById("drawerRuhailyReport")) document.getElementById("drawerRuhailyReport").innerHTML = `✅ مستلم: ${stats.ruhaily.d} | ❌ ملغى: ${stats.ruhaily.c}`;
+    let dTotal = stats.delivery.d + stats.batarji.d + stats.ruhaily.d;
+    let cTotal = stats.delivery.c + stats.batarji.c + stats.ruhaily.c;
+    if(document.getElementById("drawerDeliveryReport")) document.getElementById("drawerDeliveryReport").innerHTML = `✅ إجمالي المستلم: ${dTotal} | ❌ إجمالي الملغى: ${cTotal}`;
+    if(document.getElementById("drawerBatarjiReport")) document.getElementById("drawerBatarjiReport").innerHTML = `🚚 التوصيل: ${stats.delivery.d} مستلم | ${stats.delivery.c} ملغى`;
+    if(document.getElementById("drawerRuhailyReport")) document.getElementById("drawerRuhailyReport").innerHTML = `🏪 البترجي: ${stats.batarji.d} مستلم | ${stats.batarji.c} ملغى <br> 🏪 الرحيلي: ${stats.ruhaily.d} مستلم | ${stats.ruhaily.c} ملغى`;
 }
 
 function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
@@ -674,14 +677,27 @@ function switchTab(t) { activeTab = t; updateReports(); }
 function updateReports() {
     let content = document.getElementById("reportsContent"); if(!content) return;
     let html = "";
+    
+    if(activeTab === 'pending') {
+        let hasPending = false;
+        meals.forEach(meal => {
+            if(meal.branch === currentBranchView && (!tableStatus[meal.number] || !tableStatus[meal.number].status)) {
+                html += `<div class="report-card"><div><b># ${meal.number}</b><br>${meal.name}</div><div style="color:#e2e8f0; font-weight:bold;">⏳ قيد الانتظار</div></div>`;
+                hasPending = true;
+            }
+        });
+        content.innerHTML = hasPending ? html : "<p style='padding:20px; text-align:center;'>لا توجد وجبات قيد الانتظار</p>";
+        return;
+    }
+
     if(currentBranchView === "delivery" && activeTab !== 'archive') {
-        html += `<div class="delivery-manual-box"><input type="number" id="manualDeliveryCountInput" onchange="updateDeliveryManualCount(this.value)" value="${deliveryTotalCount}" /><button class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">📦 تسليم وجبات التوصيل معاً</button></div>`;
+        html += `<div class="delivery-manual-box"><button class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">📦 تسليم وجبات التوصيل معاً</button></div>`;
     }
     let numbers = Array.from(searchedNumbers);
     numbers.forEach(num => {
         let meal = meals.find(m => m.number == num), item = tableStatus[num] || {};
         if(meal && meal.branch === currentBranchView && item.status === activeTab) {
-            html += `<div class="report-card"><div><b># ${num}</b><br>${meal.name}</div><div>${item.time}</div></div>`;
+            html += `<div class="report-card"><div><b># ${num}</b><br>${meal.name} <br><span style="color:#22c55e; font-size:11px;">الموقع: ${item.by || 'غير محدد'}</span></div><div>${item.time}</div></div>`;
         }
     });
     content.innerHTML = html || "<p style='padding:20px; text-align:center;'>لا سجلات</p>";
@@ -699,25 +715,25 @@ function generateAndSharePDFReport() {
     let doneTotal = 0, cancelTotal = 0, deliveryDone = 0, batarjiDone = 0, ruhailyDone = 0;
     let deliveryBody = "", batarjiBody = "", ruhailyBody = "";
 
-    Object.keys(tableStatus).forEach(num => {
-        let meal = meals.find(m => m.number == num);
-        if (meal) {
-            let item = tableStatus[num] || {};
-            let statusText = item.status === "done" ? "✅ مستلم" : "❌ ملغى";
-            let rowHtml = `<tr><td>${num}</td><td>${meal.name}</td><td>${statusText}</td><td>${item.time || '--'}</td></tr>`;
-            
-            if (item.status === "done") doneTotal++;
-            if (item.status === "cancel") cancelTotal++;
+    meals.forEach(meal => {
+        let item = tableStatus[meal.number] || {};
+        let statusText = "⏳ قيد الانتظار";
+        if(item.status === "done") statusText = "✅ مستلم";
+        if(item.status === "cancel") statusText = "❌ ملغى";
+        
+        let rowHtml = `<tr><td>${meal.number}</td><td>${meal.name}</td><td>${statusText}</td><td>${item.by || '--'}</td><td>${item.time || '--'}</td></tr>`;
+        
+        if (item.status === "done") doneTotal++;
+        if (item.status === "cancel") cancelTotal++;
 
-            if (meal.branch === "delivery") { if(item.status === "done") deliveryDone++; deliveryBody += rowHtml; }
-            else if (meal.branch === "batarji") { if(item.status === "done") batarjiDone++; batarjiBody += rowHtml; }
-            else if (meal.branch === "ruhaily") { if(item.status === "done") ruhailyDone++; ruhailyBody += rowHtml; }
-        }
+        if (meal.branch === "delivery") { if(item.status === "done") deliveryDone++; deliveryBody += rowHtml; }
+        else if (meal.branch === "batarji") { if(item.status === "done") batarjiDone++; batarjiBody += rowHtml; }
+        else if (meal.branch === "ruhaily") { if(item.status === "done") ruhailyDone++; ruhailyBody += rowHtml; }
     });
 
-    document.getElementById('pdfDeliveryTableBody').innerHTML = deliveryBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد عمليات فرز لهذا القسم اليوم</td></tr>";
-    document.getElementById('pdfBatarjiTableBody').innerHTML = batarjiBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد عمليات فرز لهذا الفرع اليوم</td></tr>";
-    document.getElementById('pdfRuhailyTableBody').innerHTML = ruhailyBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد عمليات فرز لهذا الفرع اليوم</td></tr>";
+    document.getElementById('pdfDeliveryTableBody').innerHTML = deliveryBody || "<tr><td colspan='5' style='text-align:center;'>لا توجد عمليات فرز لهذا القسم اليوم</td></tr>";
+    document.getElementById('pdfBatarjiTableBody').innerHTML = batarjiBody || "<tr><td colspan='5' style='text-align:center;'>لا توجد عمليات فرز لهذا الفرع اليوم</td></tr>";
+    document.getElementById('pdfRuhailyTableBody').innerHTML = ruhailyBody || "<tr><td colspan='5' style='text-align:center;'>لا توجد عمليات فرز لهذا الفرع اليوم</td></tr>";
 
     document.getElementById('pdfSumDeliveryDone').innerText = deliveryDone;
     document.getElementById('pdfSumBatarjiDone').innerText = batarjiDone;
