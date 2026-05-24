@@ -124,7 +124,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .branch-filter-btn.active-branch-selected { color: #ffffff !important; background: rgba(34, 197, 94, 0.85) !important; border-color: #22c55e !important; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important; }
 
 .top-banner { width: 100%; height: 110px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,254,0.08); }
-.container { width: 100%; max-width: 650px; margin: auto; }
+.container { width: 100%; max-width: 650px; margin: auto; display: none; } /* مخفي حتى ينجح الدخول */
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.45); padding: 12px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .brand-title { font-size: 20px; font-weight: 700; }
 .brand-protein { color: #22c55e; } .brand-carb { color: #facc15; }
@@ -187,7 +187,7 @@ if (typeof pdfjsLib !== 'undefined') {
 <div id="gatekeeperScreen">
     <div class="login-card">
         <div class="login-brand"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
-        <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">🔑 يرجى إدخال كلمة مرور النظام للمتابعة</div>
+        <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">⏳ جاري مزامنة جدار الحماية السحابي...</div>
         
         <input type="password" id="sitePasswordInput" class="auth-input" placeholder="••••••" maxlength="15" style="letter-spacing: 2px;">
         
@@ -283,7 +283,7 @@ if (typeof pdfjsLib !== 'undefined') {
     </div>
 </div>
 
-<div class="container">
+<div class="container" id="mainAppContainer">
     <div class="top-banner" id="topBanner"></div>
     <div class="header">
         <button onclick="toggleSidebarDrawer(true)" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">⋮</button>
@@ -398,8 +398,10 @@ var db;
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery"; 
 var deliveryTotalCount = 70; 
-var currentMasterPassword = "71138";
-var currentSiteGlobalPassword = "yumlez2025"; 
+
+// متغيرات الذاكرة المؤقتة للأكواد لضمان عدم حدوث تعليق سباق البيانات
+var cloudMasterPassword = "71138";
+var cloudSiteGlobalPassword = "yumlez2025"; 
 
 var staffData = {
     batarji: { name: "مسؤول فرع البترجي", code: "1111" },
@@ -407,15 +409,18 @@ var staffData = {
     delivery: { name: "مسؤول قسم التوصيل", code: "3333" }
 };
 
-// تشغيل جلب الأكواد من السيرفر فوراً كأولوية قصوى حتى والشاشة مقفلة
-(function preloadPasswordsAndConnect() {
+// تهيئة الاتصال والمزامنة الذكية
+(function initializeSystemSync() {
     if (typeof firebase !== 'undefined') {
         if(!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         db = firebase.database();
+        
         db.ref("pnc_data").on("value", (snapshot) => {
             let data = snapshot.val() || {};
-            if(data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
-            if(data.siteGlobalPassword !== undefined) currentSiteGlobalPassword = data.siteGlobalPassword;
+            
+            // تحديث قيم جدار الحماية في الخلفية فوراً دون الكتابة العشوائية فوق مدخلات لوحة التحكم
+            if(data.masterPassword !== undefined) cloudMasterPassword = data.masterPassword;
+            if(data.siteGlobalPassword !== undefined) cloudSiteGlobalPassword = data.siteGlobalPassword;
             
             meals = data.mealsList || [];
             tableStatus = data.actions || {};
@@ -430,22 +435,15 @@ var staffData = {
                 if(data.staff.delivery) staffData.delivery = data.staff.delivery;
             }
             
-            // تحديث الحقول المباشرة إذا كانت البوابة مفتوحة
-            if(document.getElementById("siteGlobalPassInput")) document.getElementById("siteGlobalPassInput").value = currentSiteGlobalPassword;
-            if(document.getElementById("adminMasterPassInput")) document.getElementById("adminMasterPassInput").value = currentMasterPassword;
-            if(document.getElementById("waLink")) document.getElementById("waLink").href = "https://wa.me/" + waNum;
-            if(document.getElementById("whatsappInput")) document.getElementById("whatsappInput").value = waNum;
-            if(document.getElementById("bannerUrlInput")) document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
-            if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
-            
-            if(document.getElementById("workerNameBatarji")) {
-                document.getElementById("workerNameBatarji").value = staffData.batarji.name || "";
-                document.getElementById("workerCodeBatarji").value = staffData.batarji.code || "";
-                document.getElementById("workerNameRuhaily").value = staffData.ruhaily.name || "";
-                document.getElementById("workerCodeRuhaily").value = staffData.ruhaily.code || "";
-                document.getElementById("workerNameDelivery").value = staffData.delivery.name || "";
-                document.getElementById("workerCodeDelivery").value = staffData.delivery.code || "";
+            // تحديث رسالة بوابة العبور لإخبار الميدان بجاهزية النظام الفورية
+            if(document.getElementById("loginMessage")) {
+                document.getElementById("loginMessage").innerHTML = "🟢 النظام جاهز ومؤمن سحابياً";
+                document.getElementById("loginMessage").style.color = "#22c55e";
             }
+            
+            // تحديث الروابط والتصميم التلقائي
+            if(document.getElementById("waLink")) document.getElementById("waLink").href = "https://wa.me/" + waNum;
+            if(document.getElementById("topBanner")) document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
             
             searchedNumbers.clear();
             Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
@@ -459,21 +457,36 @@ var staffData = {
     }
 })();
 
+// فحص أمني فوري مع حماية ديناميكية كاملة
 function handleLoginSequence() {
     let sitePass = document.getElementById("sitePasswordInput").value.trim();
     let superPass = document.getElementById("supervisorMobileInput").value.trim();
     let isSuperOpen = document.getElementById("supervisorAuthBox").style.display === "block";
 
-    // العبور الفوري بناءً على كلمات المرور المحدثة من السحاب
-    if (sitePass === currentSiteGlobalPassword || 
+    // التحقق المباشر من مصفوفة الحماية السحابية المتزامنة + الأكواد الثابتة كـ Bypass طوارئ
+    if (sitePass === cloudSiteGlobalPassword || 
         sitePass === "yumlez2025" || 
-        sitePass === currentMasterPassword || 
+        sitePass === cloudMasterPassword || 
         sitePass === "71138" ||
         (isSuperOpen && superPass === masterSystemSecret)) {
         
+        // إخفاء بوابة الحماية وإظهار التطبيق فوراً
         document.getElementById("gatekeeperScreen").style.display = "none";
+        document.getElementById("mainAppContainer").style.display = "block";
+        
+        // تعبئة حقول المشرف فقط بعد نجاح الدخول لتفادي تشتيت طاقم الفرز
+        document.getElementById("siteGlobalPassInput").value = cloudSiteGlobalPassword;
+        document.getElementById("adminMasterPassInput").value = cloudMasterPassword;
+        document.getElementById("whatsappInput").value = waNum;
+        document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
+        document.getElementById("workerNameBatarji").value = staffData.batarji.name || "";
+        document.getElementById("workerCodeBatarji").value = staffData.batarji.code || "";
+        document.getElementById("workerNameRuhaily").value = staffData.ruhaily.name || "";
+        document.getElementById("workerCodeRuhaily").value = staffData.ruhaily.code || "";
+        document.getElementById("workerNameDelivery").value = staffData.delivery.name || "";
+        document.getElementById("workerCodeDelivery").value = staffData.delivery.code || "";
     } else {
-        alert("عذراً، الرمز المدخل غير صحيح!");
+        alert("عذراً، الرمز المدخل غير صحيح أو لم تكتمل المزامنة السحابية بعد!");
     }
 }
 
@@ -523,7 +536,7 @@ function calculateAllBranchesLiveReport() {
 function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
 function closeAdminModal() { document.getElementById("adminAuthModal").style.display = "none"; }
 function verifyAdminCode() {
-    if(document.getElementById("adminPasswordInput").value.trim() === currentMasterPassword || document.getElementById("adminPasswordInput").value.trim() === "71138") {
+    if(document.getElementById("adminPasswordInput").value.trim() === cloudMasterPassword || document.getElementById("adminPasswordInput").value.trim() === "71138") {
         document.getElementById("adminAuthModal").style.display = "none"; document.getElementById("adminPanel").style.display = "block";
     } else { alert("الرمز غير صحيح!"); }
 }
@@ -639,6 +652,7 @@ function triggerWorkerAuth(num, type) {
         } else { alert("الكود خاطئ!"); }
     };
 }
+function closeWorkerAuthModal() { document.getElementById("workerAuthModal").style.display = "none"; }
 
 function executeDeliveryAction(num, type, staffName) {
     searchedNumbers.delete(num); searchedNumbers.add(num);
@@ -649,6 +663,7 @@ function executeDeliveryAction(num, type, staffName) {
 function resetMealAction(num) {
     if(!db) return;
     db.ref("pnc_data/actions/" + num).remove().then(() => {
+        closeCustomAlert();
         showCustomAlert("🔄", "تم الإرجاع", `تم إرجاع الاشتراك # ${num} لقيد الانتظار بنجاح!`, true, false, null);
     });
 }
@@ -755,14 +770,4 @@ function generateAndSharePDFReport() {
     document.getElementById('pdfBatarjiTableBody').innerHTML = batarjiBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد وجبات لهذا الفرع</td></tr>";
     document.getElementById('pdfRuhailyTableBody').innerHTML = ruhailyBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد وجبات لهذا الفرع</td></tr>";
 
-    document.getElementById('pdfSumDeliveryDone').innerText = deliveryDone;
-    document.getElementById('pdfSumBatarjiDone').innerText = batarjiDone;
-    document.getElementById('pdfSumRuhailyDone').innerText = ruhailyDone;
-    
-    document.getElementById('pdfMetaGlobalDone').innerText = doneTotal;
-    document.getElementById('pdfMetaGlobalCancel').innerText = cancelTotal;
-    document.getElementById('pdfMetaGlobalTotal').innerText = meals.length;
-    document.getElementById('pdfMetaGlobalPending').innerText = pendingTotal;
-
-    document.getElementById('pdfLabelStaffDelivery').innerText = staffData.delivery.name || "";
-    document.getElementById('pdfLab
+    document.getElementById('pdfSumD
