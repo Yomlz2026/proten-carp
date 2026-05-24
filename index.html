@@ -146,8 +146,6 @@ input[type="number"] { font-size: 20px; text-align: center; }
 .meal-card-info { display: flex; flex-direction: column; gap: 2px; }
 .meal-card-num { color: #facc15; font-weight: 700; font-size: 15px; }
 .meal-card-name { font-size: 14px; color: #e2e8f0; font-weight: 700; }
-/* التنسيق الجديد لاسم القسم تحت اسم المشترك */
-.meal-card-branch { font-size: 11px; font-weight: bold; margin-top: 3px; display: inline-block; padding: 2px 8px; border-radius: 6px; }
 
 .whatsapp-bottom-bar { position: fixed; bottom: 38px; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 15px; z-index: 998; display: flex; justify-content: center; align-items: center; }
 .whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; }
@@ -187,7 +185,7 @@ if (typeof pdfjsLib !== 'undefined') {
         <div class="login-brand"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
         <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">🔑 يرجى إدخال كلمة مرور النظام للمتابعة</div>
         
-        <input type="password" id="sitePasswordInput" class="auth-input" placeholder="•••••" maxlength="15" style="letter-spacing: 2px;">
+        <input type="password" id="sitePasswordInput" class="auth-input" placeholder="••••••" maxlength="15" style="letter-spacing: 2px;">
         
         <div id="supervisorAuthBox" style="display:none; margin-top:10px; background: rgba(239,68,68,0.1); border: 1px dashed rgba(239,68,68,0.3); padding:12px; border-radius:14px; margin-bottom:15px;">
             <span style="font-size:11px; color:#ef4444; font-weight:bold; display:block; margin-bottom:5px;">⚠️ اطلب موافقة المشرف الفورية:</span>
@@ -259,7 +257,7 @@ if (typeof pdfjsLib !== 'undefined') {
 
 <div class="reports-overlay" id="reportsOverlay">
     <div class="reports-header">
-        <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">📋 سجل فرز الأقسام</div>
+        <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">📋 سجل فرز (قسم التوصيل)</div>
         <button onclick="closeReports()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
     </div>
     <div class="reports-tabs">
@@ -400,13 +398,6 @@ var staffData = {
     delivery: { name: "مسؤول قسم التوصيل", code: "3333" }
 };
 
-// مصفوفة مسميات الأقسام لسهولة الاستدعاء العربي والديناميكي
-const branchNamesAr = {
-    delivery: "قسم التوصيل",
-    batarji: "فرع البترجي",
-    ruhaily: "فرع الرحيلي"
-};
-
 function toggleSidebarDrawer(open) {
     const drawer = document.getElementById("sidebarDrawer");
     const overlay = document.getElementById("drawerOverlay");
@@ -527,7 +518,7 @@ function closeAdminModal() { document.getElementById("adminAuthModal").style.dis
 function verifyAdminCode() {
     if(document.getElementById("adminPasswordInput").value.trim() === currentMasterPassword) {
         document.getElementById("adminAuthModal").style.display = "none"; document.getElementById("adminPanel").style.display = "block";
-    } else { alert("الرمز غير صحيح!"); } verification;
+    } else { alert("الرمز غير صحيح!"); }
 }
 
 function saveAdminSettings() {
@@ -570,20 +561,9 @@ function switchBranchView(view) {
     document.getElementById("btn-view-delivery").classList.remove("active-branch-selected");
     document.getElementById("btn-view-batarji").classList.remove("active-branch-selected");
     document.getElementById("btn-view-ruhaily").classList.remove("active-branch-selected");
-    
-    if(view === 'delivery') {
-        document.getElementById("btn-view-delivery").classList.add("active-branch-selected");
-        document.getElementById("listTitle").innerText = "قائمة فرز التوصيل المباشرة:";
-    }
-    if(view === 'batarji') {
-        document.getElementById("btn-view-batarji").classList.add("active-branch-selected");
-        document.getElementById("listTitle").innerText = "قائمة فرز فرع البترجي المباشرة:";
-    }
-    if(view === 'ruhaily') {
-        document.getElementById("btn-view-ruhaily").classList.add("active-branch-selected");
-        document.getElementById("listTitle").innerText = "قائمة فرز فرع الرحيلي المباشرة:";
-    }
-    
+    if(view === 'delivery') document.getElementById("btn-view-delivery").classList.add("active-branch-selected");
+    if(view === 'batarji') document.getElementById("btn-view-batarji").classList.add("active-branch-selected");
+    if(view === 'ruhaily') document.getElementById("btn-view-ruhaily").classList.add("active-branch-selected");
     recalculateStats(); renderCards(); updateReports();
 }
 
@@ -682,26 +662,7 @@ function renderCards() {
     let html = "";
     filtered.reverse().forEach(num => {
         let meal = meals.find(m => m.number == num), item = tableStatus[num] || {}, col = item.status === "done" ? "#22c55e" : "#ef4444";
-        
-        // تعديل تأمين ظهور اسم المشترك بشكل سليم وثابت
-        let currentSubscriberName = (meal && meal.name) ? meal.name : "مشترك";
-        
-        // تحديد لون وستايل اسم القسم الذي سيظهر بالأسفل
-        let branchBadgeColor = "rgba(56, 189, 248, 0.15); color: #38bdf8;"; // افتراضي توصيل الأزرق
-        if(meal && meal.branch === 'batarji') branchBadgeColor = "rgba(250, 204, 21, 0.15); color: #facc15;"; // البترجي الأصفر
-        if(meal && meal.branch === 'ruhaily') branchBadgeColor = "rgba(168, 85, 247, 0.15); color: #a855f7;"; // الرحيلي البنفسجي
-        let currentBranchName = meal ? branchNamesAr[meal.branch] : "غير محدد";
-
-        html += `<div class="meal-row-card">
-                    <div class="meal-card-main-info">
-                        <div>
-                            <span class="meal-card-num"># ${num}</span><br>
-                            <span class="meal-card-name">${currentSubscriberName}</span><br>
-                            <span class="meal-card-branch" style="${branchBadgeColor}">القسم: ${currentBranchName}</span>
-                        </div>
-                        <span style="color:${col}; font-weight:bold;">${item.status==='done'?'✅ مستلم':'❌ ملغى'}</span>
-                    </div>
-                 </div>`;
+        html += `<div class="meal-row-card"><div class="meal-card-main-info"><div><span class="meal-card-num"># ${num}</span><br><span class="meal-card-name">${meal?meal.name:''}</span></div><span style="color:${col}; font-weight:bold;">${item.status==='done'?'✅ مستلم':'❌ ملغى'}</span></div></div>`;
     });
     container.innerHTML = html;
 }
@@ -713,11 +674,6 @@ function switchTab(t) { activeTab = t; updateReports(); }
 function updateReports() {
     let content = document.getElementById("reportsContent"); if(!content) return;
     let html = "";
-    
-    // تحديث عنوان السلايدر ليكون ديناميكياً حسب القسم الذي يتصفحه المستخدم حالياً
-    let currentDeptName = branchNamesAr[currentBranchView] || "القسم الحالي";
-    document.getElementById("reportsOverlayTitle").innerText = `📋 سجل فرز (${currentDeptName})`;
-
     if(currentBranchView === "delivery" && activeTab !== 'archive') {
         html += `<div class="delivery-manual-box"><input type="number" id="manualDeliveryCountInput" onchange="updateDeliveryManualCount(this.value)" value="${deliveryTotalCount}" /><button class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">📦 تسليم وجبات التوصيل معاً</button></div>`;
     }
@@ -773,4 +729,43 @@ function generateAndSharePDFReport() {
     document.getElementById('pdfMetaGlobalPending').innerText = meals.length - (doneTotal + cancelTotal);
 
     document.getElementById('pdfLabelStaffDelivery').innerText = staffData.delivery.name || "";
-    document.getElementById('pdfLabelStaffBatarji').innerText = staffData.batar
+    document.getElementById('pdfLabelStaffBatarji').innerText = staffData.batarji.name || "";
+    document.getElementById('pdfLabelStaffRuhaily').innerText = staffData.ruhaily.name || "";
+
+    const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     `تقرير_الفرز_اليومي_${now.toLocaleDateString('en-US')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).outputPdf('blob').then((blob) => {
+        element.style.display = 'none';
+        const blobUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = blobUrl;
+        downloadLink.download = `تقرير_الفرز_اليومي_${now.toLocaleDateString('en-US')}.pdf`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(blobUrl);
+
+        let textMsg = `*📊 تقرير الفرز والإشراف السحابي اليومي* \n`;
+        textMsg += `*التاريخ:* ${now.toLocaleDateString('ar-SA')} \n`;
+        textMsg += `----------------------------------------\n`;
+        textMsg += `🚚 *قسم التوصيل (مستلم):* ${deliveryDone} \n`;
+        textMsg += `🏪 *فرع البترجي (مستلم):* ${batarjiDone} \n`;
+        textMsg += `🏪 *فرع الرحيلي (مستلم):* ${ruhailyDone} \n`;
+        textMsg += `----------------------------------------\n`;
+        textMsg += `✅ *إجمالي المستلمين:* ${doneTotal} وجبة \n`;
+        textMsg += `❌ *إجمالي الملغيين:* ${cancelTotal} وجبة \n`;
+        textMsg += `📱 _تم توليد وتحميل كشف الـ PDF بجهازك وجاهز للإرسال!_`;
+
+        let encodeMsg = encodeURIComponent(textMsg);
+        setTimeout(() => { window.open(`https://wa.me/${waNum}?text=${encodeMsg}`, '_blank'); }, 1200);
+    }).catch(err => { element.style.display = 'none'; alert("حدث خطأ أثناء معالجة الـ PDF: " + err); });
+}
+</script>
+</body>
+</html>
