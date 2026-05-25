@@ -31,7 +31,7 @@ body.en-mode .admin-grid-label, body.en-mode #listTitle, body.en-mode .report-st
 #adminAuthModal, #workerAuthModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
 .auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 30px; width: 100%; max-width: 380px; text-align: center; }
 .sidebar-drawer { position: fixed; top: 0; right: -320px; width: 320px; height: 100%; background: #1e293b; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.5); transition: right 0.3s ease; padding: 20px; overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.08); }
-body.en-mode .sidebar-drawer { right: auto; left: -320px; border-left: none; border-right: 1px solid rgba(255,255,254,0.08); transition: left 0.3s ease; }
+body.en-mode .sidebar-drawer { right: auto; left: -320px; border-left: none; border-right: 1px solid rgba(255,255,255,0.08); transition: left 0.3s ease; }
 body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
 .sidebar-drawer.open { right: 0; }
 .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9998; display: none; }
@@ -50,7 +50,7 @@ body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
 .reports-tab.cancel-tab.active-tab { color: #ef4444; border-bottom-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
 .reports-tab.pending-tab.active-tab { color: #facc15; border-bottom-color: #facc15; background: rgba(250, 204, 21, 0.05); }
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 190px; }
-.report-card { background: rgba(255,255,253,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+.report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 .reports-overlay-footer { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 501; }
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .report-stat-box-footer { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
@@ -75,7 +75,6 @@ input[type="number"] { font-size: 20px; text-align: center; }
 .greenBox { background: rgba(34, 197, 94, 0.12); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); } 
 .red { background: rgba(239, 68, 68, 0.12); color: #ef4444; border-color: rgba(239, 68, 68, 0.18); }
 .yellowBox { background: rgba(250, 204, 21, 0.12); color: #facc15; border-color: rgba(250, 204, 21, 0.18); }
-.search-box-live { margin-bottom: 12px; }
 .meal-row-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
 .meal-card-main-info { display: flex; justify-content: space-between; align-items: center; }
 .meal-card-num { color: #facc15; font-weight: 700; font-size: 15px; }
@@ -112,11 +111,14 @@ body.en-mode .pdf-table th { text-align: left !important; }
     <div class="login-card">
         <div class="login-brand"><span class="brand-protein" data-lang="protein">بروتين</span> و<span class="brand-carb" data-lang="carb">كارب</span></div>
         <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;" data-lang="connecting">🔑 يرجى إدخال الرمز السري للدخول</div>
+        
         <input type="password" id="sitePasswordInput" class="auth-input" placeholder="•••••" maxlength="15" style="letter-spacing: 2px;">
+        
         <div id="supervisorAuthBox" style="display:none; margin-top:10px; background: rgba(239,68,68,0.1); border: 1px dashed rgba(239,68,68,0.3); padding:12px; border-radius:14px; margin-bottom:15px;">
             <span style="font-size:11px; color:#ef4444; font-weight:bold; display:block; margin-bottom:5px;" data-lang="req_super">⚠️ اطلب موافقة المشرف الفورية:</span>
             <input type="password" id="supervisorMobileInput" class="auth-input" placeholder="أدخل رقم جوال المشرف الخاص" style="font-size:15px; padding:10px; margin-bottom:0;">
         </div>
+
         <button class="login-btn" id="submitLoginBtn" onclick="handleLoginSequence()" data-lang="login_btn">تسجيل الدخول الآمن</button>
         <button class="forgot-pass-link" id="forgotBtn" onclick="showSupervisorField()" data-lang="forgot_btn">نسيت كلمة المرور?</button>
     </div>
@@ -170,7 +172,7 @@ body.en-mode .pdf-table th { text-align: left !important; }
 </div>
 
 <div id="adminAuthModal">
-    <div class="alert-card">
+    <div class="auth-card">
         <div class="alert-title-text" data-lang="admin_code">🔒 رمز المشرف الآمن</div>
         <input type="password" id="adminPasswordInput" class="auth-input" placeholder="•••••" maxlength="6" inputmode="numeric">
         <div class="modal-actions-group">
@@ -182,7 +184,7 @@ body.en-mode .pdf-table th { text-align: left !important; }
 
 <div class="reports-overlay" id="reportsOverlay">
     <div class="reports-header">
-        <button onclick="closeReports(); toggleSidebarDrawer(true);" style="background:rgba(255,255,254,0.1); border:none; color:#facc15; font-size:13px; font-weight:bold; padding:6px 12px; border-radius:10px; cursor:pointer;" id="backToDrawerBtn">⬅️ رجوع للقائمة</button>
+        <button onclick="closeReports(); toggleSidebarDrawer(true);" style="background:rgba(255,255,255,0.1); border:none; color:#facc15; font-size:13px; font-weight:bold; padding:6px 12px; border-radius:10px; cursor:pointer;" id="backToDrawerBtn">⬅️ رجوع للقائمة</button>
         <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">📋 سجل فرز القسم</div>
         <button onclick="closeReports()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
     </div>
@@ -213,7 +215,7 @@ body.en-mode .pdf-table th { text-align: left !important; }
     </div>
 
     <div class="card control-panel" id="adminPanel">
-        <input accept=".pdf" id="pdfFile" type="file" style="margin-bottom:12px; font-size:12px;"/>
+        <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:12px; font-size:12px;"/>
         <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب المشرف..."/>
         <input id="bannerUrlInput" type="url" placeholder="رابط صورة البانر العلوية..." style="margin-top:12px; margin-bottom:12px;"/>
         
@@ -252,9 +254,6 @@ body.en-mode .pdf-table th { text-align: left !important; }
     </div>
 
     <div class="card">
-        <div class="search-box-live">
-            <input id="liveSearchInput" placeholder="🔍 بحث سريع باسم أو رقم العميل..." type="text" oninput="renderCards()"/>
-        </div>
         <input id="mealInput" placeholder="اكتب رقم اشتراك العميل هنا..." type="number"/>
         <button class="searchBtn" onclick="checkMeal()" data-lang="search_btn">🔍 ابدأ الفرز والبحث</button>
         <button class="deliverAllBtn" id="deliverAllBtn" onclick="triggerDeliverAllDelivery()" data-lang="deliver_all_btn">⚡ تسليم الكل (قسم التوصيل)</button>
@@ -310,7 +309,6 @@ var currentBranchView = "delivery";
 var currentMasterPassword = "71138", currentSiteGlobalPassword = "yumlez2025"; 
 var currentCoolingTemp = "";
 var currentLang = "ar";
-var isProcessingPDF = false; 
 
 const dictionary = {
     ar: {
@@ -364,13 +362,12 @@ function toggleLanguage() {
     });
 
     let placeholderTranslations = {
-        ar: { mealInput: "اكتب رقم اشتراك العميل هنا...", sitePasswordInput: "•••••", supervisorMobileInput: "أدخل رقم جوال المشرف الخاص", liveSearchInput: "🔍 بحث سريع باسم أو رقم العميل..." },
-        en: { mealInput: "Type client subscription number...", sitePasswordInput: "•••••", supervisorMobileInput: "Enter Supervisor Phone Number", liveSearchInput: "🔍 Fast search by name or ID..." }
+        ar: { mealInput: "اكتب رقم اشتراك العميل هنا...", sitePasswordInput: "•••••", supervisorMobileInput: "أدخل رقم جوال المشرف الخاص" },
+        en: { mealInput: "Type client subscription number...", sitePasswordInput: "•••••", supervisorMobileInput: "Enter Supervisor Phone Number" }
     };
     document.getElementById("mealInput").placeholder = placeholderTranslations[currentLang].mealInput;
     document.getElementById("sitePasswordInput").placeholder = placeholderTranslations[currentLang].sitePasswordInput;
     document.getElementById("supervisorMobileInput").placeholder = placeholderTranslations[currentLang].supervisorMobileInput;
-    document.getElementById("liveSearchInput").placeholder = placeholderTranslations[currentLang].liveSearchInput;
 
     document.getElementById("backToDrawerBtn").innerText = dictionary[currentLang].back_btn;
     switchBranchView(currentBranchView);
@@ -407,7 +404,6 @@ function startFirebaseConnection() {
         db = firebase.database();
         
         db.ref("pnc_data").on("value", snap => { 
-            if (isProcessingPDF) return; 
             if(snap.exists()) {
                 applyCloudData(snap.val());
                 document.getElementById("status").innerHTML = currentLang === "ar" ? "🟢 متصل ومزامَن سحابياً" : "🟢 Connected and Synced";
@@ -419,244 +415,6 @@ function startFirebaseConnection() {
         console.error(e);
     }
 }
-
-function applyCloudData(data) {
-    if(!data) return;
-    
-    meals = data.mealsList || []; 
-    tableStatus = data.actions || {}; 
-    waNum = data.whatsapp || "966506546313";
-    currentBannerUrl = data.bannerUrl || defaultBanner;
-    currentCoolingTemp = data.coolingTemp || "";
-    
-    if(data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
-    if(data.siteGlobalPassword !== undefined) currentSiteGlobalPassword = data.siteGlobalPassword;
-    if(data.staff) {
-        if(data.staff.batarji) staffData.batarji = data.staff.batarji;
-        if(data.staff.ruhaily) staffData.ruhaily = data.staff.ruhaily;
-        if(data.staff.delivery) staffData.delivery = data.staff.delivery;
-    }
-    
-    document.getElementById("waLink").href = "https://wa.me/" + waNum;
-    document.getElementById("whatsappInput").value = waNum;
-    document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
-    document.getElementById("coolingTempInput").value = currentCoolingTemp;
-    document.getElementById("adminMasterPassInput").value = currentMasterPassword;
-    document.getElementById("siteGlobalPassInput").value = currentSiteGlobalPassword;
-    document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
-    
-    document.getElementById("workerNameBatarji").value = staffData.batarji.name || "";
-    document.getElementById("workerCodeBatarji").value = staffData.batarji.code || "";
-    document.getElementById("workerNameRuhaily").value = staffData.ruhaily.name || "";
-    document.getElementById("workerCodeRuhaily").value = staffData.ruhaily.code || "";
-    document.getElementById("workerNameDelivery").value = staffData.delivery.name || "";
-    document.getElementById("workerCodeDelivery").value = staffData.delivery.code || "";
-    
-    searchedNumbers.clear(); 
-    Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
-    
-    recalculateStats(); 
-    renderCards(); 
-    updateReports(); 
-    calculateAllBranchesLiveReport();
-    updateDeliverAllBtnVisibility();
-}
-
-function handleLoginSequence() {
-    let sitePass = document.getElementById("sitePasswordInput").value.trim();
-    let superPass = document.getElementById("supervisorMobileInput").value.trim();
-    let isSuperOpen = document.getElementById("supervisorAuthBox").style.display === "block";
-
-    if (sitePass === "yumlez2025" || sitePass === currentSiteGlobalPassword || (isSuperOpen && superPass === masterSystemSecret)) {
-        document.getElementById("gatekeeperScreen").style.display = "none";
-        startFirebaseConnection();
-    } else { 
-        alert(currentLang === "ar" ? "عذراً، الرمز المدخل غير صحيح!" : "Sorry, incorrect PIN!"); 
-    }
-}
-
-function calculateAllBranchesLiveReport() {
-    let stats = { delivery: {d:0, c:0, p:0}, batarji: {d:0, c:0, p:0}, ruhaily: {d:0, c:0, p:0} };
-    meals.forEach(m => {
-        let item = tableStatus[m.number] || {};
-        if(item.status === "done") stats[m.branch].d++;
-        else if(item.status === "cancel") stats[m.branch].c++;
-        else stats[m.branch].p++;
-    });
-    let labels = { ar: { d: "مستلم", c: "ملغى", p: "انتظار" }, en: { d: "Recv", c: "Canc", p: "Pend" } };
-    document.getElementById("drawerDeliveryReport").innerHTML = `✅ ${labels[currentLang].d}: ${stats.delivery.d} | ❌ ${labels[currentLang].c}: ${stats.delivery.c} | ⏳ ${labels[currentLang].p}: ${stats.delivery.p}`;
-    document.getElementById("drawerBatarjiReport").innerHTML = `✅ ${labels[currentLang].d}: ${stats.batarji.d} | ❌ ${labels[currentLang].c}: ${stats.batarji.c} | ⏳ ${labels[currentLang].p}: ${stats.batarji.p}`;
-    document.getElementById("drawerRuhailyReport").innerHTML = `✅ ${labels[currentLang].d}: ${stats.ruhaily.d} | ❌ ${labels[currentLang].c}: ${stats.ruhaily.c} | ⏳ ${labels[currentLang].p}: ${stats.ruhaily.p}`;
-}
-
-function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
-function closeAdminModal() { document.getElementById("adminAuthModal").style.display = "none"; }
-function verifyAdminCode() {
-    if(document.getElementById("adminPasswordInput").value.trim() === currentMasterPassword) {
-        document.getElementById("adminAuthModal").style.display = "none"; document.getElementById("adminPanel").style.display = "block";
-    } else { alert(currentLang === "ar" ? "الرمز غير صحيح!" : "Wrong code!"); }
-}
-
-function saveAdminSettings() {
-    if(!db) return;
-    let updateData = {
-        whatsapp: document.getElementById("whatsappInput").value.trim(),
-        bannerUrl: document.getElementById("bannerUrlInput").value.trim() || defaultBanner,
-        coolingTemp: document.getElementById("coolingTempInput").value.trim(),
-        masterPassword: document.getElementById("adminMasterPassInput").value.trim() || "71138",
-        siteGlobalPassword: document.getElementById("siteGlobalPassInput").value.trim() || "yumlez2025",
-        staff: {
-            batarji: { name: document.getElementById("workerNameBatarji").value.trim(), code: document.getElementById("workerCodeBatarji").value.trim() },
-            ruhaily: { name: document.getElementById("workerNameRuhaily").value.trim(), code: document.getElementById("workerCodeRuhaily").value.trim() },
-            delivery: { name: document.getElementById("workerNameDelivery").value.trim(), code: document.getElementById("workerCodeDelivery").value.trim() }
-        }
-    };
-    db.ref("pnc_data").update(updateData);
-    showCustomAlert("✨", currentLang === "ar" ? "تم التحديث" : "Updated", currentLang === "ar" ? "تم حفظ وتحديث الإعدادات السحابية بنجاح!" : "Cloud configurations saved successfully!", true, false, null);
-}
-
-function switchBranchView(view) {
-    currentBranchView = view;
-    document.querySelectorAll(".branch-filter-btn").forEach(b => b.classList.remove("active-branch-selected"));
-    document.getElementById("btn-view-" + view).classList.add("active-branch-selected");
-    
-    const branchNames = { ar: { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" }, en: { delivery: "Delivery", batarji: "Batarji", ruhaily: "Ruhaily" } };
-    let currentBranchName = branchNames[currentLang][view];
-    document.getElementById("listTitle").innerText = dictionary[currentLang].list_title.replace("{branch}", currentBranchName);
-    document.getElementById("reportsOverlayTitle").innerText = dictionary[currentLang].overlay_title.replace("{branch}", currentBranchName);
-    
-    recalculateStats(); renderCards(); updateReports(); updateDeliverAllBtnVisibility();
-}
-
-function updateDeliverAllBtnVisibility() {
-    let btn = document.getElementById("deliverAllBtn");
-    btn.style.display = (currentBranchView === "delivery") ? "block" : "none";
-}
-
-function recalculateStats() {
-    let p = 0, d = 0, c = 0;
-    meals.forEach(m => {
-        if(m.branch === currentBranchView) {
-            let act = tableStatus[m.number] || {};
-            if(act.status === "done") d++;
-            else if(act.status === "cancel") c++;
-            else p++;
-        }
-    });
-    document.getElementById("pendingMeals").innerText = p;
-    document.getElementById("doneMeals").innerText = d;
-    document.getElementById("cancelMeals").innerText = c;
-}
-
-function renderCards() {
-    let container = document.getElementById("mealCardsContainer");
-    container.innerHTML = "";
-    let query = document.getElementById("liveSearchInput").value.trim().toLowerCase();
-    
-    let filtered = meals.filter(m => m.branch === currentBranchView);
-    if(query) {
-        filtered = filtered.filter(m => m.number.toString().includes(query) || m.name.toLowerCase().includes(query));
-    }
-    
-    if(filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">${currentLang === "ar" ? "لا توجد وجبات لعرضها" : "No meals found"}</div>`;
-        return;
-    }
-    
-    filtered.forEach(m => {
-        let act = tableStatus[m.number] || {};
-        let statusBadge = `<span style="color:#facc15; font-size:12px;">⏳ انتظار</span>`;
-        if(act.status === "done") statusBadge = `<span style="color:#22c55e; font-size:12px;">✅ مستلم (${act.time})</span>`;
-        if(act.status === "cancel") statusBadge = `<span style="color:#ef4444; font-size:12px;">❌ ملغى (${act.time})</span>`;
-        
-        let card = document.createElement("div");
-        card.className = "meal-row-card";
-        card.style.cursor = "pointer";
-        card.onclick = () => { document.getElementById("mealInput").value = m.number; checkMeal(); };
-        card.innerHTML = `
-            <div class="meal-card-main-info">
-                <span class="meal-card-num">#${m.number}</span>
-                ${statusBadge}
-            </div>
-            <div class="meal-card-name">${m.name}</div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-function checkMeal() {
-    let num = document.getElementById("mealInput").value.trim();
-    if(!num) return;
-    let meal = meals.find(m => m.number == num);
-    if(!meal) {
-        showCustomAlert("🔍", currentLang === "ar" ? "غير موجود" : "Not Found", currentLang === "ar" ? "رقم الاشتراك غير مسجل في الكشف اليومي!" : "Subscription ID not registered!", false, false, null);
-        return;
-    }
-    
-    if(meal.branch !== currentBranchView) {
-        switchBranchView(meal.branch);
-    }
-    
-    let act = tableStatus[num] || {};
-    let info = currentLang === "ar" ? 
-        `الاسم: ${meal.name}<br>القسم: ${meal.branch === 'delivery' ? '🚚 توصيل' : '🏪 فرع'}<br>الحالة الحالية: ${act.status === 'done' ? '✅ مستلم' : act.status === 'cancel' ? '❌ ملغى' : '⏳ قيد الانتظار'}` :
-        `Name: ${meal.name}<br>Dept: ${meal.branch}<br>Status: ${act.status || 'Pending'}`;
-        
-    showCustomAlert("👤", meal.name, info, true, true, num);
-}
-
-function triggerWorkerAuth(num, action) {
-    let branchKey = currentBranchView;
-    let staffTitle = staffData[branchKey].name || "مسؤول الفرز";
-    
-    if(sessionStorage.getItem("auth_verified_" + branchKey) === "true") {
-        executeStatusChange(num, action, staffTitle);
-    } else {
-        document.getElementById("workerPasswordInput").value = "";
-        document.getElementById("workerAuthTitle").innerText = currentLang === "ar" ? `🔑 إثبات هوية (${staffTitle})` : `🔑 Identity Verification (${staffTitle})`;
-        document.getElementById("workerAuthModal").style.display = "flex";
-        document.getElementById("workerPasswordInput").focus();
-        
-        document.getElementById("workerAuthConfirmBtn").onclick = function() {
-            let enteredCode = document.getElementById("workerPasswordInput").value.trim();
-            if(enteredCode === staffData[branchKey].code || enteredCode === masterSystemSecret) {
-                sessionStorage.setItem("auth_verified_" + branchKey, "true");
-                executeStatusChange(num, action, staffTitle);
-                closeWorkerAuthModal();
-            } else { alert(currentLang === "ar" ? "الرمز السري غير صحيح!" : "Incorrect operational code!"); }
-        };
-    }
-}
-
-function closeWorkerAuthModal() { document.getElementById("workerAuthModal").style.display = "none"; }
-
-function executeStatusChange(num, action, staffName) {
-    if(!db) return;
-    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
-    db.ref(`pnc_data/actions/${num}`).set({
-        status: action,
-        time: timeString,
-        by: staffName
-    }).then(() => {
-        document.getElementById("mealInput").value = "";
-    });
-}
-
-function openReports() {
-    document.getElementById("reportsOverlay").classList.add("open");
-    switchTab(activeTab);
-}
-function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
-
-function switchTab(tab) {
-    activeTab = tab;
-    document.querySelectorAll(".reports-tab").forEach(t => t.classList.remove("active-tab"));
-    document.getElementById("tab-" + tab).classList.add("active-tab");
-    updateReports();
-}
-
-function updateReports() {
-    let c}
 
 function applyCloudData(data) {
     if(!data) return;
@@ -791,7 +549,7 @@ function triggerDeliverAllDelivery() {
             if(enteredCode === staffData[branchKey].code || enteredCode === masterSystemSecret) {
                 sessionStorage.setItem("auth_verified_" + branchKey, "true");
                 executeDeliverAllSequence(pendingDeliveryMeals, staffTitle); closeWorkerAuthModal();
-            } else { alert(currentLang === "ar" ? "Kود خاطئ!" : "Incorrect code!"); }
+            } else { alert(currentLang === "ar" ? "الكود خاطئ!" : "Incorrect code!"); }
         };
     }
 }
@@ -806,30 +564,28 @@ function executeDeliverAllSequence(targetMeals, staffName) {
     });
 }
 
-// 🛡️ دالة استخراج البيانات الحصينة والمحدثة - النسخة الفائقة لمنع انهيار متصفحات الجوال
-document.getElementById('pdfFile').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if(!file || !db || isProcessingPDF) return;
+// 🚀 نظام الفرز والضغط المتطور القاطع للتهنيج نهائياً وحماية ذاكرة الجوال
+async function startReadingPDF(file) {
+    if(!file || !db) return;
     
-    isProcessingPDF = true;
-    showCustomAlert("⏳", currentLang === "ar" ? "بدء المعالجة الذكية" : "Smart Processing", currentLang === "ar" ? "جاري تحييد العمليات الإضافية وفتح الملف..." : "Neutralizing external tasks and opening file...", false, false, null);
+    showCustomAlert("⏳", currentLang === "ar" ? "بدء المعالجة والضغط" : "Processing", currentLang === "ar" ? "جاري تحضير ملف المشتركين..." : "Preparing file...", false, false, null);
     
     let reader = new FileReader();
     reader.onload = async function() {
         try {
             let typedarray = new Uint8Array(this.result);
-            let pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+            let pdf = await pdfjsLib.getDocument(typedarray).promise;
             let totalPages = pdf.numPages;
             let tempMeals = [];
             
-            for (let i = 1; i <= totalPages; i++) {
-                let percent = Math.round((i / totalPages) * 100);
-                document.getElementById("alertMessage").innerHTML = currentLang === "ar" ? `جاري استخراج البيانات بأمان فائق لمنع التعليق: ${percent}%` : `Ultra-safe data extraction active: ${percent}%`;
+            for (let p = 1; p <= totalPages; p++) {
+                let percent = Math.round((p / totalPages) * 100);
+                document.getElementById("alertMessage").innerHTML = currentLang === "ar" ? `جاري ضغط وقراءة البيانات: ${percent}%` : `Compressing & Reading: ${percent}%`;
                 
-                let page = await pdf.getPage(i);
+                let page = await pdf.getPage(p);
                 let content = await page.getTextContent();
-                
                 let lastY = "", lines = [], currentLine = "";
+                
                 for (let item of content.items) {
                     if (lastY !== "" && item.transform[5] !== lastY) { lines.push(currentLine); currentLine = ""; }
                     currentLine += " " + item.str; lastY = item.transform[5];
@@ -857,5 +613,13 @@ document.getElementById('pdfFile').addEventListener('change', function(e) {
                 });
                 
                 if (detectedNumber) {
+                    // 🌟 تقليص وضغط الاسم (أخذ أول اسمين فقط) لتخفيض وزن جزيئات البيانات لحماية الذاكرة والفايربيس
                     let cleanNameParts = (detectedName || "مشترك").split(/\s+/).filter(Boolean);
-    
+                    let shortName = cleanNameParts.slice(0, 2).join(" ");
+                    tempMeals.push({ number: detectedNumber, name: shortName, branch: targetBranch });
+                }
+                await new Promise(resolve => setTimeout(resolve, 5));
+            }
+            
+            // فلترة وحذف التكرار كلياً
+            me
