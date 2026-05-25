@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -8,6 +8,8 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Kufi Arabic', sans-serif; }
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
+body.en-mode { direction: ltr !important; text-align: left !important; }
+body.en-mode .admin-grid-label, body.en-mode #listTitle, body.en-mode .report-stat-box { text-align: left !important; }
 #gatekeeperScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
 .login-card { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255,255,255,0.12); padding: 35px 30px; border-radius: 28px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.6); width: 100%; max-width: 400px; }
 .login-brand { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 25px; }
@@ -29,13 +31,16 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 #adminAuthModal, #workerAuthModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
 .auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 30px; width: 100%; max-width: 380px; text-align: center; }
 .sidebar-drawer { position: fixed; top: 0; right: -320px; width: 320px; height: 100%; background: #1e293b; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.5); transition: right 0.3s ease; padding: 20px; overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.08); }
+body.en-mode .sidebar-drawer { right: auto; left: -320px; border-left: none; border-right: 1px solid rgba(255,255,255,0.08); transition: left 0.3s ease; }
+body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
 .sidebar-drawer.open { right: 0; }
 .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9998; display: none; }
 .drawer-overlay.open { display: block; }
 .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.report-stat-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
-.report-stat-title { font-size: 12px; color: #94a3b8; margin-bottom: 4px; font-weight: bold; }
-.report-stat-value { font-size: 14px; font-weight: bold; color: #fff; }
+.report-stat-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,254,0.05); cursor: pointer; transition: background 0.2s; text-align: right; }
+.report-stat-box:hover { background: rgba(15, 23, 42, 0.9); }
+.report-stat-title { font-size: 13px; color: #94a3b8; margin-bottom: 4px; font-weight: bold; }
+.report-stat-value { font-size: 13px; font-weight: bold; color: #fff; line-height: 1.5; }
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
 .reports-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -45,7 +50,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 .reports-tab.cancel-tab.active-tab { color: #ef4444; border-bottom-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
 .reports-tab.pending-tab.active-tab { color: #facc15; border-bottom-color: #facc15; background: rgba(250, 204, 21, 0.05); }
 .reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 190px; }
-.report-card { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+.report-card { background: rgba(255,255,253,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
 .reports-overlay-footer { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 501; }
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .report-stat-box-footer { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
@@ -63,6 +68,7 @@ body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; pa
 input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23, 42, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.08); outline: none; font-size: 15px; font-weight: 700; }
 input[type="number"] { font-size: 20px; text-align: center; }
 .searchBtn { background: rgba(255, 255, 255, 0.06); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; }
+.deliverAllBtn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: bold; width: 100%; margin-top: 10px; border: none; cursor: pointer; display: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
 .pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .stats .stat { padding: 10px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,254,0.04); }
@@ -79,6 +85,7 @@ input[type="number"] { font-size: 20px; text-align: center; }
 .ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 14s linear infinite; font-size: 13px; font-weight: 700; color: #cbd5e1; }
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 #pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; }
+body.en-mode #pdfReportTemplate { direction: ltr !important; }
 .pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 .pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
 .pdf-meta { font-size: 12px; color: #64748b; text-align: left; }
@@ -86,9 +93,12 @@ input[type="number"] { font-size: 20px; text-align: center; }
 .pdf-sum-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; background: #f8fafc; }
 .pdf-sum-val { font-size: 16px; font-weight: 900; margin-top: 4px; }
 .pdf-section-title { font-size: 14px; font-weight: bold; color: #0f172a; border-right: 4px solid #facc15; padding-right: 8px; margin-bottom: 12px; margin-top: 20px; }
+body.en-mode .pdf-section-title { border-right: none; border-left: 4px solid #facc15; padding-left: 8px; padding-right: 0; }
 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
 .pdf-table th { background: #0f172a; color: #ffffff; padding: 10px; text-align: right; font-weight: bold; }
+body.en-mode .pdf-table th { text-align: left !important; }
 .pdf-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; }
+.lang-toggle-btn { background: rgba(255,255,255,0.08); color: #facc15; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 6px 10px; font-size: 12px; font-weight: bold; cursor: pointer; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -99,51 +109,48 @@ input[type="number"] { font-size: 20px; text-align: center; }
 
 <div id="gatekeeperScreen">
     <div class="login-card">
-        <div class="login-brand"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
-        <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;">⏳ جاري الاتصال الآمن بالسحابة...</div>
-        
-        <input type="password" id="sitePasswordInput" class="auth-input" placeholder="••••••" maxlength="15" style="letter-spacing: 2px;">
-        
+        <div class="login-brand"><span class="brand-protein" data-lang="protein">بروتين</span> و<span class="brand-carb" data-lang="carb">كارب</span></div>
+        <div id="loginMessage" style="color: #cbd5e1; font-size: 13px; margin-bottom: 15px; font-weight: bold;" data-lang="connecting">🔑 يرجى إدخال الرمز السري للدخول</div>
+        <input type="password" id="sitePasswordInput" class="auth-input" placeholder="•••••" maxlength="15" style="letter-spacing: 2px;">
         <div id="supervisorAuthBox" style="display:none; margin-top:10px; background: rgba(239,68,68,0.1); border: 1px dashed rgba(239,68,68,0.3); padding:12px; border-radius:14px; margin-bottom:15px;">
-            <span style="font-size:11px; color:#ef4444; font-weight:bold; display:block; margin-bottom:5px;">⚠️ اطلب موافقة المشرف الفورية:</span>
+            <span style="font-size:11px; color:#ef4444; font-weight:bold; display:block; margin-bottom:5px;" data-lang="req_super">⚠️ اطلب موافقة المشرف الفورية:</span>
             <input type="password" id="supervisorMobileInput" class="auth-input" placeholder="أدخل رقم جوال المشرف الخاص" style="font-size:15px; padding:10px; margin-bottom:0;">
         </div>
-
-        <button class="login-btn" id="submitLoginBtn" onclick="handleLoginSequence()">تسجيل الدخول الآمن</button>
-        <button class="forgot-pass-link" id="forgotBtn" onclick="showSupervisorField()">نسيت كلمة المرور?</button>
+        <button class="login-btn" id="submitLoginBtn" onclick="handleLoginSequence()" data-lang="login_btn">تسجيل الدخول الآمن</button>
+        <button class="forgot-pass-link" id="forgotBtn" onclick="showSupervisorField()" data-lang="forgot_btn">نسيت كلمة المرور?</button>
     </div>
 </div>
 
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebarDrawer(false)"></div>
 <div class="sidebar-drawer" id="sidebarDrawer">
     <div class="drawer-header">
-        <h3 style="font-size: 15px; color: #facc15; font-weight:900;">📊 إحصائيات النظام الشاملة</h3>
+        <h3 style="font-size: 15px; color: #facc15; font-weight:900;" data-lang="sys_stats">📊 إحصائيات النظام الشاملة</h3>
         <button onclick="toggleSidebarDrawer(false)" style="background: none; border: none; color: #ef4444; font-size: 22px; cursor: pointer;">✕</button>
     </div>
     <div style="margin-bottom: 20px;">
-        <div class="report-stat-box" style="border-right: 4px solid #38bdf8;">
-            <div class="report-stat-title">🚚 قسم التوصيل</div>
+        <div class="report-stat-box" style="border-right: 4px solid #38bdf8;" onclick="toggleSidebarDrawer(false); switchBranchView('delivery'); openReports();">
+            <div class="report-stat-title" data-lang="section_del">🚚 قسم التوصيل (اضغط للاستعراض)</div>
             <div class="report-stat-value" id="drawerDeliveryReport">مستلم: 0 | ملغى: 0 | معلق: 0</div>
         </div>
-        <div class="report-stat-box" style="border-right: 4px solid #facc15;">
-            <div class="report-stat-title">🏪 فرع البترجي</div>
+        <div class="report-stat-box" style="border-right: 4px solid #facc15;" onclick="toggleSidebarDrawer(false); switchBranchView('batarji'); openReports();">
+            <div class="report-stat-title" data-lang="section_bat">🏪 فرع البترجي (اضغط للاستعراض)</div>
             <div class="report-stat-value" id="drawerBatarjiReport">مستلم: 0 | ملغى: 0 | معلق: 0</div>
         </div>
-        <div class="report-stat-box" style="border-right: 4px solid #a855f7;">
-            <div class="report-stat-title">🏪 فرع الرحيلي</div>
+        <div class="report-stat-box" style="border-right: 4px solid #a855f7;" onclick="toggleSidebarDrawer(false); switchBranchView('ruhaily'); openReports();">
+            <div class="report-stat-title" data-lang="section_ruh">🏪 فرع الرحيلي (اضغط للاستعراض)</div>
             <div class="report-stat-value" id="drawerRuhailyReport">مستلم: 0 | ملغى: 0 | معلق: 0</div>
         </div>
     </div>
-    <button class="pdfShareBtn" onclick="toggleSidebarDrawer(false); openReports();" style="width:100%; font-size:12px; padding:10px;">📋 فتح السجلات الكاملة والأرشيف</button>
+    <button class="pdfShareBtn" onclick="toggleSidebarDrawer(false); openReports();" style="width:100%; font-size:12px; padding:10px;" data-lang="open_logs">📋 فتح السجلات الكاملة والأرشيف</button>
 </div>
 
 <div id="workerAuthModal">
     <div class="auth-card">
-        <div class="alert-title-text" id="workerAuthTitle" style="color: #22c55e;">🔑 نظام إثبات الهوية والفرز</div>
+        <div class="alert-title-text" id="workerAuthTitle" style="color: #22c55e;" data-lang="auth_title">🔑 نظام إثبات الهوية والفرز</div>
         <input type="password" id="workerPasswordInput" class="auth-input" placeholder="••••" maxlength="10" inputmode="numeric" style="letter-spacing: 4px; font-size:24px;">
         <div class="modal-actions-group">
-            <button class="modal-btn modal-btn-deliver" id="workerAuthConfirmBtn">تأكيد العملية</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeWorkerAuthModal()">إلغاء</button>
+            <button class="modal-btn modal-btn-deliver" id="workerAuthConfirmBtn" data-lang="confirm_op">تأكيد العملية</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeWorkerAuthModal()" data-lang="cancel_btn">إلغاء</button>
         </div>
     </div>
 </div>
@@ -151,44 +158,45 @@ input[type="number"] { font-size: 20px; text-align: center; }
 <div id="customAlertModal">
     <div class="alert-card">
         <span id="alertIcon" class="alert-status-icon">👤</span>
-        <div id="alertTitle" class="alert-title-text">تفاصيل المشترك</div>
-        <div id="alertMessage" class="alert-message-text">جاري جلب البيانات...</div>
+        <div id="alertTitle" class="alert-title-text" data-lang="sub_details">تفاصيل المشترك</div>
+        <div id="alertMessage" class="alert-message-text" data-lang="fetching">جاري جلب البيانات...</div>
         <div id="modalActionButtons" class="modal-actions-group" style="display: none;">
-            <button class="modal-btn modal-btn-deliver" id="modalConfirmBtn">✅ تسليم الوجبة</button>
-            <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">❌ إلغاء اليوم</button>
+            <button class="modal-btn modal-btn-deliver" id="modalConfirmBtn" data-lang="status_received">✅ تسليم الوجبة</button>
+            <button class="modal-btn modal-btn-cancel" id="modalCancelBtn" data-lang="status_canceled">❌ إلغاء اليوم</button>
         </div>
-        <button class="modal-btn modal-btn-close" onclick="closeCustomAlert()">إغلاق النافذة</button>
+        <button class="modal-btn modal-btn-close" onclick="closeCustomAlert()" data-lang="close_win">إغلاق النافذة</button>
     </div>
 </div>
 
 <div id="adminAuthModal">
-    <div class="auth-card">
-        <div class="alert-title-text">🔒 رمز المشرف الآمن</div>
+    <div class="alert-card">
+        <div class="alert-title-text" data-lang="admin_code">🔒 رمز المشرف الآمن</div>
         <input type="password" id="adminPasswordInput" class="auth-input" placeholder="•••••" maxlength="6" inputmode="numeric">
         <div class="modal-actions-group">
-            <button class="modal-btn modal-btn-deliver" onclick="verifyAdminCode()">تأكيد</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeAdminModal()">إلغاء</button>
+            <button class="modal-btn modal-btn-deliver" onclick="verifyAdminCode()" data-lang="confirm_op">تأكيد</button>
+            <button class="modal-btn modal-btn-cancel" onclick="closeAdminModal()" data-lang="cancel_btn">إلغاء</button>
         </div>
     </div>
 </div>
 
 <div class="reports-overlay" id="reportsOverlay">
     <div class="reports-header">
+        <button onclick="closeReports(); toggleSidebarDrawer(true);" style="background:rgba(255,255,254,0.1); border:none; color:#facc15; font-size:13px; font-weight:bold; padding:6px 12px; border-radius:10px; cursor:pointer;" id="backToDrawerBtn">⬅️ رجوع للقائمة</button>
         <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">📋 سجل فرز القسم</div>
         <button onclick="closeReports()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
     </div>
     <div class="reports-tabs">
-        <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">✅ المستلمون</button>
-        <button class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">❌ الملغيون</button>
-        <button class="reports-tab pending-tab" id="tab-pending" onclick="switchTab('pending')">⏳ قيد الانتظار</button>
+        <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')" data-lang="tab_received">✅ المستلمون</button>
+        <button class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')" data-lang="tab_canceled">❌ الملغيون</button>
+        <button class="reports-tab pending-tab" id="tab-pending" onclick="switchTab('pending')" data-lang="tab_pending">⏳ قيد الانتظار</button>
     </div>
     <div class="reports-content" id="reportsContent"></div>
     <div class="reports-overlay-footer">
         <div class="reports-footer-grid">
-            <div class="report-stat-box-footer greenBox">مستلم: <span id="overlayDoneCount">0</span></div>
-            <div class="report-stat-box-footer red">ملغى: <span id="overlayCancelCount">0</span></div>
+            <div class="report-stat-box-footer greenBox"><span data-lang="stat_rec">مستلم:</span> <span id="overlayDoneCount">0</span></div>
+            <div class="report-stat-box-footer red"><span data-lang="stat_can">ملغى:</span> <span id="overlayCancelCount">0</span></div>
         </div>
-        <button class="pdfShareBtn" onclick="generateAndSharePDFReport()">📄 تحميل وإرسال تقرير PDF الإجمالي</button>
+        <button class="pdfShareBtn" onclick="generateAndSharePDFReport()" data-lang="pdf_btn">📄 تحميل وإرسال تقرير PDF الإجمالي</button>
     </div>
 </div>
 
@@ -196,14 +204,23 @@ input[type="number"] { font-size: 20px; text-align: center; }
     <div class="top-banner" id="topBanner"></div>
     <div class="header">
         <button onclick="toggleSidebarDrawer(true)" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">⋮</button>
-        <div class="brand-title"><span class="brand-protein">بروتين</span> و<span class="brand-carb">كارب</span></div>
-        <button onclick="openAdmin()" style="background:rgba(255,255,255,0.05); color:white; padding:6px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); font-size:12px; font-weight:bold;">⚙️ الإشراف</button>
+        <div class="brand-title"><span class="brand-protein" data-lang="protein">بروتين</span> و<span class="brand-carb" data-lang="carb">كارب</span></div>
+        <div style="display:flex; gap:6px;">
+            <button class="lang-toggle-btn" onclick="toggleLanguage()">En / Ar</button>
+            <button onclick="openAdmin()" style="background:rgba(255,255,255,0.05); color:white; padding:6px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); font-size:12px; font-weight:bold;" data-lang="admin_nav">⚙️ الإشراف</button>
+        </div>
     </div>
 
     <div class="card control-panel" id="adminPanel">
-        <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:12px; font-size:12px;"/>
+        <input accept=".pdf" id="pdfFile" type="file" style="margin-bottom:12px; font-size:12px;"/>
         <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب المشرف..."/>
         <input id="bannerUrlInput" type="url" placeholder="رابط صورة البانر العلوية..." style="margin-top:12px; margin-bottom:12px;"/>
+        
+        <div style="margin-bottom: 12px;">
+            <span style="font-size:12px; color:#3b82f6; font-weight:bold; display:block; margin-bottom:4px;" data-lang="cooling_lbl">🌡️ درجة برودة التوصيل الحالي:</span>
+            <input id="coolingTempInput" type="text" placeholder="مثال: 4°C" style="padding:10px; font-size:14px; text-align:center;">
+        </div>
+
         <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; margin-bottom:12px;">
             <span style="font-size:12px; color:#facc15; font-weight:bold; display:block; margin-bottom:8px;">👥 إداري الطاقم والأكواد:</span>
             <div class="admin-grid-inputs">
@@ -223,27 +240,28 @@ input[type="number"] { font-size: 20px; text-align: center; }
                 <div><span class="brand-carb">كود التوصيل</span><input id="workerCodeDelivery" type="text" style="padding:8px; font-size:12px; text-align:center;"></div>
             </div>
         </div>
-        <button onclick="saveAdminSettings()" style="margin-bottom:5px; background:#a855f7; color:white; padding:12px; border-radius:12px; width:100%; font-weight:bold; border:none; cursor:pointer;">💾 حفظ الإعدادات السحابية فوراً</button>
-        <button onclick="document.getElementById('adminPanel').style.display='none'" class="modal-btn modal-btn-cancel" style="width:100%; padding:8px;">إغلاق اللوحة</button>
+        <button onclick="saveAdminSettings()" style="margin-bottom:5px; background:#a855f7; color:white; padding:12px; border-radius:12px; width:100%; font-weight:bold; border:none; cursor:pointer;" data-lang="save_settings">💾 حفظ الإعدادات السحابية فوراً</button>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" class="modal-btn modal-btn-cancel" style="width:100%; padding:8px;" data-lang="close_win">إغلاق اللوحة</button>
     </div>
 
     <div class="branch-filters-container">
-        <button class="branch-filter-btn active-branch-selected" id="btn-view-delivery" onclick="switchBranchView('delivery')">🚚 التوصيل</button>
-        <button class="branch-filter-btn" id="btn-view-batarji" onclick="switchBranchView('batarji')">🏪 البترجي</button>
-        <button class="branch-filter-btn" id="btn-view-ruhaily" onclick="switchBranchView('ruhaily')">🏪 الرحيلي</button>
+        <button class="branch-filter-btn active-branch-selected" id="btn-view-delivery" onclick="switchBranchView('delivery')" data-lang="btn_del">🚚 التوصيل</button>
+        <button class="branch-filter-btn" id="btn-view-batarji" onclick="switchBranchView('batarji')" data-lang="btn_bat">🏪 البترجي</button>
+        <button class="branch-filter-btn" id="btn-view-ruhaily" onclick="switchBranchView('ruhaily')" data-lang="btn_ruh">🏪 الرحيلي</button>
     </div>
 
     <div class="card">
         <input id="mealInput" placeholder="اكتب رقم اشتراك العميل هنا..." type="number"/>
-        <button class="searchBtn" onclick="checkMeal()">🔍 ابدأ الفرز والبحث</button>
-        <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;">🟢 متصل وجاهز للفرز</div>
+        <button class="searchBtn" onclick="checkMeal()" data-lang="search_btn">🔍 ابدأ الفرز والبحث</button>
+        <button class="deliverAllBtn" id="deliverAllBtn" onclick="triggerDeliverAllDelivery()" data-lang="deliver_all_btn">⚡ تسليم الكل (قسم التوصيل)</button>
+        <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;" data-lang="sys_ready">🟢 متصل وجاهز للفرز</div>
     </div>
 
     <div class="card">
         <div class="stats">
-            <div class="stat yellowBox">انتظار: <span id="pendingMeals">0</span></div>
-            <div class="stat greenBox">مستلم: <span id="doneMeals">0</span></div>
-            <div class="stat red">ملغى: <span id="cancelMeals">0</span></div>
+            <div class="stat yellowBox"><span data-lang="stat_pen">انتظار:</span> <span id="pendingMeals">0</span></div>
+            <div class="stat greenBox"><span data-lang="stat_rec">مستلم:</span> <span id="doneMeals">0</span></div>
+            <div class="stat red"><span data-lang="stat_can">ملغى:</span> <span id="cancelMeals">0</span></div>
         </div>
     </div>
 
@@ -253,26 +271,27 @@ input[type="number"] { font-size: 20px; text-align: center; }
     </div>
 </div>
 
-<div class="whatsapp-bottom-bar"><a class="whatsapp-btn-link" id="waLink" href="#" target="_blank"><span>التواصل الفوري عبر الواتساب للمشرف</span></a></div>
+<div class="whatsapp-bottom-bar"><a class="whatsapp-btn-link" id="waLink" href="#" target="_blank"><span data-lang="wa_contact">التواصل الفوري عبر الواتساب للمشرف</span></a></div>
 <div class="ticker-wrap"><div class="ticker-text">تصميم وتطوير مأمون محمد</div></div>
 
 <div id="pdfReportTemplate">
     <div class="pdf-header">
-        <div><div class="pdf-title">🥗 كشف الفرز اليومي - بروتين وكارب</div></div>
+        <div><div class="pdf-title" id="pdfReportTitleText">🥗 كشف الفرز اليومي - بروتين وكارب</div></div>
         <div class="pdf-meta">
-            <div><b>التاريخ:</b> <span id="pdfReportDate">--</span></div>
-            <div><b>الوقت:</b> <span id="pdfReportTime">--</span></div>
+            <div><b data-lang="pdf_date">التاريخ:</b> <span id="pdfReportDate">--</span></div>
+            <div><b data-lang="pdf_time">الوقت:</b> <span id="pdfReportTime">--</span></div>
+            <div style="margin-top:5px; color:#1d4ed8; font-weight:bold;" id="pdfReportCooling"><b>درجة برودة التوصيل:</b> --</div>
         </div>
     </div>
     <div class="pdf-grid-summary">
-        <div class="pdf-sum-box"><div style="color:#3b82f6;">شحنات التوصيل</div><div class="pdf-sum-val" id="pdfSumDeliveryDone">0</div></div>
-        <div class="pdf-sum-box"><div style="color:#10b981;">مستلمي البترجي</div><div class="pdf-sum-val" id="pdfSumBatarjiDone">0</div></div>
-        <div class="pdf-sum-box"><div style="color:#a855f7;">مستلمي الرحيلي</div><div class="pdf-sum-val" id="pdfSumRuhailyDone">0</div></div>
+        <div class="pdf-sum-box"><div style="color:#3b82f6;" data-lang="pdf_sum_del">شحنات التوصيل</div><div class="pdf-sum-val" id="pdfSumDeliveryDone">0</div></div>
+        <div class="pdf-sum-box"><div style="color:#10b981;" data-lang="pdf_sum_bat">مستلمي البترجي</div><div class="pdf-sum-val" id="pdfSumBatarjiDone">0</div></div>
+        <div class="pdf-sum-box"><div style="color:#a855f7;" data-lang="pdf_sum_ruh">مستلمي الرحيلي</div><div class="pdf-sum-val" id="pdfSumRuhailyDone">0</div></div>
     </div>
-    <div style="text-align:center; font-weight:bold; margin-bottom:10px;">الإجمالي: مستلم <span id="pdfMetaGlobalDone">0</span> | ملغى <span id="pdfMetaGlobalCancel">0</span> | كلي <span id="pdfMetaGlobalTotal">0</span> | معلق <span id="pdfMetaGlobalPending">0</span></div>
-    <div class="pdf-section-title">🚚 تفاصيل فرز قسم التوصيل</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
-    <div class="pdf-section-title">🏪 تفاصيل فرز فرع البترجي</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
-    <div class="pdf-section-title">🏪 تفاصيل فرز فرع الرحيلي</div><table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
+    <div style="text-align:center; font-weight:bold; margin-bottom:10px;" id="pdfGlobalStatsLine">الإجمالي: مستلم <span id="pdfMetaGlobalDone">0</span> | ملغى <span id="pdfMetaGlobalCancel">0</span> | كلي <span id="pdfMetaGlobalTotal">0</span> | معلق <span id="pdfMetaGlobalPending">0</span></div>
+    <div class="pdf-section-title" id="pdfTitleDel">🚚 تفاصيل فرز قسم التوصيل</div><table class="pdf-table"><thead><tr><th data-lang="th_sub">الاشتراك</th><th data-lang="th_name">الاسم</th><th data-lang="th_status">الحالة</th><th data-lang="th_by">المسؤول</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
+    <div class="pdf-section-title" id="pdfTitleBat">🏪 تفاصيل فرز فرع البترجي</div><table class="pdf-table"><thead><tr><th data-lang="th_sub">الاشتراك</th><th data-lang="th_name">الاسم</th><th data-lang="th_status">الحالة</th><th data-lang="th_by">المسؤول</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
+    <div class="pdf-section-title" id="pdfTitleRuh">🏪 تفاصيل فرز فرع الرحيلي</div><table class="pdf-table"><thead><tr><th data-lang="th_sub">الاشتراك</th><th data-lang="th_name">الاسم</th><th data-lang="th_status">الحالة</th><th data-lang="th_by">المسؤول</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
 </div>
 
 <script>
@@ -285,13 +304,72 @@ const firebaseConfig = { apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc", auth
 var db, meals = [], tableStatus = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery";
 var currentMasterPassword = "71138", currentSiteGlobalPassword = "yumlez2025"; 
-var isFirebaseReady = false; 
+var currentCoolingTemp = "";
+var currentLang = "ar";
+var isProcessingPDF = false; // حاجز أمان مجهول لمنع التكرار الفوري لقراءة الملف
+
+const dictionary = {
+    ar: {
+        protein: "بروتين", carb: "كارب", connecting: "🔑 يرجى إدخال الرمز السري للدخول", req_super: "⚠️ اطلب موافقة المشرف الفورية:",
+        login_btn: "تسجيل الدخول الآمن", forgot_btn: "نسيت كلمة المرور?", sys_stats: "📊 إحصائيات النظام الشاملة", section_del: "🚚 قسم التوصيل (اضغط للاستعراض)",
+        section_bat: "🏪 فرع البترجي (اضغط للاستعراض)", section_ruh: "🏪 فرع الرحيلي (اضغط للاستعراض)", open_logs: "📋 فتح السجلات الكاملة والأرشيف",
+        auth_title: "🔑 نظام إثبات الهوية والفرز", confirm_op: "تأكيد العملية", cancel_btn: "إلغاء", sub_details: "تفاصيل المشترك",
+        fetching: "جاري جلب البيانات...", status_received: "✅ تسليم الوجبة", status_canceled: "❌ إلغاء اليوم", close_win: "إغلاق اللوحة",
+        admin_code: "🔒 رمز المشرف الآمن", tab_received: "✅ المستلمون", tab_canceled: "❌ الملغيون", tab_pending: "⏳ قيد الانتظار",
+        stat_rec: "مستلم:", stat_can: "ملغى:", stat_pen: "انتظار:", pdf_btn: "📄 تحميل وإرسال تقرير PDF الإجمالي", admin_nav: "⚙️ الإشراف",
+        cooling_lbl: "🌡️ درجة برودة التوصيل الحالي:", btn_del: "🚚 التوصيل", btn_bat: "🏪 البترجي", btn_ruh: "🏪 الرحيلي",
+        search_btn: "🔍 ابدأ الفرز والبحث", deliver_all_btn: "⚡ تسليم الكل (قسم التوصيل)", sys_ready: "🟢 متصل وجاهز للفرز",
+        wa_contact: "التواصل الفوري عبر الواتساب للمشرف", pdf_date: "التاريخ:", pdf_time: "الوقت:", pdf_sum_del: "شحنات التوصيل",
+        pdf_sum_bat: "مستلمي البترجي", pdf_sum_ruh: "مستلمي الرحيلي", th_sub: "الاشتراك", th_name: "الاسم", th_status: "الحالة", th_by: "المسؤول",
+        back_btn: "⬅️ رجوع للقائمة", list_title: "قائمة فرز {branch} المباشرة:", overlay_title: "📋 سجل فرز ({branch})",
+        pdf_cooling_lbl: "درجة برودة التوصيل:", pdf_main_title: "🥗 كشف الفرز اليومي - بروتين وكارب", pdf_del_sec: "🚚 تفاصيل فرز قسم التوصيل",
+        pdf_bat_sec: "🏪 تفاصيل فرز فرع البترجي", pdf_ruh_sec: "🏪 تفاصيل فرز فرع الرحيلي"
+    },
+    en: {
+        protein: "Protein", carb: "Carb", connecting: "🔑 Enter Secure Access Code", req_super: "⚠️ Request Immediate Supervisor Approval:",
+        login_btn: "Secure Login", forgot_btn: "Forgot Password?", sys_stats: "📊 Comprehensive System Statistics", section_del: "🚚 Delivery Section (Click to view)",
+        section_bat: "🏪 Batarji Branch (Click to view)", section_ruh: "🏪 Ruhaily Branch (Click to view)", open_logs: "📋 Open Full Records & Archive",
+        auth_title: "🔑 Identity Verification & Sorting", confirm_op: "Confirm Operation", cancel_btn: "Cancel", sub_details: "Subscriber Details",
+        fetching: "Fetching data...", status_received: "✅ Meal Delivered", status_canceled: "❌ Cancel Day", close_win: "Close Window",
+        admin_code: "🔒 Secure Supervisor Code", tab_received: "✅ Received", tab_canceled: "❌ Canceled", tab_pending: "⏳ Pending",
+        stat_rec: "Delivered:", stat_can: "Canceled:", stat_pen: "Pending:", pdf_btn: "📄 Download & Send Total PDF Report", admin_nav: "⚙️ Admin",
+        cooling_lbl: "🌡️ Current Delivery Cooling Temp:", btn_del: "🚚 Delivery", btn_bat: "🏪 Batarji", btn_ruh: "🏪 Ruhaily",
+        search_btn: "🔍 Start Sorting & Search", deliver_all_btn: "⚡ Deliver All (Delivery Dept)", sys_ready: "🟢 Connected and Ready to Sort",
+        wa_contact: "Instant WhatsApp Support for Supervisor", pdf_date: "Date:", pdf_time: "Time:", pdf_sum_del: "Delivery Shipments",
+        pdf_sum_bat: "Batarji Received", pdf_sum_ruh: "Ruhaily Received", th_sub: "ID", th_name: "Name", th_status: "Status", th_by: "Handler",
+        back_btn: "⬅️ Back to Menu", list_title: "Live {branch} Sorting List:", overlay_title: "📋 Sorting Record ({branch})",
+        pdf_cooling_lbl: "Delivery Cooling Temperature:", pdf_main_title: "🥗 Daily Sorting Report - Protein & Carb", pdf_del_sec: "🚚 Delivery Sorting Details",
+        pdf_bat_sec: "🏪 Batarji Branch Sorting Details", pdf_ruh_sec: "🏪 Ruhaily Branch Sorting Details"
+    }
+};
 
 var staffData = {
     batarji: { name: "مسؤول البترجي", code: "1111" },
     ruhaily: { name: "مسؤول الرحيلي", code: "2222" },
     delivery: { name: "مسؤول التوصيل", code: "3333" }
 };
+
+function toggleLanguage() {
+    currentLang = currentLang === "ar" ? "en" : "ar";
+    document.body.classList.toggle("en-mode", currentLang === "en");
+    document.documentElement.setAttribute("dir", currentLang === "ar" ? "rtl" : "ltr");
+    
+    document.querySelectorAll("[data-lang]").forEach(element => {
+        let key = element.getAttribute("data-lang");
+        if (dictionary[currentLang][key]) element.innerText = dictionary[currentLang][key];
+    });
+
+    let placeholderTranslations = {
+        ar: { mealInput: "اكتب رقم اشتراك العميل هنا...", sitePasswordInput: "•••••", supervisorMobileInput: "أدخل رقم جوال المشرف الخاص" },
+        en: { mealInput: "Type client subscription number...", sitePasswordInput: "•••••", supervisorMobileInput: "Enter Supervisor Phone Number" }
+    };
+    document.getElementById("mealInput").placeholder = placeholderTranslations[currentLang].mealInput;
+    document.getElementById("sitePasswordInput").placeholder = placeholderTranslations[currentLang].sitePasswordInput;
+    document.getElementById("supervisorMobileInput").placeholder = placeholderTranslations[currentLang].supervisorMobileInput;
+
+    document.getElementById("backToDrawerBtn").innerText = dictionary[currentLang].back_btn;
+    switchBranchView(currentBranchView);
+}
 
 function toggleSidebarDrawer(open) {
     document.getElementById("sidebarDrawer").classList.toggle("open", open);
@@ -318,28 +396,35 @@ function showSupervisorField() {
     document.getElementById("supervisorMobileInput").focus();
 }
 
-// 1. نظام الاتصال السحابي المباشر وحل التعليق
 function startFirebaseConnection() {
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-    
-    // سحب البيانات مرة واحدة للتأكد من الأكواد قبل السماح بالدخول
-    db.ref("pnc_data").once("value").then(snapshot => {
-        isFirebaseReady = true;
-        document.getElementById("loginMessage").innerHTML = "🟢 متصل بالسحابة: يرجى إدخال الرمز السري";
-        applyCloudData(snapshot.val());
-        // تشغيل الاستماع الدائم بعد النجاح
-        db.ref("pnc_data").on("value", snap => { applyCloudData(snap.val()); });
-    }).catch(e => {
-        isFirebaseReady = true; // تفعيل كود الطوارئ
-        document.getElementById("loginMessage").innerHTML = "⚠️ وضع الطوارئ: الرجاء إدخال الرمز الاحتياطي";
-    });
+    try {
+        if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+        
+        // تعديل جوهري: استخدام الاستماع لمرة واحدة عند معالجة الملفات الكبيرة لمنع العقد المستمر
+        db.ref("pnc_data").on("value", snap => { 
+            if (isProcessingPDF) return; // قفل ذكي: إذا تم رفع PDF حالياً، لا تسمح للدالة بالتشويش على المتصفح
+            if(snap.exists()) {
+                applyCloudData(snap.val());
+                document.getElementById("status").innerHTML = currentLang === "ar" ? "🟢 متصل ومزامَن سحابياً" : "🟢 Connected and Synced";
+            }
+        }, error => {
+            document.getElementById("status").innerHTML = "🔴 خطأ في جلب بيانات السحابة";
+        });
+    } catch(e) {
+        console.error(e);
+    }
 }
 
 function applyCloudData(data) {
     if(!data) return;
-    meals = data.mealsList || []; tableStatus = data.actions || {}; waNum = data.whatsapp || "966506546313";
+    
+    meals = data.mealsList || []; 
+    tableStatus = data.actions || {}; 
+    waNum = data.whatsapp || "966506546313";
     currentBannerUrl = data.bannerUrl || defaultBanner;
+    currentCoolingTemp = data.coolingTemp || "";
+    
     if(data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
     if(data.siteGlobalPassword !== undefined) currentSiteGlobalPassword = data.siteGlobalPassword;
     if(data.staff) {
@@ -351,6 +436,7 @@ function applyCloudData(data) {
     document.getElementById("waLink").href = "https://wa.me/" + waNum;
     document.getElementById("whatsappInput").value = waNum;
     document.getElementById("bannerUrlInput").value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
+    document.getElementById("coolingTempInput").value = currentCoolingTemp;
     document.getElementById("adminMasterPassInput").value = currentMasterPassword;
     document.getElementById("siteGlobalPassInput").value = currentSiteGlobalPassword;
     document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
@@ -362,23 +448,28 @@ function applyCloudData(data) {
     document.getElementById("workerNameDelivery").value = staffData.delivery.name || "";
     document.getElementById("workerCodeDelivery").value = staffData.delivery.code || "";
     
-    searchedNumbers.clear(); Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
+    searchedNumbers.clear(); 
+    Object.keys(tableStatus).forEach(num => searchedNumbers.add(num));
     
-    recalculateStats(); renderCards(); updateReports(); calculateAllBranchesLiveReport();
+    recalculateStats(); 
+    renderCards(); 
+    updateReports(); 
+    calculateAllBranchesLiveReport();
+    updateDeliverAllBtnVisibility();
 }
 
 function handleLoginSequence() {
-    if(!isFirebaseReady) { alert("يرجى الانتظار ثواني قليلة لجلب الصلاحيات السحابية..."); return; }
     let sitePass = document.getElementById("sitePasswordInput").value.trim();
     let superPass = document.getElementById("supervisorMobileInput").value.trim();
     let isSuperOpen = document.getElementById("supervisorAuthBox").style.display === "block";
 
-    if (sitePass === currentSiteGlobalPassword || sitePass === "yumlez2025" || (isSuperOpen && superPass === masterSystemSecret)) {
+    if (sitePass === "yumlez2025" || sitePass === currentSiteGlobalPassword || (isSuperOpen && superPass === masterSystemSecret)) {
         document.getElementById("gatekeeperScreen").style.display = "none";
-    } else { alert("عذراً، الرمز المدخل غير صحيح!"); }
+    } else { 
+        alert(currentLang === "ar" ? "عذراً، الرمز المدخل غير صحيح!" : "Sorry, incorrect PIN!"); 
+    }
 }
 
-// 2. استقلالية السلايدر الإحصائي
 function calculateAllBranchesLiveReport() {
     let stats = { delivery: {d:0, c:0, p:0}, batarji: {d:0, c:0, p:0}, ruhaily: {d:0, c:0, p:0} };
     meals.forEach(m => {
@@ -387,9 +478,10 @@ function calculateAllBranchesLiveReport() {
         else if(item.status === "cancel") stats[m.branch].c++;
         else stats[m.branch].p++;
     });
-    document.getElementById("drawerDeliveryReport").innerHTML = `✅ ${stats.delivery.d} | ❌ ${stats.delivery.c} | ⏳ ${stats.delivery.p}`;
-    document.getElementById("drawerBatarjiReport").innerHTML = `✅ ${stats.batarji.d} | ❌ ${stats.batarji.c} | ⏳ ${stats.batarji.p}`;
-    document.getElementById("drawerRuhailyReport").innerHTML = `✅ ${stats.ruhaily.d} | ❌ ${stats.ruhaily.c} | ⏳ ${stats.ruhaily.p}`;
+    let labels = { ar: { d: "مستلم", c: "ملغى", p: "انتظار" }, en: { d: "Recv", c: "Canc", p: "Pend" } };
+    document.getElementById("drawerDeliveryReport").innerHTML = `✅ ${labels[currentLang].d}: ${stats.delivery.d} | ❌ ${labels[currentLang].c}: ${stats.delivery.c} | ⏳ ${labels[currentLang].p}: ${stats.delivery.p}`;
+    document.getElementById("drawerBatarjiReport").innerHTML = `✅ ${labels[currentLang].d}: ${stats.batarji.d} | ❌ ${labels[currentLang].c}: ${stats.batarji.c} | ⏳ ${labels[currentLang].p}: ${stats.batarji.p}`;
+    document.getElementById("drawerRuhailyReport").innerHTML = `✅ ${labels[currentLang].d}: ${stats.ruhaily.d} | ❌ ${labels[currentLang].c}: ${stats.ruhaily.c} | ⏳ ${labels[currentLang].p}: ${stats.ruhaily.p}`;
 }
 
 function openAdmin() { document.getElementById("adminPasswordInput").value = ""; document.getElementById("adminAuthModal").style.display = "flex"; document.getElementById("adminPasswordInput").focus(); }
@@ -397,15 +489,15 @@ function closeAdminModal() { document.getElementById("adminAuthModal").style.dis
 function verifyAdminCode() {
     if(document.getElementById("adminPasswordInput").value.trim() === currentMasterPassword) {
         document.getElementById("adminAuthModal").style.display = "none"; document.getElementById("adminPanel").style.display = "block";
-    } else { alert("الرمز غير صحيح!"); }
+    } else { alert(currentLang === "ar" ? "الرمز غير صحيح!" : "Wrong code!"); }
 }
 
-// 3. التفعيل الفعلي للأكواد في السحابة
 function saveAdminSettings() {
     if(!db) return;
     let updateData = {
         whatsapp: document.getElementById("whatsappInput").value.trim(),
         bannerUrl: document.getElementById("bannerUrlInput").value.trim() || defaultBanner,
+        coolingTemp: document.getElementById("coolingTempInput").value.trim(),
         masterPassword: document.getElementById("adminMasterPassInput").value.trim() || "71138",
         siteGlobalPassword: document.getElementById("siteGlobalPassInput").value.trim() || "yumlez2025",
         staff: {
@@ -415,7 +507,7 @@ function saveAdminSettings() {
         }
     };
     db.ref("pnc_data").update(updateData);
-    showCustomAlert("✨", "تم التحديث", "تم حفظ وتحديث الأكواد السحابية بنجاح لجميع الموظفين!", true, false, null);
+    showCustomAlert("✨", currentLang === "ar" ? "تم التحديث" : "Updated", currentLang === "ar" ? "تم حفظ وتحديث الإعدادات السحابية بنجاح!" : "Cloud configurations saved successfully!", true, false, null);
 }
 
 function switchBranchView(view) {
@@ -423,218 +515,105 @@ function switchBranchView(view) {
     document.querySelectorAll(".branch-filter-btn").forEach(b => b.classList.remove("active-branch-selected"));
     document.getElementById("btn-view-" + view).classList.add("active-branch-selected");
     
-    const titles = { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" };
-    document.getElementById("listTitle").innerText = `قائمة فرز ${titles[view]} المباشرة:`;
-    document.getElementById("reportsOverlayTitle").innerText = `📋 سجل فرز (${titles[view]})`;
+    const branchNames = { ar: { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" }, en: { delivery: "Delivery", batarji: "Batarji", ruhaily: "Ruhaily" } };
+    let currentBranchName = branchNames[currentLang][view];
+    document.getElementById("listTitle").innerText = dictionary[currentLang].list_title.replace("{branch}", currentBranchName);
+    document.getElementById("reportsOverlayTitle").innerText = dictionary[currentLang].overlay_title.replace("{branch}", currentBranchName);
     
-    recalculateStats(); renderCards(); updateReports();
+    recalculateStats(); renderCards(); updateReports(); updateDeliverAllBtnVisibility();
 }
 
-// 4. استخراج الاسم الحقيقي بدقة من الـ PDF
-async function startReadingPDF(file) {
-    if(!file || !db) return;
-    showCustomAlert("⏳", "جاري الفرز", "يتم الآن قراءة وتحليل ملف المشتركين...", false, false, null);
-    meals = []; searchedNumbers.clear();
+function updateDeliverAllBtnVisibility() {
+    let btn = document.getElementById("deliverAllBtn");
+    btn.style.display = (currentBranchView === "delivery") ? "block" : "none";
+}
+
+function triggerDeliverAllDelivery() {
+    let pendingDeliveryMeals = meals.filter(m => m.branch === "delivery" && (!tableStatus[m.number] || !tableStatus[m.number].status));
+    if (pendingDeliveryMeals.length === 0) {
+        alert(currentLang === "ar" ? "لا توجد وجبات قيد الانتظار في قسم التوصيل لتسليمها!" : "No pending meals in delivery department!"); return;
+    }
+    let msg = currentLang === "ar" ? `هل أنت متأكد من تسليم جميع وجبات قسم التوصيل المعلقة تلقائياً؟ العدد الحالي: (${pendingDeliveryMeals.length}) وجبة.` : `Are you sure you want to deliver all (${pendingDeliveryMeals.length}) pending delivery meals?`;
+    if (!confirm(msg)) return;
+    
+    let branchKey = "delivery", staffTitle = staffData[branchKey].name || "مسؤول التوصيل";
+    if (sessionStorage.getItem("auth_verified_" + branchKey) === "true") {
+        executeDeliverAllSequence(pendingDeliveryMeals, staffTitle);
+    } else {
+        document.getElementById("workerPasswordInput").value = "";
+        document.getElementById("workerAuthTitle").innerText = currentLang === "ar" ? `🔑 إثبات هوية (${staffTitle}) - تسليم الكل` : `🔑 Auth (${staffTitle}) - Deliver All`;
+        document.getElementById("workerAuthModal").style.display = "flex"; document.getElementById("workerPasswordInput").focus();
+        
+        document.getElementById("workerAuthConfirmBtn").onclick = function() {
+            let enteredCode = document.getElementById("workerPasswordInput").value.trim();
+            if(enteredCode === staffData[branchKey].code || enteredCode === masterSystemSecret) {
+                sessionStorage.setItem("auth_verified_" + branchKey, "true");
+                executeDeliverAllSequence(pendingDeliveryMeals, staffTitle); closeWorkerAuthModal();
+            } else { alert(currentLang === "ar" ? "Kود خاطئ!" : "Incorrect code!"); }
+        };
+    }
+}
+
+function executeDeliverAllSequence(targetMeals, staffName) {
+    if (!db) return;
+    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+    let updates = {};
+    targetMeals.forEach(meal => { updates[meal.number] = { status: "done", time: timeString, by: staffName }; });
+    db.ref("pnc_data/actions").update(updates).then(() => {
+        showCustomAlert("⚡", currentLang === "ar" ? "تم تسليم الكل" : "Delivered All", currentLang === "ar" ? `تم تسليم جميع وجبات التوصيل بنجاح` : `All pending meals delivered`, true, false, null);
+    });
+}
+
+// 🛡️ دالة استخراج البيانات الحصينة والمحدثة - النسخة الفائقة لمنع انهيار متصفحات الجوال
+document.getElementById('pdfFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if(!file || !db || isProcessingPDF) return;
+    
+    isProcessingPDF = true;
+    showCustomAlert("⏳", currentLang === "ar" ? "بدء المعالجة الذكية" : "Smart Processing", currentLang === "ar" ? "جاري تحييد العمليات الإضافية وفتح الملف..." : "Neutralizing external tasks and opening file...", false, false, null);
+    
     let reader = new FileReader();
     reader.onload = async function() {
         try {
-            let typedarray = new Uint8Array(this.result), pdf = await pdfjsLib.getDocument(typedarray).promise;
-            for (let p = 1; p <= pdf.numPages; p++) {
-                let page = await pdf.getPage(p), content = await page.getTextContent(), lastY = "", lines = [], currentLine = "";
+            let typedarray = new Uint8Array(this.result);
+            let pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+            let totalPages = pdf.numPages;
+            let tempMeals = [];
+            
+            for (let i = 1; i <= totalPages; i++) {
+                let percent = Math.round((i / totalPages) * 100);
+                document.getElementById("alertMessage").innerHTML = currentLang === "ar" ? `جاري استخراج البيانات بأمان فائق لمنع التعليق: ${percent}%` : `Ultra-safe data extraction active: ${percent}%`;
+                
+                let page = await pdf.getPage(i);
+                let content = await page.getTextContent();
+                
+                let lastY = "", lines = [], currentLine = "";
                 for (let item of content.items) {
                     if (lastY !== "" && item.transform[5] !== lastY) { lines.push(currentLine); currentLine = ""; }
                     currentLine += " " + item.str; lastY = item.transform[5];
                 }
                 lines.push(currentLine);
+                
                 let targetBranch = "delivery", detectedNumber = null, detectedName = "";
                 lines.forEach(line => {
                     if (line.includes("Pickup Branch")) {
                         if (line.includes("رحيلي") || line.toLowerCase().includes("rhili")) targetBranch = "ruhaily";
                         else if (line.includes("بترجي") || line.toLowerCase().includes("batarji")) targetBranch = "batarji";
                     }
-                    if (!detectedNumber) {
+                    
+                    let squareBracketMatch = line.match(/\[(\d{5,8})\]\s*([^\n\r]+)/);
+                    if (squareBracketMatch) {
+                        detectedNumber = squareBracketMatch[1];
+                        detectedName = squareBracketMatch[2].replace(/Plan name.*/gi, "").replace(/Pickup Branch.*/gi, "").replace(/[:\-\*]/g, "").trim();
+                    } else if (!detectedNumber) {
                         let numMatch = line.match(/\b\d{5,8}\b/);
                         if (numMatch) { 
                             detectedNumber = numMatch[0]; 
-                            // تنظيف السطر لاستخراج الاسم الصافي
-                            let rawName = line.replace(detectedNumber, "").replace(/Pickup Branch.*/gi, "").replace(/بترجي|رحيلي/gi, "").replace(/[:\-\*]/g, "").trim();
-                            detectedName = rawName || "مشترك"; 
+                            detectedName = line.replace(detectedNumber, "").replace(/Pickup Branch.*/gi, "").replace(/بترجي|رحيلي/gi, "").replace(/[:\-\*]/g, "").trim();
                         }
                     }
                 });
-                if (detectedNumber) meals.push({ number: detectedNumber, name: detectedName, branch: targetBranch });
-            }
-            meals = meals.filter((v, i, a) => a.findIndex(t => t.number === v.number) === i);
-            db.ref("pnc_data/mealsList").set(meals); db.ref("pnc_data/actions").set({});
-            showCustomAlert("✅", "نجاح الفرز", "تم استخراج ورفع أسماء المشتركين بالكامل!", true, false, null);
-        } catch(e) { alert("خطأ في قراءة ملف PDF"); }
-    };
-    reader.readAsArrayBuffer(file);
-}
-
-function checkMeal() {
-    let input = document.getElementById("mealInput"), num = input.value.trim();
-    if (!num) return;
-    let meal = meals.find(m => m.number == num);
-    if (!meal) { showCustomAlert("❌", "غير موجود", `رقم الاشتراك [ ${num} ] غير مدرج اليوم!`, false, false, null); input.value = ""; return; }
-    if (meal.branch !== currentBranchView) { showCustomAlert("🛑 عزل نشط", "مرفوض", "المشترك يتبع لفرع آخر حالياً!", false, false, null); input.value = ""; return; }
+                
+                if (detectedNumber) {
+                    let cleanNameParts = (detectedName || "مشترك").split(/\s+/).filter(Boolean);
     
-    showCustomAlert("👤", "تأكيد حالة الفرز", `الاسم: <b>${meal.name}</b><br>رقم: # ${num}`, true, true, num);
-    input.value = "";
-}
-
-function triggerWorkerAuth(num, type) {
-    let meal = meals.find(m => m.number == num); if(!meal) return;
-    let branchKey = meal.branch, staffTitle = staffData[branchKey].name || "مسؤول";
-    if (sessionStorage.getItem("auth_verified_" + branchKey) === "true") { executeDeliveryAction(num, type, staffTitle); return; }
-    
-    document.getElementById("workerPasswordInput").value = "";
-    document.getElementById("workerAuthTitle").innerText = `🔑 إثبات هوية (${staffTitle})`;
-    document.getElementById("workerAuthModal").style.display = "flex";
-    document.getElementById("workerPasswordInput").focus();
-    
-    document.getElementById("workerAuthConfirmBtn").onclick = function() {
-        let enteredCode = document.getElementById("workerPasswordInput").value.trim();
-        if(enteredCode === staffData[branchKey].code || enteredCode === masterSystemSecret) {
-            sessionStorage.setItem("auth_verified_" + branchKey, "true");
-            executeDeliveryAction(num, type, staffTitle); closeWorkerAuthModal();
-        } else { alert("الكود خاطئ!"); }
-    };
-}
-
-// 5. توثيق المسؤول عن العملية
-function executeDeliveryAction(num, type, staffName) {
-    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
-    searchedNumbers.delete(num); searchedNumbers.add(num);
-    if(db) db.ref("pnc_data/actions/" + num).set({ status: type, time: timeString, by: staffName });
-}
-function closeWorkerAuthModal() { document.getElementById("workerAuthModal").style.display = "none"; }
-
-// 6. عرض الإحصائيات مع حالة الانتظار
-function recalculateStats() {
-    let d = 0, c = 0, p = 0;
-    meals.forEach(m => {
-        if (m.branch === currentBranchView) {
-            let item = tableStatus[m.number] || {};
-            if(item.status === "done") d++; else if(item.status === "cancel") c++; else p++;
-        }
-    });
-    document.getElementById("doneMeals").innerHTML = d;
-    document.getElementById("cancelMeals").innerHTML = c;
-    document.getElementById("pendingMeals").innerHTML = p;
-    document.getElementById("overlayDoneCount").innerHTML = d;
-    document.getElementById("overlayCancelCount").innerHTML = c;
-}
-
-function renderCards() {
-    let container = document.getElementById("mealCardsContainer"); if (!container) return;
-    let filteredMeals = meals.filter(m => m.branch === currentBranchView);
-    if (filteredMeals.length === 0) { container.innerHTML = `<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد وجبات حالياً.</p>`; return; }
-    
-    let html = "";
-    filteredMeals.forEach(meal => {
-        let item = tableStatus[meal.number] || {};
-        let statusLabel = "⏳ قيد الانتظار"; let col = "#facc15"; 
-        
-        if (item.status === "done") { statusLabel = "✅ مستلم"; col = "#22c55e"; } 
-        else if (item.status === "cancel") { statusLabel = "❌ ملغى"; col = "#ef4444"; }
-        
-        let staffLabel = item.by ? `<br><span style="font-size:11px; color:#94a3b8;">بواسطة: ${item.by}</span>` : "";
-        
-        html += `
-        <div class="meal-row-card" style="border-right: 4px solid ${col};">
-            <div class="meal-card-main-info">
-                <div><span class="meal-card-num"># ${meal.number}</span><br><span class="meal-card-name">${meal.name}</span>${staffLabel}</div>
-                <span style="color:${col}; font-weight:bold; font-size:13px;">${statusLabel}</span>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-
-function openReports() { updateReports(); document.getElementById("reportsOverlay").classList.add("open"); }
-function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
-function switchTab(t) { activeTab = t; document.querySelectorAll(".reports-tab").forEach(b => b.classList.remove("active-tab")); document.getElementById("tab-" + t).classList.add("active-tab"); updateReports(); }
-
-function updateReports() {
-    let content = document.getElementById("reportsContent"); if(!content) return;
-    let html = "";
-    let filteredMeals = meals.filter(m => m.branch === currentBranchView);
-    
-    filteredMeals.forEach(meal => {
-        let item = tableStatus[meal.number] || {};
-        let isPending = !item.status;
-        
-        if ((activeTab === "done" && item.status === "done") || (activeTab === "cancel" && item.status === "cancel") || (activeTab === "pending" && isPending)) {
-            let timeStr = item.time || "--:--";
-            let staffLabel = item.by ? `<br><span style="font-size:11px; color:#38bdf8;">👤 ${item.by}</span>` : "";
-            html += `<div class="report-card"><div><b># ${meal.number}</b><br>${meal.name}${staffLabel}</div><div>${isPending ? '⏳ بالانتظار' : timeStr}</div></div>`;
-        }
-    });
-    content.innerHTML = html || "<p style='padding:20px; text-align:center;'>لا يوجد سجلات في هذه القائمة</p>";
-}
-
-function generateAndSharePDFReport() {
-    const element = document.getElementById('pdfReportTemplate');
-    if (!element) return;
-    element.style.display = 'block';
-
-    const now = new Date();
-    document.getElementById('pdfReportDate').innerText = now.toLocaleDateString('ar-SA');
-    document.getElementById('pdfReportTime').innerText = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
-
-    let doneTotal = 0, cancelTotal = 0, pTotal = 0, deliveryDone = 0, batarjiDone = 0, ruhailyDone = 0;
-    let deliveryBody = "", batarjiBody = "", ruhailyBody = "";
-
-    meals.forEach(meal => {
-        let item = tableStatus[meal.number] || {};
-        let statusText = item.status === "done" ? "✅ مستلم" : (item.status === "cancel" ? "❌ ملغى" : "⏳ انتظار");
-        let rowHtml = `<tr><td>${meal.number}</td><td>${meal.name}</td><td>${statusText}</td><td>${item.by || '--'}</td></tr>`;
-        
-        if (item.status === "done") doneTotal++;
-        else if (item.status === "cancel") cancelTotal++;
-        else pTotal++;
-
-        if (meal.branch === "delivery") { if(item.status === "done") deliveryDone++; deliveryBody += rowHtml; }
-        else if (meal.branch === "batarji") { if(item.status === "done") batarjiDone++; batarjiBody += rowHtml; }
-        else if (meal.branch === "ruhaily") { if(item.status === "done") ruhailyDone++; ruhailyBody += rowHtml; }
-    });
-
-    document.getElementById('pdfDeliveryTableBody').innerHTML = deliveryBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد وجبات</td></tr>";
-    document.getElementById('pdfBatarjiTableBody').innerHTML = batarjiBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد وجبات</td></tr>";
-    document.getElementById('pdfRuhailyTableBody').innerHTML = ruhailyBody || "<tr><td colspan='4' style='text-align:center;'>لا توجد وجبات</td></tr>";
-
-    document.getElementById('pdfSumDeliveryDone').innerText = deliveryDone;
-    document.getElementById('pdfSumBatarjiDone').innerText = batarjiDone;
-    document.getElementById('pdfSumRuhailyDone').innerText = ruhailyDone;
-    
-    document.getElementById('pdfMetaGlobalDone').innerText = doneTotal;
-    document.getElementById('pdfMetaGlobalCancel').innerText = cancelTotal;
-    document.getElementById('pdfMetaGlobalTotal').innerText = meals.length;
-    document.getElementById('pdfMetaGlobalPending').innerText = pTotal;
-
-    const opt = { margin: [10, 10, 10, 10], filename: `تقرير_بروتين_وكارب.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-
-    html2pdf().set(opt).from(element).outputPdf('blob').then((blob) => {
-        element.style.display = 'none';
-        const blobUrl = URL.createObjectURL(blob);
-        const downloadLink = document.createElement('a'); downloadLink.href = blobUrl; downloadLink.download = `تقرير_بروتين_وكارب.pdf`;
-        document.body.appendChild(downloadLink); downloadLink.click(); document.body.removeChild(downloadLink); URL.revokeObjectURL(blobUrl);
-
-        let textMsg = `*📊 تقرير الفرز والإشراف السحابي اليومي* \n*التاريخ:* ${now.toLocaleDateString('ar-SA')} \n--------------------\n🚚 *توصيل (مستلم):* ${deliveryDone} \n🏪 *بترجي (مستلم):* ${batarjiDone} \n🏪 *رحيلي (مستلم):* ${ruhailyDone} \n--------------------\n✅ *المستلم:* ${doneTotal} | ❌ *الملغى:* ${cancelTotal} | ⏳ *بانتظار الفرز:* ${pTotal}`;
-        setTimeout(() => { window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(textMsg)}`, '_blank'); }, 1200);
-    });
-}
-
-window.onload = function() {
-    startFirebaseConnection();
-    document.getElementById("sitePasswordInput").focus();
-    
-    document.getElementById("mealInput").addEventListener("keypress", function(e) { if(e.key === "Enter") { e.preventDefault(); checkMeal(); } });
-    document.getElementById("sitePasswordInput").addEventListener("keypress", function(e) { if(e.key === "Enter") { e.preventDefault(); handleLoginSequence(); } });
-    document.getElementById("supervisorMobileInput").addEventListener("keypress", function(e) { if(e.key === "Enter") { e.preventDefault(); handleLoginSequence(); } });
-};
-</script>
-</body>
-</html>
-
