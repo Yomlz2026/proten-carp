@@ -10,17 +10,23 @@
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
 body.en-mode { direction: ltr !important; text-align: left !important; }
 
-#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
-.alert-card { background: #1e293b; border-radius: 24px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.08); }
-.alert-status-icon { font-size: 45px; margin-bottom: 12px; display: inline-block; }
-.alert-title-text { font-size: 18px; font-weight: 700; color: #facc15; margin-bottom: 8px; }
-.alert-message-text { font-size: 15px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
-.modal-actions-group { display: flex; gap: 10px; margin-bottom: 12px; }
-.modal-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-.modal-btn-deliver { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
+.alert-card { background: #1e293b; border-radius: 24px; padding: 30px; width: 100%; max-width: 440px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border: 1px solid rgba(255, 255, 255, 0.08); animation: alertShow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes alertShow { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.alert-status-icon { font-size: 50px; margin-bottom: 15px; display: inline-block; }
+.alert-title-text { font-size: 20px; font-weight: 900; color: #ffffff; margin-bottom: 12px; }
+.alert-message-text { font-size: 14px; color: #cbd5e1; line-height: 1.7; margin-bottom: 24px; text-align: right; background: rgba(15, 23, 42, 0.3); padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.03); }
+.modal-actions-group { display: flex; gap: 12px; margin-bottom: 12px; }
+.modal-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.modal-btn-deliver { background: #22c55e; color: #ffffff; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); }
 .modal-btn-cancel { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 .modal-btn-close { background: rgba(255, 255, 255, 0.06); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; }
 
+.modal-input-style { width: 100%; padding: 12px; border-radius: 12px; background: #0f172a; color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 14px; text-align: center; margin-bottom: 15px; outline: none; }
+.modal-select-style { width: 100%; padding: 12px; border-radius: 12px; background: #0f172a; color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 14px; margin-bottom: 15px; outline: none; font-weight: bold; }
+
+/* تصميم السلايدر النظيف والمطور */
 .sidebar-drawer { position: fixed; top: 0; right: -320px; width: 320px; height: 100%; background: #1e293b; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.5); transition: right 0.3s ease; padding: 20px; overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 20px; }
 body.en-mode .sidebar-drawer { right: auto; left: -320px; border-left: none; border-right: 1px solid rgba(255,255,254,0.08); transition: left 0.3s ease; }
 body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
@@ -29,9 +35,10 @@ body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
 .drawer-overlay.open { display: block; }
 .drawer-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
 .drawer-sec-title { font-size: 13px; color: #94a3b8; margin-bottom: 10px; font-weight: bold; }
-.drawer-summary-card { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-.drawer-summary-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
-.drawer-summary-row:last-child { border-bottom: none; padding-bottom: 0; }
+.drawer-summary-card { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 5px 12px; display: flex; flex-direction: column; }
+.drawer-summary-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); cursor: pointer; transition: all 0.2s; }
+.drawer-summary-row:hover { padding-right: 5px; background: rgba(255,255,255,0.02); }
+.drawer-summary-row:last-child { border-bottom: none; }
 
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
@@ -108,28 +115,32 @@ input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebarDrawer(false)"></div>
 <div class="sidebar-drawer" id="sidebarDrawer">
     <div class="drawer-header">
-        <h3 style="font-size: 16px; color: #facc15; font-weight:900;">⚙️ القائمة الشاملة</h3>
+        <h3 style="font-size: 16px; color: #facc15; font-weight:900;">⚙️ القائمة السحابية</h3>
         <button onclick="toggleSidebarDrawer(false)" style="background: none; border: none; color: #ef4444; font-size: 22px; cursor: pointer;">✕</button>
     </div>
+    
+    <!-- قسم 1: ملخص الإحصائيات مع ميزة فتح السجل الذكي بضغطة واحدة -->
     <div>
-        <h4 class="drawer-sec-title">📊 ملخص إحصائيات اليوم</h4>
+        <h4 class="drawer-sec-title">📊 إحصائيات اليوم (اضغط لفتح السجل المفصل)</h4>
         <div class="drawer-summary-card">
-            <div class="drawer-summary-row" style="color: #38bdf8;">
+            <div class="drawer-summary-row" style="color: #38bdf8;" onclick="toggleSidebarDrawer(false); switchBranchView('delivery'); openReports();">
                 <span>🚚 قسم التوصيل</span><span id="drawerDelSum">0 مستلم / 0 باقي</span>
             </div>
-            <div class="drawer-summary-row" style="color: #10b981;">
+            <div class="drawer-summary-row" style="color: #10b981;" onclick="toggleSidebarDrawer(false); switchBranchView('batarji'); openReports();">
                 <span>🏪 فرع البترجي</span><span id="drawerBatSum">0 مستلم / 0 باقي</span>
             </div>
-            <div class="drawer-summary-row" style="color: #a855f7;">
+            <div class="drawer-summary-row" style="color: #a855f7;" onclick="toggleSidebarDrawer(false); switchBranchView('ruhaily'); openReports();">
                 <span>🏪 فرع الرحيلي</span><span id="drawerRuhSum">0 مستلم / 0 باقي</span>
             </div>
         </div>
     </div>
+
+    <!-- قسم 2: تحميل PDF الفوري الإجمالي للنظام -->
     <div>
-        <h4 class="drawer-sec-title">⚡ إجراءات سريعة</h4>
-        <button class="pdfShareBtn" onclick="toggleSidebarDrawer(false); openReports();" style="width:100%; font-size:12px; padding:12px; margin-bottom: 8px;">📋 فتح السجل المفصل (للقسم الحالي)</button>
-        <button class="pdfShareBtn" onclick="generateAndSharePDFReport()" style="width:100%; font-size:12px; padding:12px; background: linear-gradient(135deg, #ef4444, #b91c1c);">📄 تحميل تقرير PDF الشامل</button>
+        <button class="pdfShareBtn" onclick="generateAndSharePDFReport()" style="width:100%; font-size:12px; padding:12px; background: linear-gradient(135deg, #10b981, #059669);">📄 تحميل تقرير PDF الشامل فوراً</button>
     </div>
+
+    <!-- قسم 3: الأرشيف النظيف -->
     <div style="flex:1; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
         <h4 class="drawer-sec-title" style="color: #a855f7;">📂 أرشيف الأيام السابقة</h4>
         <div id="archiveContainer"></div>
@@ -137,15 +148,17 @@ input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23
 </div>
 
 <div id="customAlertModal">
-    <div class="alert-card">
+    <div class="alert-card" id="alertCardContainer">
         <span id="alertIcon" class="alert-status-icon">👤</span>
         <div id="alertTitle" class="alert-title-text">تفاصيل المشترك</div>
         <div id="alertMessage" class="alert-message-text">جاري جلب البيانات...</div>
+        <div id="modalDynamicFields" style="display: none;"></div>
+        
         <div id="modalActionButtons" class="modal-actions-group" style="display: none;">
             <button class="modal-btn modal-btn-deliver" id="modalConfirmBtn">✅ تسليم الوجبة</button>
             <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">❌ إلغاء اليوم</button>
         </div>
-        <button class="modal-btn modal-btn-close" onclick="closeCustomAlert()">إغلاق النافذة</button>
+        <button class="modal-btn modal-btn-close" id="modalCloseBtn" onclick="closeCustomAlert()">إغلاق النافذة</button>
     </div>
 </div>
 
@@ -225,7 +238,10 @@ input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23
     </div>
 
     <div class="card">
-        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-bottom:8px;">💡 اضغط على أي صندوق لفلترة القائمة بالأسفل (اضغط مرة أخرى لإلغاء الفلتر)</div>
+        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-bottom:8px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+            <span>💡 اضغط على صندوق للفلترة</span>
+            <button id="logoutStaffBtn" onclick="logoutCurrentStaff()" style="display:none; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:3px 8px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer;">🚪 تسجيل خروج الموظف</button>
+        </div>
         <div class="stats">
             <div class="stat yellowBox" id="stat-pending" onclick="toggleMainListFilter('pending')">انتظار: <span id="pendingMeals">0</span></div>
             <div class="stat greenBox" id="stat-done" onclick="toggleMainListFilter('done')">مستلم: <span id="doneMeals">0</span></div>
@@ -234,7 +250,7 @@ input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23
     </div>
 
     <div class="card">
-        <h3 style="font-size:14px; font-weight:700; margin-bottom:10px;" id="listTitle">القائمة المباشرة للفرز:</h3>
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:10px;" id="listTitle">قائمة التوصيل المباشرة:</h3>
         <div id="mealCardsContainer"></div>
     </div>
 </div>
@@ -279,6 +295,7 @@ var currentBranchView = "delivery";
 var currentCoolingTemp = "";
 var activeMainFilter = "all";
 
+var currentLoggedStaff = { delivery: null, batarji: null, ruhaily: null };
 var staffData = {
     batarji: [ {name:"", code:""}, {name:"", code:""}, {name:"", code:""} ],
     ruhaily: [ {name:"", code:""} ],
@@ -301,18 +318,24 @@ function toggleSidebarDrawer(open) {
     document.getElementById("drawerOverlay").classList.toggle("open", open);
 }
 
-function showCustomAlert(icon, title, message, isSuccess, showActions, num) {
+function showCustomAlert(icon, title, message, showActions, num) {
     document.getElementById("alertIcon").innerHTML = icon;
     document.getElementById("alertTitle").innerHTML = title;
     document.getElementById("alertMessage").innerHTML = message;
+    document.getElementById("modalDynamicFields").style.display = "none";
+    document.getElementById("modalDynamicFields").innerHTML = "";
+    
     let actionsBox = document.getElementById("modalActionButtons");
     if(showActions && num) {
         actionsBox.style.display = "flex";
-        document.getElementById("modalConfirmBtn").onclick = function() { closeCustomAlert(); triggerWorkerAuth(num, 'done'); };
-        document.getElementById("modalCancelBtn").onclick = function() { closeCustomAlert(); triggerWorkerAuth(num, 'cancel'); };
+        document.getElementById("modalConfirmBtn").onclick = function() { closeCustomAlert(); executeDirectAction(num, 'done'); };
+        document.getElementById("modalCancelBtn").onclick = function() { closeCustomAlert(); executeDirectAction(num, 'cancel'); };
     } else { actionsBox.style.display = "none"; }
+    
+    document.getElementById("modalCloseBtn").style.display = "block";
     document.getElementById("customAlertModal").style.display = "flex";
 }
+
 function closeCustomAlert() { document.getElementById("customAlertModal").style.display = "none"; }
 
 function startFirebaseConnection() {
@@ -339,7 +362,6 @@ function applyCloudData(data) {
     currentCoolingTemp = data.coolingTemp || "";
     
     if(data.staff) {
-        // الحماية من الانهيار إذا كانت السحابة تحتوي على بيانات قديمة بصيغة مختلفة
         if(Array.isArray(data.staff.batarji)) staffData.batarji = data.staff.batarji;
         if(Array.isArray(data.staff.ruhaily)) staffData.ruhaily = data.staff.ruhaily;
         if(Array.isArray(data.staff.delivery)) staffData.delivery = data.staff.delivery;
@@ -364,7 +386,7 @@ function applyCloudData(data) {
     document.getElementById("dName1").value = (staffData.delivery[0] && staffData.delivery[0].name) ? staffData.delivery[0].name : "";
     document.getElementById("dCode1").value = (staffData.delivery[0] && staffData.delivery[0].code) ? staffData.delivery[0].code : "";
     
-    recalculateStats(); renderCards(); updateReports(); calculateAllBranchesLiveReport(); updateDeliverAllBtnVisibility(); renderArchives();
+    recalculateStats(); renderCards(); updateReports(); calculateAllBranchesLiveReport(); updateDeliverAllBtnVisibility(); renderArchives(); updateLogoutBtnVisibility();
 }
 
 function renderArchives() {
@@ -451,38 +473,97 @@ function saveAdminSettings() {
         }
     };
     db.ref("pnc_data").update(updateData);
-    showCustomAlert("✨", "تم التحديث", "تم حفظ الإعدادات وأكواد الموظفين بنجاح!", true, false, null);
+    showCustomAlert("✨", "تم التحديث", "تم حفظ الإعدادات وأكواد الموظفين بنجاح!", false, null);
 }
 
-function triggerWorkerAuth(num, action) {
-    let branchStaff = staffData[currentBranchView];
-    if(!Array.isArray(branchStaff)) branchStaff = []; // حماية إضافية
-
-    let enteredCode = prompt("🔐 الرجاء إدخل الكود السري الخاص بك لتأكيد العملية:");
-    if(enteredCode === null) return; 
-    let matchedStaff = branchStaff.find(s => s.code === enteredCode && s.code !== "");
-    if(matchedStaff) {
-        executeStatusChange(num, action, matchedStaff.name);
-    } else { alert("❌ الكود السري غير صحيح أو غير مسجل!"); }
+function checkStaffLoginRequirement(callback) {
+    if (currentLoggedStaff[currentBranchView]) {
+        callback();
+        return;
+    }
+    
+    document.getElementById("alertIcon").innerHTML = "🔐";
+    document.getElementById("alertTitle").innerHTML = "تسجيل دخول الموظف";
+    document.getElementById("alertMessage").innerHTML = "الرجاء تسجيل الهوية لمرة واحدة لبدء عمليات الفرز السريع.";
+    document.getElementById("modalActionButtons").style.display = "none";
+    document.getElementById("modalCloseBtn").style.display = "none";
+    
+    let dynamicBox = document.getElementById("modalDynamicFields");
+    dynamicBox.innerHTML = "";
+    dynamicBox.style.display = "block";
+    
+    let branchStaff = staffData[currentBranchView] || [];
+    
+    if (currentBranchView === "batarji") {
+        let selectHTML = `<select id="loginStaffSelect" class="modal-select-style">`;
+        branchStaff.forEach((s, idx) => {
+            if(s.name) selectHTML += `<option value="${idx}">${s.name}</option>`;
+        });
+        selectHTML += `</select>`;
+        dynamicBox.innerHTML += selectHTML;
+    }
+    
+    dynamicBox.innerHTML += `<input id="loginStaffCode" type="password" placeholder="أدخل الكود السري" class="modal-input-style">`;
+    dynamicBox.innerHTML += `<button id="loginSubmitBtn" class="modal-btn modal-btn-deliver" style="width:100%">دخول وتفعيل الفرز السريع</button>`;
+    
+    document.getElementById("customAlertModal").style.display = "flex";
+    
+    document.getElementById("loginSubmitBtn").onclick = function() {
+        let codeInput = document.getElementById("loginStaffCode").value.trim();
+        if(!codeInput) { alert("الرجاء كتابة الكود!"); return; }
+        
+        let matchedStaff = null;
+        if (currentBranchView === "batarji") {
+            let selectedIdx = document.getElementById("loginStaffSelect").value;
+            let staffObj = branchStaff[selectedIdx];
+            if(staffObj && staffObj.code === codeInput) matchedStaff = staffObj;
+        } else {
+            matchedStaff = branchStaff.find(s => s.code === codeInput && s.code !== "");
+        }
+        
+        if (matchedStaff) {
+            currentLoggedStaff[currentBranchView] = matchedStaff.name;
+            updateLogoutBtnVisibility();
+            closeCustomAlert();
+            callback();
+        } else {
+            alert("❌ الكود السري غير صحيح!");
+        }
+    };
 }
 
-function executeStatusChange(num, action, staffName) {
-    if(!db) return;
-    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
-    db.ref(`pnc_data/actions/${num}`).set({
-        status: action,
-        time: timeString,
-        by: staffName
-    }).then(() => { document.getElementById("mealInput").value = ""; });
+function logoutCurrentStaff() {
+    currentLoggedStaff[currentBranchView] = null;
+    updateLogoutBtnVisibility();
+    alert("تم تسجيل الخروج بنجاح.");
+}
+
+function updateLogoutBtnVisibility() {
+    let btn = document.getElementById("logoutStaffBtn");
+    if (currentLoggedStaff[currentBranchView]) {
+        btn.style.display = "inline-block";
+    } else {
+        btn.style.display = "none";
+    }
+}
+
+function executeDirectAction(num, action) {
+    checkStaffLoginRequirement(function() {
+        let staffName = currentLoggedStaff[currentBranchView] || "موظف معتمد";
+        if(!db) return;
+        let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+        db.ref(`pnc_data/actions/${num}`).set({
+            status: action,
+            time: timeString,
+            by: staffName
+        }).then(() => { document.getElementById("mealInput").value = ""; });
+    });
 }
 
 function triggerDeliverAllDelivery() {
     if(confirm("هل أنت متأكد من تسليم كافة وجبات قسم التوصيل المنتظرة دفعة واحدة؟")) {
-        let staffName = (staffData.delivery[0] && staffData.delivery[0].name) ? staffData.delivery[0].name : "مسؤول التوصيل";
-        let expectedCode = (staffData.delivery[0] && staffData.delivery[0].code) ? staffData.delivery[0].code : "";
-        
-        let enteredCode = prompt("🔐 أدخل الكود السري الخاص بالتوصيل:");
-        if(enteredCode === expectedCode && enteredCode !== "") {
+        checkStaffLoginRequirement(function() {
+            let staffName = currentLoggedStaff["delivery"] || "مسؤول التوصيل";
             let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
             let updates = {};
             meals.forEach(m => {
@@ -494,7 +575,7 @@ function triggerDeliverAllDelivery() {
                 }
             });
             if(Object.keys(updates).length > 0) db.ref().update(updates);
-        } else { alert("❌ الكود السري غير صحيح!"); }
+        });
     }
 }
 
@@ -508,7 +589,7 @@ function switchBranchView(view) {
     let branchNames = { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" };
     document.getElementById("listTitle").innerText = "قائمة فرز " + branchNames[view] + " المباشرة:";
     
-    recalculateStats(); renderCards(); updateReports(); updateDeliverAllBtnVisibility();
+    recalculateStats(); renderCards(); updateReports(); updateDeliverAllBtnVisibility(); updateLogoutBtnVisibility();
 }
 
 function updateDeliverAllBtnVisibility() {
@@ -592,24 +673,30 @@ function checkMealFromInput() {
     let userInput = document.getElementById("mealInput").value.trim().toLowerCase();
     if(!userInput) return;
     let meal = meals.find(m => m.number.toString() === userInput) || meals.find(m => m.name.toLowerCase().includes(userInput));
-    if(!meal) { showCustomAlert("🔍", "غير موجود", "لم يتم العثور على أي مشترك بهذا الاسم أو الرقم!", false, false, null); return; }
+    if(!meal) { showCustomAlert("🔍", "غير موجود", "لم يتم العثور على أي مشترك بهذا الاسم أو الرقم!", false, null); return; }
     checkMeal(meal);
 }
 
 function checkMeal(meal) {
+    let branchLabels = { delivery: '🚚 قسم التوصيل', batarji: '🏪 فرع البترجي', ruhaily: '🏪 فرع الرحيلي' };
+    
     if(meal.branch !== currentBranchView) {
-        let branchNameAr = meal.branch === 'delivery' ? 'التوصيل' : (meal.branch === 'batarji' ? 'البترجي' : 'الرحيلي');
-        showCustomAlert("⚠️", "عذراً! موقع خاطئ", `هذه الوجبة مخصصة لقسم (<b>${branchNameAr}</b>).`, false, false, null);
+        let correctBranchLabel = branchLabels[meal.branch] || meal.branch;
+        showCustomAlert("⚠️", "عذراً! موقع خاطئ", `هذا المشترك مخصص لقسم (<b>${correctBranchLabel}</b>). لا يمكنك اتخاذ أي إجراء عليه من هنا.`, false, null);
         return;
     }
+    
     let act = tableStatus[meal.number] || {};
+    let currentBranchLabel = branchLabels[meal.branch] || meal.branch;
+    
     if(act.status === "done") {
-        let info = `الاسم: ${meal.name}<br>هذه الوجبة <b>مستلمة بالفعل</b>.<br>استلمها الموظف: <b style="color:#22c55e">${act.by}</b><br>الوقت: ${act.time}`;
-        showCustomAlert("✅", "وجبة مستلمة مسبقاً!", info, true, false, null);
+        let info = `👤 الاسم: <b>${meal.name}</b><br>📌 رقم الاشتراك: #${meal.number}<br>📍 القسم: <b>${currentBranchLabel}</b><br><br>⚠️ <b style="color:#22c55e">هذه الوجبة مسجلة كمستلمة بالفعل!</b><br>🚚 المسؤول: ${act.by}<br>⏰ الوقت: ${act.time}`;
+        showCustomAlert("✅", "وجبة مستلمة مسبقاً!", info, false, null);
         return; 
     }
-    let info = `الاسم: ${meal.name}<br>رقم الاشتراك: #${meal.number}<br>القسم: ${meal.branch === 'delivery' ? '🚚 توصيل' : '🏪 فرع'}<br>الحالة الحالية: ${act.status === 'cancel' ? '❌ ملغى' : '⏳ قيد الانتظار'}`;
-    showCustomAlert("👤", meal.name, info, true, true, meal.number);
+    
+    let info = `👤 الاسم: <b>${meal.name}</b><br>📌 رقم الاشتراك: #${meal.number}<br>📍 القسم: <b>${currentBranchLabel}</b><br>⏳ الحالة: ${act.status === 'cancel' ? '<b style="color:#ef4444">❌ ملغى</b>' : 'قيد الانتظار'}`;
+    showCustomAlert("👤", "تفاصيل فرز المشترك", info, true, meal.number);
 }
 
 function openReports() { document.getElementById("reportsOverlay").classList.add("open"); switchTab(activeTab); }
@@ -621,6 +708,9 @@ function updateReports() {
     content.innerHTML = "";
     let filteredMeals = meals.filter(m => m.branch === currentBranchView);
     let done = 0, cancel = 0;
+    
+    let branchNames = { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" };
+    document.getElementById("reportsOverlayTitle").innerText = "📋 سجل فرز فرع (" + branchNames[currentBranchView] + ")";
     
     filteredMeals.forEach(m => {
         let act = tableStatus[m.number] || {};
