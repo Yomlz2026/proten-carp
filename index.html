@@ -9,7 +9,6 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Kufi Arabic', sans-serif; }
 body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
 body.en-mode { direction: ltr !important; text-align: left !important; }
-body.en-mode .admin-grid-label, body.en-mode #listTitle, body.en-mode .report-stat-box { text-align: left !important; }
 
 #customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
 .alert-card { background: #1e293b; border-radius: 24px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.08); }
@@ -22,18 +21,17 @@ body.en-mode .admin-grid-label, body.en-mode #listTitle, body.en-mode .report-st
 .modal-btn-cancel { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 .modal-btn-close { background: rgba(255, 255, 255, 0.06); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; }
 
-.sidebar-drawer { position: fixed; top: 0; right: -320px; width: 320px; height: 100%; background: #1e293b; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.5); transition: right 0.3s ease; padding: 20px; overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.08); }
+.sidebar-drawer { position: fixed; top: 0; right: -320px; width: 320px; height: 100%; background: #1e293b; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.5); transition: right 0.3s ease; padding: 20px; overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 20px; }
 body.en-mode .sidebar-drawer { right: auto; left: -320px; border-left: none; border-right: 1px solid rgba(255,255,254,0.08); transition: left 0.3s ease; }
 body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
 .sidebar-drawer.open { right: 0; }
 .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9998; display: none; }
 .drawer-overlay.open { display: block; }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-
-.report-stat-box { background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,254,0.05); cursor: pointer; transition: background 0.2s; text-align: right; }
-.report-stat-box:hover { background: rgba(15, 23, 42, 0.9); }
-.report-stat-title { font-size: 13px; color: #94a3b8; margin-bottom: 4px; font-weight: bold; }
-.report-stat-value { font-size: 13px; font-weight: bold; color: #fff; line-height: 1.5; }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.drawer-sec-title { font-size: 13px; color: #94a3b8; margin-bottom: 10px; font-weight: bold; }
+.drawer-summary-card { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.drawer-summary-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.05); }
+.drawer-summary-row:last-child { border-bottom: none; padding-bottom: 0; }
 
 .reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
 .reports-overlay.open { display: flex; }
@@ -50,7 +48,7 @@ body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
 .report-stat-box-footer { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
 
 .branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
-.branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); text-align: center; }
+.branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; cursor: pointer; color: #94a3b8; background: rgba(30, 41, 59, 0.45); text-align: center; transition: all 0.2s; }
 .branch-filter-btn.active-branch-selected { color: #ffffff !important; background: rgba(34, 197, 94, 0.85) !important; border-color: #22c55e !important; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important; }
 
 .top-banner { width: 100%; height: 110px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,254,0.08); }
@@ -62,19 +60,17 @@ body.en-mode .sidebar-drawer.open { left: 0; right: auto; }
 .control-panel { background: rgba(20, 83, 45, 0.25); border: 1px solid rgba(34, 197, 94, 0.2); display: none; }
 .admin-grid-inputs { display: grid; gap: 8px; margin-bottom: 10px; }
 .admin-grid-label { font-size: 12px; color: #a855f7; font-weight: bold; display: block; margin-bottom: 5px; text-align: right; }
-
 input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23, 42, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.08); outline: none; font-size: 15px; font-weight: 700; }
-
 .staff-row { display: flex; gap: 8px; margin-bottom: 5px; }
 .staff-row input { padding: 10px; font-size: 13px; }
 
 .searchBtn { background: linear-gradient(135deg, #a855f7, #7c3aed); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2); }
-.deliverAllBtn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: bold; width: 100%; margin-top: 10px; border: none; cursor: pointer; display: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+.deliverAllBtn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: bold; width: 100%; margin-top: 10px; border: none; cursor: pointer; display: none; }
 .pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
 
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.stats .stat { padding: 10px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,254,0.04); cursor: pointer; transition: transform 0.1s; }
-.stats .stat:active { transform: scale(0.95); }
+.stats .stat { padding: 10px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,254,0.04); cursor: pointer; transition: all 0.2s; opacity: 1; }
+.stats .stat.inactive-filter { opacity: 0.4; filter: grayscale(50%); }
 .greenBox { background: rgba(34, 197, 94, 0.12); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); } 
 .red { background: rgba(239, 68, 68, 0.12); color: #ef4444; border-color: rgba(239, 68, 68, 0.18); }
 .yellowBox { background: rgba(250, 204, 21, 0.12); color: #facc15; border-color: rgba(250, 204, 21, 0.18); }
@@ -91,7 +87,6 @@ input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
 #pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; }
-body.en-mode #pdfReportTemplate { direction: ltr !important; }
 .pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
 .pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
 .pdf-meta { font-size: 12px; color: #64748b; text-align: left; }
@@ -99,12 +94,9 @@ body.en-mode #pdfReportTemplate { direction: ltr !important; }
 .pdf-sum-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; background: #f8fafc; }
 .pdf-sum-val { font-size: 16px; font-weight: 900; margin-top: 4px; }
 .pdf-section-title { font-size: 14px; font-weight: bold; color: #0f172a; border-right: 4px solid #facc15; padding-right: 8px; margin-bottom: 12px; margin-top: 20px; }
-body.en-mode .pdf-section-title { border-right: none; border-left: 4px solid #facc15; padding-left: 8px; padding-right: 0; }
 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
 .pdf-table th { background: #0f172a; color: #ffffff; padding: 10px; text-align: right; font-weight: bold; }
-body.en-mode .pdf-table th { text-align: left !important; }
 .pdf-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a; }
-.lang-toggle-btn { background: rgba(255,255,255,0.08); color: #facc15; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 6px 10px; font-size: 12px; font-weight: bold; cursor: pointer; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -116,63 +108,64 @@ body.en-mode .pdf-table th { text-align: left !important; }
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebarDrawer(false)"></div>
 <div class="sidebar-drawer" id="sidebarDrawer">
     <div class="drawer-header">
-        <h3 style="font-size: 15px; color: #facc15; font-weight:900;" data-lang="sys_stats">📊 إحصائيات النظام الشاملة</h3>
+        <h3 style="font-size: 16px; color: #facc15; font-weight:900;">⚙️ القائمة الشاملة</h3>
         <button onclick="toggleSidebarDrawer(false)" style="background: none; border: none; color: #ef4444; font-size: 22px; cursor: pointer;">✕</button>
     </div>
-    <div style="margin-bottom: 20px;">
-        <div class="report-stat-box" style="border-right: 4px solid #38bdf8;" onclick="toggleSidebarDrawer(false); switchBranchView('delivery'); openReports();">
-            <div class="report-stat-title" data-lang="section_del">🚚 قسم التوصيل (اضغط للاستعراض)</div>
-            <div class="report-stat-value" id="drawerDeliveryReport">مستلم: 0 | ملغى: 0 | معلق: 0</div>
-        </div>
-        <div class="report-stat-box" style="border-right: 4px solid #facc15;" onclick="toggleSidebarDrawer(false); switchBranchView('batarji'); openReports();">
-            <div class="report-stat-title" data-lang="section_bat">🏪 فرع البترجي (اضغط للاستعراض)</div>
-            <div class="report-stat-value" id="drawerBatarjiReport">مستلم: 0 | ملغى: 0 | معلق: 0</div>
-        </div>
-        <div class="report-stat-box" style="border-right: 4px solid #a855f7;" onclick="toggleSidebarDrawer(false); switchBranchView('ruhaily'); openReports();">
-            <div class="report-stat-title" data-lang="section_ruh">🏪 فرع الرحيلي (اضغط للاستعراض)</div>
-            <div class="report-stat-value" id="drawerRuhailyReport">مستلم: 0 | ملغى: 0 | معلق: 0</div>
+    <div>
+        <h4 class="drawer-sec-title">📊 ملخص إحصائيات اليوم</h4>
+        <div class="drawer-summary-card">
+            <div class="drawer-summary-row" style="color: #38bdf8;">
+                <span>🚚 قسم التوصيل</span><span id="drawerDelSum">0 مستلم / 0 باقي</span>
+            </div>
+            <div class="drawer-summary-row" style="color: #10b981;">
+                <span>🏪 فرع البترجي</span><span id="drawerBatSum">0 مستلم / 0 باقي</span>
+            </div>
+            <div class="drawer-summary-row" style="color: #a855f7;">
+                <span>🏪 فرع الرحيلي</span><span id="drawerRuhSum">0 مستلم / 0 باقي</span>
+            </div>
         </div>
     </div>
-    <button class="pdfShareBtn" onclick="toggleSidebarDrawer(false); openReports();" style="width:100%; font-size:12px; padding:10px; margin-bottom: 15px;" data-lang="open_logs">📋 فتح السجلات الكاملة</button>
-
-    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-        <h3 style="font-size: 14px; color: #a855f7; font-weight:900; margin-bottom: 10px;">📂 أرشيف الأيام السابقة</h3>
-        <div id="archiveContainer">
-            </div>
+    <div>
+        <h4 class="drawer-sec-title">⚡ إجراءات سريعة</h4>
+        <button class="pdfShareBtn" onclick="toggleSidebarDrawer(false); openReports();" style="width:100%; font-size:12px; padding:12px; margin-bottom: 8px;">📋 فتح السجل المفصل (للقسم الحالي)</button>
+        <button class="pdfShareBtn" onclick="generateAndSharePDFReport()" style="width:100%; font-size:12px; padding:12px; background: linear-gradient(135deg, #ef4444, #b91c1c);">📄 تحميل تقرير PDF الشامل</button>
+    </div>
+    <div style="flex:1; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+        <h4 class="drawer-sec-title" style="color: #a855f7;">📂 أرشيف الأيام السابقة</h4>
+        <div id="archiveContainer"></div>
     </div>
 </div>
 
 <div id="customAlertModal">
     <div class="alert-card">
         <span id="alertIcon" class="alert-status-icon">👤</span>
-        <div id="alertTitle" class="alert-title-text" data-lang="sub_details">تفاصيل المشترك</div>
-        <div id="alertMessage" class="alert-message-text" data-lang="fetching">جاري جلب البيانات...</div>
+        <div id="alertTitle" class="alert-title-text">تفاصيل المشترك</div>
+        <div id="alertMessage" class="alert-message-text">جاري جلب البيانات...</div>
         <div id="modalActionButtons" class="modal-actions-group" style="display: none;">
-            <button class="modal-btn modal-btn-deliver" id="modalConfirmBtn" data-lang="status_received">✅ تسليم الوجبة</button>
-            <button class="modal-btn modal-btn-cancel" id="modalCancelBtn" data-lang="status_canceled">❌ إلغاء اليوم</button>
+            <button class="modal-btn modal-btn-deliver" id="modalConfirmBtn">✅ تسليم الوجبة</button>
+            <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">❌ إلغاء اليوم</button>
         </div>
-        <button class="modal-btn modal-btn-close" onclick="closeCustomAlert()" data-lang="close_win">إغلاق النافذة</button>
+        <button class="modal-btn modal-btn-close" onclick="closeCustomAlert()">إغلاق النافذة</button>
     </div>
 </div>
 
 <div class="reports-overlay" id="reportsOverlay">
     <div class="reports-header">
         <button onclick="closeReports();" style="background:rgba(255,255,254,0.1); border:none; color:#facc15; font-size:13px; font-weight:bold; padding:6px 12px; border-radius:10px; cursor:pointer;">⬅️ إغلاق السجل</button>
-        <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">📋 سجل فرز القسم</div>
+        <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">📋 سجل الفرز</div>
         <button onclick="closeReports()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
     </div>
     <div class="reports-tabs">
-        <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')" data-lang="tab_received">✅ المستلمون</button>
-        <button class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')" data-lang="tab_canceled">❌ الملغيون</button>
-        <button class="reports-tab pending-tab" id="tab-pending" onclick="switchTab('pending')" data-lang="tab_pending">⏳ قيد الانتظار</button>
+        <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">✅ المستلمون</button>
+        <button class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">❌ الملغيون</button>
+        <button class="reports-tab pending-tab" id="tab-pending" onclick="switchTab('pending')">⏳ قيد الانتظار</button>
     </div>
     <div class="reports-content" id="reportsContent"></div>
     <div class="reports-overlay-footer">
         <div class="reports-footer-grid">
-            <div class="report-stat-box-footer greenBox"><span data-lang="stat_rec">مستلم:</span> <span id="overlayDoneCount">0</span></div>
-            <div class="report-stat-box-footer red"><span data-lang="stat_can">ملغى:</span> <span id="overlayCancelCount">0</span></div>
+            <div class="report-stat-box-footer greenBox">مستلم: <span id="overlayDoneCount">0</span></div>
+            <div class="report-stat-box-footer red">ملغى: <span id="overlayCancelCount">0</span></div>
         </div>
-        <button class="pdfShareBtn" onclick="generateAndSharePDFReport()" data-lang="pdf_btn">📄 تحميل وإرسال تقرير PDF الإجمالي</button>
     </div>
 </div>
 
@@ -180,66 +173,63 @@ body.en-mode .pdf-table th { text-align: left !important; }
     <div class="top-banner" id="topBanner"></div>
     <div class="header">
         <button onclick="toggleSidebarDrawer(true)" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">⋮</button>
-        <div class="brand-title"><span class="brand-protein" data-lang="protein">بروتين</span> و<span class="brand-carb" data-lang="carb">كارب</span></div>
+        <div class="brand-title">بروتين وكارب</div>
         <div style="display:flex; gap:6px;">
-            <button class="lang-toggle-btn" onclick="toggleLanguage()">En / Ar</button>
-            <button onclick="openAdmin()" style="background:rgba(255,255,255,0.05); color:white; padding:6px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); font-size:12px; font-weight:bold; cursor:pointer;" data-lang="admin_nav">⚙️ الإشراف</button>
+            <button onclick="openAdmin()" style="background:rgba(255,255,255,0.05); color:white; padding:6px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); font-size:12px; font-weight:bold; cursor:pointer;">⚙️ الإشراف</button>
         </div>
     </div>
 
     <div class="card control-panel" id="adminPanel">
-        <span style="font-size:12px; color:#facc15; font-weight:bold; margin-bottom:5px; display:block;">📄 رفع PDF جديد (يقوم بأرشفة اليوم السابق وتصفير الحالات):</span>
+        <span style="font-size:12px; color:#facc15; font-weight:bold; margin-bottom:5px; display:block;">📄 رفع PDF جديد (يقوم بأرشفة اليوم السابق):</span>
         <input accept=".pdf" id="pdfFile" type="file" style="margin-bottom:12px; font-size:12px;"/>
         <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب المشرف..."/>
         <input id="bannerUrlInput" type="url" placeholder="رابط صورة البانر العلوية..." style="margin-top:12px; margin-bottom:12px;"/>
         
         <div style="margin-bottom: 12px;">
-            <span style="font-size:12px; color:#3b82f6; font-weight:bold; display:block; margin-bottom:4px;" data-lang="cooling_lbl">🌡️ درجة برودة التوصيل الحالي:</span>
+            <span style="font-size:12px; color:#3b82f6; font-weight:bold; display:block; margin-bottom:4px;">🌡️ درجة برودة التوصيل الحالي:</span>
             <input id="coolingTempInput" type="text" placeholder="مثال: 4°C" style="padding:10px; font-size:14px; text-align:center;">
         </div>
 
         <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; margin-bottom:12px;">
             <span style="font-size:13px; color:#facc15; font-weight:bold; display:block; margin-bottom:10px;">👥 طاقم العمل (الاسم والكود السري):</span>
-            
             <div class="admin-grid-inputs">
                 <span class="admin-grid-label">🏪 موظفي البترجي (3 خانات)</span>
                 <div class="staff-row"><input id="bName1" placeholder="اسم الموظف 1"><input id="bCode1" placeholder="الكود" style="width:40%;"></div>
                 <div class="staff-row"><input id="bName2" placeholder="اسم الموظف 2"><input id="bCode2" placeholder="الكود" style="width:40%;"></div>
                 <div class="staff-row"><input id="bName3" placeholder="اسم الموظف 3"><input id="bCode3" placeholder="الكود" style="width:40%;"></div>
             </div>
-
             <div class="admin-grid-inputs">
                 <span class="admin-grid-label">🏪 موظف الرحيلي (خانة واحدة)</span>
                 <div class="staff-row"><input id="rName1" placeholder="اسم الموظف"><input id="rCode1" placeholder="الكود" style="width:40%;"></div>
             </div>
-
             <div class="admin-grid-inputs">
                 <span class="admin-grid-label">🚚 موظف التوصيل (خانة واحدة)</span>
                 <div class="staff-row"><input id="dName1" placeholder="اسم الموظف"><input id="dCode1" placeholder="الكود" style="width:40%;"></div>
             </div>
         </div>
-        <button onclick="saveAdminSettings()" style="margin-bottom:5px; background:#a855f7; color:white; padding:12px; border-radius:12px; width:100%; font-weight:bold; border:none; cursor:pointer;" data-lang="save_settings">💾 حفظ الإعدادات السحابية فوراً</button>
-        <button onclick="document.getElementById('adminPanel').style.display='none'" class="modal-btn modal-btn-cancel" style="width:100%; padding:8px;" data-lang="close_win">إغلاق اللوحة</button>
+        <button onclick="saveAdminSettings()" style="margin-bottom:5px; background:#a855f7; color:white; padding:12px; border-radius:12px; width:100%; font-weight:bold; border:none; cursor:pointer;">💾 حفظ الإعدادات السحابية فوراً</button>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" class="modal-btn modal-btn-cancel" style="width:100%; padding:8px;">إغلاق اللوحة</button>
     </div>
 
     <div class="branch-filters-container">
-        <button class="branch-filter-btn active-branch-selected" id="btn-view-delivery" onclick="switchBranchView('delivery')" data-lang="btn_del">🚚 التوصيل</button>
-        <button class="branch-filter-btn" id="btn-view-batarji" onclick="switchBranchView('batarji')" data-lang="btn_bat">🏪 البترجي</button>
-        <button class="branch-filter-btn" id="btn-view-ruhaily" onclick="switchBranchView('ruhaily')" data-lang="btn_ruh">🏪 الرحيلي</button>
+        <button class="branch-filter-btn active-branch-selected" id="btn-view-delivery" onclick="switchBranchView('delivery')">🚚 التوصيل</button>
+        <button class="branch-filter-btn" id="btn-view-batarji" onclick="switchBranchView('batarji')">🏪 البترجي</button>
+        <button class="branch-filter-btn" id="btn-view-ruhaily" onclick="switchBranchView('ruhaily')">🏪 الرحيلي</button>
     </div>
 
     <div class="card">
         <input id="mealInput" placeholder="🔍 اكتب اسم المشترك أو رقم الاشتراك هنا..." type="text" oninput="renderCards()"/>
-        <button class="searchBtn" onclick="checkMealFromInput()" data-lang="search_btn">🔍 ابدأ الفرز والبحث</button>
-        <button class="deliverAllBtn" id="deliverAllBtn" onclick="triggerDeliverAllDelivery()" data-lang="deliver_all_btn">⚡ تسليم الكل (قسم التوصيل)</button>
-        <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;" data-lang="sys_ready">🟢 متصل وجاهز للفرز</div>
+        <button class="searchBtn" onclick="checkMealFromInput()">🔍 ابدأ الفرز والبحث</button>
+        <button class="deliverAllBtn" id="deliverAllBtn" onclick="triggerDeliverAllDelivery()">⚡ تسليم الكل (قسم التوصيل)</button>
+        <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;">🟢 متصل وجاهز للفرز</div>
     </div>
 
     <div class="card">
+        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-bottom:8px;">💡 اضغط على أي صندوق لفلترة القائمة بالأسفل (اضغط مرة أخرى لإلغاء الفلتر)</div>
         <div class="stats">
-            <div class="stat yellowBox" onclick="openReportsWithTab('pending')"><span data-lang="stat_pen">انتظار:</span> <span id="pendingMeals">0</span></div>
-            <div class="stat greenBox" onclick="openReportsWithTab('done')"><span data-lang="stat_rec">مستلم:</span> <span id="doneMeals">0</span></div>
-            <div class="stat red" onclick="openReportsWithTab('cancel')"><span data-lang="stat_can">ملغى:</span> <span id="cancelMeals">0</span></div>
+            <div class="stat yellowBox" id="stat-pending" onclick="toggleMainListFilter('pending')">انتظار: <span id="pendingMeals">0</span></div>
+            <div class="stat greenBox" id="stat-done" onclick="toggleMainListFilter('done')">مستلم: <span id="doneMeals">0</span></div>
+            <div class="stat red" id="stat-cancel" onclick="toggleMainListFilter('cancel')">ملغى: <span id="cancelMeals">0</span></div>
         </div>
     </div>
 
@@ -249,33 +239,33 @@ body.en-mode .pdf-table th { text-align: left !important; }
     </div>
 </div>
 
-<div class="whatsapp-bottom-bar"><a class="whatsapp-btn-link" id="waLink" href="#" target="_blank"><span data-lang="wa_contact">التواصل الفوري عبر الواتساب للمشرف</span></a></div>
+<div class="whatsapp-bottom-bar"><a class="whatsapp-btn-link" id="waLink" href="#" target="_blank">التواصل الفوري عبر الواتساب للمشرف</a></div>
 <div class="ticker-wrap"><div class="ticker-text">تصميم وتطوير مأمون محمد</div></div>
 
 <div id="pdfReportTemplate">
     <div class="pdf-header">
         <div><div class="pdf-title">🥗 كشف الفرز اليومي - بروتين وكارب</div></div>
         <div class="pdf-meta">
-            <div><b data-lang="pdf_date">التاريخ:</b> <span id="pdfReportDate">--</span></div>
-            <div><b data-lang="pdf_time">الوقت:</b> <span id="pdfReportTime">--</span></div>
+            <div><b>التاريخ:</b> <span id="pdfReportDate">--</span></div>
+            <div><b>الوقت:</b> <span id="pdfReportTime">--</span></div>
             <div style="margin-top:5px; color:#1d4ed8; font-weight:bold;"><b>درجة برودة التوصيل:</b> <span id="pdfReportCooling">--</span></div>
         </div>
     </div>
     <div class="pdf-grid-summary">
-        <div class="pdf-sum-box"><div style="color:#3b82f6;" data-lang="pdf_sum_del">شحنات التوصيل</div><div class="pdf-sum-val" id="pdfSumDeliveryDone">0</div></div>
-        <div class="pdf-sum-box"><div style="color:#10b981;" data-lang="pdf_sum_bat">مستلمي البترجي</div><div class="pdf-sum-val" id="pdfSumBatarjiDone">0</div></div>
-        <div class="pdf-sum-box"><div style="color:#a855f7;" data-lang="pdf_sum_ruh">مستلمي الرحيلي</div><div class="pdf-sum-val" id="pdfSumRuhailyDone">0</div></div>
+        <div class="pdf-sum-box"><div style="color:#3b82f6;">شحنات التوصيل</div><div class="pdf-sum-val" id="pdfSumDeliveryDone">0</div></div>
+        <div class="pdf-sum-box"><div style="color:#10b981;">مستلمي البترجي</div><div class="pdf-sum-val" id="pdfSumBatarjiDone">0</div></div>
+        <div class="pdf-sum-box"><div style="color:#a855f7;">مستلمي الرحيلي</div><div class="pdf-sum-val" id="pdfSumRuhailyDone">0</div></div>
     </div>
     <div style="text-align:center; font-weight:bold; margin-bottom:10px;">الإجمالي العام: مستلم <span id="pdfMetaGlobalDone">0</span> | ملغى <span id="pdfMetaGlobalCancel">0</span> | معلق <span id="pdfMetaGlobalPending">0</span></div>
     
     <div class="pdf-section-title">🚚 تفاصيل فرز قسم التوصيل</div>
-    <table class="pdf-table"><thead><tr><th data-lang="th_sub">الاشتراك</th><th data-lang="th_name">الاسم</th><th data-lang="th_status">الحالة</th><th data-lang="th_by">المسؤول</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
+    <table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
     
     <div class="pdf-section-title">🏪 تفاصيل فرز فرع البترجي</div>
-    <table class="pdf-table"><thead><tr><th data-lang="th_sub">الاشتراك</th><th data-lang="th_name">الاسم</th><th data-lang="th_status">الحالة</th><th data-lang="th_by">المسؤول</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
+    <table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
     
     <div class="pdf-section-title">🏪 تفاصيل فرز فرع الرحيلي</div>
-    <table class="pdf-table"><thead><tr><th data-lang="th_sub">الاشتراك</th><th data-lang="th_name">الاسم</th><th data-lang="th_status">الحالة</th><th data-lang="th_by">المسؤول</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
+    <table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
 </div>
 
 <script>
@@ -287,52 +277,29 @@ const firebaseConfig = { apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc", auth
 var db, meals = [], tableStatus = {}, archivesData = {}, activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery";
 var currentCoolingTemp = "";
-var currentLang = "ar";
+var activeMainFilter = "all";
 
-// هيكل طاقم العمل الجديد (أسماء + أكواد)
 var staffData = {
     batarji: [ {name:"", code:""}, {name:"", code:""}, {name:"", code:""} ],
     ruhaily: [ {name:"", code:""} ],
     delivery: [ {name:"", code:""} ]
 };
 
-const dictionary = {
-    ar: {
-        protein: "بروتين", carb: "كارب", sys_stats: "📊 إحصائيات النظام الشاملة", section_del: "🚚 قسم التوصيل (اضغط للاستعراض)",
-        section_bat: "🏪 فرع البترجي (اضغط للاستعراض)", section_ruh: "🏪 فرع الرحيلي (اضغط للاستعراض)", open_logs: "📋 فتح السجلات الكاملة",
-        sub_details: "تفاصيل المشترك", fetching: "جاري جلب البيانات...", status_received: "✅ تسليم الوجبة", status_canceled: "❌ إلغاء اليوم", 
-        close_win: "إغلاق النافذة", tab_received: "✅ المستلمون", tab_canceled: "❌ الملغيون", tab_pending: "⏳ قيد الانتظار",
-        stat_rec: "مستلم:", stat_can: "ملغى:", stat_pen: "انتظار:", pdf_btn: "📄 تحميل وإرسال تقرير PDF الإجمالي", admin_nav: "⚙️ الإشراف",
-        cooling_lbl: "🌡️ درجة برودة التوصيل الحالي:", btn_del: "🚚 التوصيل", btn_bat: "🏪 البترجي", btn_ruh: "🏪 الرحيلي",
-        search_btn: "🔍 ابدأ الفرز والبحث", deliver_all_btn: "⚡ تسليم الكل (قسم التوصيل)", sys_ready: "🟢 متصل وجاهز للفرز",
-        wa_contact: "التواصل الفوري عبر الواتساب للمشرف", pdf_date: "التاريخ:", pdf_time: "الوقت:", pdf_sum_del: "شحنات التوصيل",
-        pdf_sum_bat: "مستلمي البترجي", pdf_sum_ruh: "مستلمي الرحيلي", th_sub: "الاشتراك", th_name: "الاسم", th_status: "الحالة", th_by: "المسؤول"
-    },
-    en: { /* ... (نفس القاموس الإنجليزي) ... */ }
-};
-
 window.onload = function() {
     startFirebaseConnection();
-    
-    // مراقبة رفع ملف الـ PDF لأرشفة اليوم وتصفير النظام
     document.getElementById('pdfFile').addEventListener('change', function(e) {
         if(e.target.files.length > 0) {
-            if(confirm("تحذير: رفع PDF جديد سيقوم بنقل بيانات اليوم إلى 'أرشيف الأيام' وتصفير جميع الحالات لبدء يوم جديد. هل أنت متأكد؟")) {
+            if(confirm("تحذير: رفع PDF جديد سيقوم بنقل بيانات اليوم إلى 'أرشيف الأيام' وتصفير جميع الحالات. هل أنت متأكد؟")) {
                 archiveCurrentDayAndReset();
-            } else {
-                e.target.value = ""; // إلغاء الرفع
-            }
+            } else { e.target.value = ""; }
         }
     });
 };
 
-function updateLangDOM() { /* ... */ }
-function toggleLanguage() { /* ... */ }
 function toggleSidebarDrawer(open) {
     document.getElementById("sidebarDrawer").classList.toggle("open", open);
     document.getElementById("drawerOverlay").classList.toggle("open", open);
 }
-function openReportsWithTab(tabName) { activeTab = tabName; openReports(); }
 
 function showCustomAlert(icon, title, message, isSuccess, showActions, num) {
     document.getElementById("alertIcon").innerHTML = icon;
@@ -365,16 +332,17 @@ function applyCloudData(data) {
     if(!data) return;
     meals = data.mealsList || []; 
     tableStatus = data.actions || {}; 
-    archivesData = data.archives || {}; // جلب الأرشيف
+    archivesData = data.archives || {}; 
     
     waNum = data.whatsapp || "966506546313";
     currentBannerUrl = data.bannerUrl || defaultBanner;
     currentCoolingTemp = data.coolingTemp || "";
     
     if(data.staff) {
-        if(data.staff.batarji) staffData.batarji = data.staff.batarji;
-        if(data.staff.ruhaily) staffData.ruhaily = data.staff.ruhaily;
-        if(data.staff.delivery) staffData.delivery = data.staff.delivery;
+        // الحماية من الانهيار إذا كانت السحابة تحتوي على بيانات قديمة بصيغة مختلفة
+        if(Array.isArray(data.staff.batarji)) staffData.batarji = data.staff.batarji;
+        if(Array.isArray(data.staff.ruhaily)) staffData.ruhaily = data.staff.ruhaily;
+        if(Array.isArray(data.staff.delivery)) staffData.delivery = data.staff.delivery;
     }
     
     document.getElementById("waLink").href = "https://wa.me/" + waNum;
@@ -383,17 +351,22 @@ function applyCloudData(data) {
     document.getElementById("coolingTempInput").value = currentCoolingTemp;
     document.getElementById("topBanner").style.backgroundImage = `linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('${currentBannerUrl}')`;
     
-    // تعبئة حقول الإدارة للموظفين
-    document.getElementById("bName1").value = staffData.batarji[0]?.name || ""; document.getElementById("bCode1").value = staffData.batarji[0]?.code || "";
-    document.getElementById("bName2").value = staffData.batarji[1]?.name || ""; document.getElementById("bCode2").value = staffData.batarji[1]?.code || "";
-    document.getElementById("bName3").value = staffData.batarji[2]?.name || ""; document.getElementById("bCode3").value = staffData.batarji[2]?.code || "";
-    document.getElementById("rName1").value = staffData.ruhaily[0]?.name || ""; document.getElementById("rCode1").value = staffData.ruhaily[0]?.code || "";
-    document.getElementById("dName1").value = staffData.delivery[0]?.name || ""; document.getElementById("dCode1").value = staffData.delivery[0]?.code || "";
+    document.getElementById("bName1").value = (staffData.batarji[0] && staffData.batarji[0].name) ? staffData.batarji[0].name : "";
+    document.getElementById("bCode1").value = (staffData.batarji[0] && staffData.batarji[0].code) ? staffData.batarji[0].code : "";
+    document.getElementById("bName2").value = (staffData.batarji[1] && staffData.batarji[1].name) ? staffData.batarji[1].name : "";
+    document.getElementById("bCode2").value = (staffData.batarji[1] && staffData.batarji[1].code) ? staffData.batarji[1].code : "";
+    document.getElementById("bName3").value = (staffData.batarji[2] && staffData.batarji[2].name) ? staffData.batarji[2].name : "";
+    document.getElementById("bCode3").value = (staffData.batarji[2] && staffData.batarji[2].code) ? staffData.batarji[2].code : "";
+    
+    document.getElementById("rName1").value = (staffData.ruhaily[0] && staffData.ruhaily[0].name) ? staffData.ruhaily[0].name : "";
+    document.getElementById("rCode1").value = (staffData.ruhaily[0] && staffData.ruhaily[0].code) ? staffData.ruhaily[0].code : "";
+    
+    document.getElementById("dName1").value = (staffData.delivery[0] && staffData.delivery[0].name) ? staffData.delivery[0].name : "";
+    document.getElementById("dCode1").value = (staffData.delivery[0] && staffData.delivery[0].code) ? staffData.delivery[0].code : "";
     
     recalculateStats(); renderCards(); updateReports(); calculateAllBranchesLiveReport(); updateDeliverAllBtnVisibility(); renderArchives();
 }
 
-// بناء أرشيف الأيام في القائمة الجانبية
 function renderArchives() {
     let container = document.getElementById("archiveContainer");
     container.innerHTML = "";
@@ -402,7 +375,6 @@ function renderArchives() {
         container.innerHTML = `<div style="font-size:12px; color:#94a3b8; text-align:center;">لا يوجد أيام مؤرشفة حالياً</div>`;
         return;
     }
-    // الترتيب من الأحدث للأقدم
     keys.sort().reverse().forEach(key => {
         let arc = archivesData[key];
         container.innerHTML += `
@@ -418,36 +390,43 @@ function renderArchives() {
 }
 
 function deleteArchive(key) {
-    if(confirm("هل أنت متأكد من مسح هذا اليوم من الأرشيف نهائياً لتوفير المساحة؟")) {
+    if(confirm("هل أنت متأكد من مسح هذا اليوم من الأرشيف نهائياً؟")) {
         db.ref(`pnc_data/archives/${key}`).remove();
     }
 }
 
-// دالة أرشفة اليوم وتصفيره عند رفع PDF
 function archiveCurrentDayAndReset() {
     let now = new Date();
     let dateStr = now.toLocaleDateString('ar-SA');
     let archiveKey = "Arch_" + now.getTime();
-    
     let totalDone = 0;
     for(let k in tableStatus) { if(tableStatus[k].status === "done") totalDone++; }
     
-    // حفظ في الأرشيف
     db.ref(`pnc_data/archives/${archiveKey}`).set({
         date: dateStr,
         totalDone: totalDone,
-        actions: tableStatus // حفظ سجلات الحالات لتلك الأيام
+        actions: tableStatus
     }).then(() => {
-        // تصفير الحالات اليومية
         db.ref("pnc_data/actions").remove().then(() => {
             alert("تم أرشفة اليوم السابق بنجاح، وتصفير النظام لاستقبال بيانات الـ PDF الجديد.");
-            document.getElementById('pdfFile').value = ""; // إعادة تعيين الحقل
-            // ملاحظة: هنا يمكنك إضافة كود قراءة الـ PDF الجديد إذا كان متوفراً لديك
+            document.getElementById('pdfFile').value = "";
         });
     });
 }
 
-function calculateAllBranchesLiveReport() { /* ... */ }
+function calculateAllBranchesLiveReport() {
+    let stats = { delivery: {d:0, p:0}, batarji: {d:0, p:0}, ruhaily: {d:0, p:0} };
+    meals.forEach(m => {
+        let item = tableStatus[m.number] || {};
+        if(m.branch && stats[m.branch]) {
+            if(item.status === "done") stats[m.branch].d++;
+            else if(item.status !== "cancel") stats[m.branch].p++;
+        }
+    });
+    document.getElementById("drawerDelSum").innerText = `${stats.delivery.d} مستلم / ${stats.delivery.p} باقي`;
+    document.getElementById("drawerBatSum").innerText = `${stats.batarji.d} مستلم / ${stats.batarji.p} باقي`;
+    document.getElementById("drawerRuhSum").innerText = `${stats.ruhaily.d} مستلم / ${stats.ruhaily.p} باقي`;
+}
 
 function openAdmin() { document.getElementById("adminPanel").style.display = "block"; }
 
@@ -476,19 +455,15 @@ function saveAdminSettings() {
 }
 
 function triggerWorkerAuth(num, action) {
-    let branchStaff = staffData[currentBranchView] || [];
-    
-    // طلب كود الموظف
-    let enteredCode = prompt("🔐 الرجاء إدخال الكود السري الخاص بك لتأكيد العملية:");
-    if(enteredCode === null) return; // تم الإلغاء
-    
+    let branchStaff = staffData[currentBranchView];
+    if(!Array.isArray(branchStaff)) branchStaff = []; // حماية إضافية
+
+    let enteredCode = prompt("🔐 الرجاء إدخل الكود السري الخاص بك لتأكيد العملية:");
+    if(enteredCode === null) return; 
     let matchedStaff = branchStaff.find(s => s.code === enteredCode && s.code !== "");
-    
     if(matchedStaff) {
         executeStatusChange(num, action, matchedStaff.name);
-    } else {
-        alert("❌ الكود السري غير صحيح أو غير مسجل!");
-    }
+    } else { alert("❌ الكود السري غير صحيح أو غير مسجل!"); }
 }
 
 function executeStatusChange(num, action, staffName) {
@@ -498,47 +473,40 @@ function executeStatusChange(num, action, staffName) {
         status: action,
         time: timeString,
         by: staffName
-    }).then(() => {
-        document.getElementById("mealInput").value = "";
-    });
+    }).then(() => { document.getElementById("mealInput").value = ""; });
 }
 
 function triggerDeliverAllDelivery() {
     if(confirm("هل أنت متأكد من تسليم كافة وجبات قسم التوصيل المنتظرة دفعة واحدة؟")) {
-        // يمكننا استخدام الموظف الأول في التوصيل كمسؤول افتراضي لهذه العملية
-        let staffName = staffData.delivery[0]?.name || "مسؤول التوصيل";
+        let staffName = (staffData.delivery[0] && staffData.delivery[0].name) ? staffData.delivery[0].name : "مسؤول التوصيل";
+        let expectedCode = (staffData.delivery[0] && staffData.delivery[0].code) ? staffData.delivery[0].code : "";
+        
         let enteredCode = prompt("🔐 أدخل الكود السري الخاص بالتوصيل:");
-        if(enteredCode === staffData.delivery[0]?.code && enteredCode !== "") {
-            executeDeliverAll(staffName);
-        } else {
-            alert("❌ الكود السري غير صحيح!");
-        }
+        if(enteredCode === expectedCode && enteredCode !== "") {
+            let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+            let updates = {};
+            meals.forEach(m => {
+                if(m.branch === "delivery") {
+                    let act = tableStatus[m.number] || {};
+                    if(!act.status || act.status === "pending") {
+                        updates[`pnc_data/actions/${m.number}`] = { status: "done", time: timeString, by: staffName };
+                    }
+                }
+            });
+            if(Object.keys(updates).length > 0) db.ref().update(updates);
+        } else { alert("❌ الكود السري غير صحيح!"); }
     }
-}
-
-function executeDeliverAll(staffName) {
-    if(!db) return;
-    let now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
-    let updates = {};
-    meals.forEach(m => {
-        if(m.branch === "delivery") {
-            let act = tableStatus[m.number] || {};
-            if(!act.status || act.status === "pending") {
-                updates[`pnc_data/actions/${m.number}`] = { status: "done", time: timeString, by: staffName };
-            }
-        }
-    });
-    if(Object.keys(updates).length > 0) db.ref().update(updates);
 }
 
 function switchBranchView(view) {
     currentBranchView = view;
+    activeMainFilter = "all";
+    document.querySelectorAll('.stats .stat').forEach(el => el.classList.remove('inactive-filter'));
     document.querySelectorAll(".branch-filter-btn").forEach(b => b.classList.remove("active-branch-selected"));
     document.getElementById("btn-view-" + view).classList.add("active-branch-selected");
     
-    const branchNames = { ar: { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" }};
-    let currentBranchName = branchNames["ar"][view];
-    document.getElementById("listTitle").innerText = "قائمة فرز " + currentBranchName + " المباشرة:";
+    let branchNames = { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" };
+    document.getElementById("listTitle").innerText = "قائمة فرز " + branchNames[view] + " المباشرة:";
     
     recalculateStats(); renderCards(); updateReports(); updateDeliverAllBtnVisibility();
 }
@@ -562,18 +530,40 @@ function recalculateStats() {
     document.getElementById("cancelMeals").innerText = c;
 }
 
+function toggleMainListFilter(status) {
+    if(activeMainFilter === status) {
+        activeMainFilter = "all";
+        document.querySelectorAll('.stats .stat').forEach(el => el.classList.remove('inactive-filter'));
+    } else {
+        activeMainFilter = status;
+        document.querySelectorAll('.stats .stat').forEach(el => el.classList.add('inactive-filter'));
+        document.getElementById('stat-' + status).classList.remove('inactive-filter');
+    }
+    renderCards();
+}
+
 function renderCards() {
     let container = document.getElementById("mealCardsContainer");
     container.innerHTML = "";
     let query = document.getElementById("mealInput").value.trim().toLowerCase();
     
     let filtered = meals.filter(m => m.branch === currentBranchView);
+    
+    if(activeMainFilter !== "all") {
+        filtered = filtered.filter(m => {
+            let act = tableStatus[m.number] || {};
+            let s = act.status || "pending";
+            return s === activeMainFilter;
+        });
+    }
+
     if(query) {
         filtered = filtered.filter(m => m.number.toString().includes(query) || m.name.toLowerCase().includes(query));
     }
     
     if(filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">لا توجد نتائج بحث مطابقة في هذا القسم</div>`;
+        let emptyMsg = activeMainFilter === "all" ? "لا توجد نتائج بحث مطابقة" : "لا توجد وجبات في هذه الحالة";
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">${emptyMsg}</div>`;
         return;
     }
     
@@ -602,42 +592,105 @@ function checkMealFromInput() {
     let userInput = document.getElementById("mealInput").value.trim().toLowerCase();
     if(!userInput) return;
     let meal = meals.find(m => m.number.toString() === userInput) || meals.find(m => m.name.toLowerCase().includes(userInput));
-    
-    if(!meal) {
-        showCustomAlert("🔍", "غير موجود", "لم يتم العثور على أي مشترك بهذا الاسم أو الرقم!", false, false, null);
-        return;
-    }
+    if(!meal) { showCustomAlert("🔍", "غير موجود", "لم يتم العثور على أي مشترك بهذا الاسم أو الرقم!", false, false, null); return; }
     checkMeal(meal);
 }
 
 function checkMeal(meal) {
-    // 1- التحقق من موقع التسليم ومطابقته للفرع الحالي
     if(meal.branch !== currentBranchView) {
         let branchNameAr = meal.branch === 'delivery' ? 'التوصيل' : (meal.branch === 'batarji' ? 'البترجي' : 'الرحيلي');
-        showCustomAlert("⚠️", "عذراً! موقع خاطئ", `هذه الوجبة مخصصة لقسم (<b>${branchNameAr}</b>). لا يمكنك تسليمها وأنت متواجد في قسم آخر.`, false, false, null);
+        showCustomAlert("⚠️", "عذراً! موقع خاطئ", `هذه الوجبة مخصصة لقسم (<b>${branchNameAr}</b>).`, false, false, null);
         return;
     }
-
     let act = tableStatus[meal.number] || {};
-    
-    // 2- التحقق من التكرار (إذا كانت الوجبة مستلمة مسبقاً)
     if(act.status === "done") {
         let info = `الاسم: ${meal.name}<br>هذه الوجبة <b>مستلمة بالفعل</b>.<br>استلمها الموظف: <b style="color:#22c55e">${act.by}</b><br>الوقت: ${act.time}`;
         showCustomAlert("✅", "وجبة مستلمة مسبقاً!", info, true, false, null);
-        return; // الإيقاف هنا يمنع ظهور أزرار التسليم مجدداً
+        return; 
     }
-
-    // 3- إذا كانت الوجبة معلقة، يتم إظهار خيارات التسليم بشكل طبيعي
     let info = `الاسم: ${meal.name}<br>رقم الاشتراك: #${meal.number}<br>القسم: ${meal.branch === 'delivery' ? '🚚 توصيل' : '🏪 فرع'}<br>الحالة الحالية: ${act.status === 'cancel' ? '❌ ملغى' : '⏳ قيد الانتظار'}`;
     showCustomAlert("👤", meal.name, info, true, true, meal.number);
 }
 
-function openReports() { /* ... */ document.getElementById("reportsOverlay").classList.add("open"); switchTab(activeTab); }
+function openReports() { document.getElementById("reportsOverlay").classList.add("open"); switchTab(activeTab); }
 function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
 function switchTab(tab) { activeTab = tab; document.querySelectorAll(".reports-tab").forEach(t => t.classList.remove("active-tab")); document.getElementById("tab-" + tab).classList.add("active-tab"); updateReports(); }
 
-function updateReports() { /* ... */ }
-function generateAndSharePDFReport() { /* ... */ }
+function updateReports() {
+    let content = document.getElementById("reportsContent");
+    content.innerHTML = "";
+    let filteredMeals = meals.filter(m => m.branch === currentBranchView);
+    let done = 0, cancel = 0;
+    
+    filteredMeals.forEach(m => {
+        let act = tableStatus[m.number] || {};
+        let status = act.status || "pending";
+        if(status === "done") done++;
+        if(status === "cancel") cancel++;
+        
+        if (activeTab === status) {
+            let card = document.createElement("div");
+            card.className = "report-card";
+            card.innerHTML = `
+                <div>
+                    <div style="font-weight:bold; font-size:14px; color:#e2e8f0;">${m.name}</div>
+                    <div style="font-size:11px; color:#94a3b8;">رقم الاشتراك: #${m.number}</div>
+                </div>
+                <div style="font-size:12px; font-weight:bold; color: ${status === 'done' ? '#22c55e' : status === 'cancel' ? '#ef4444' : '#facc15'}">${act.time || "⏳"}</div>
+            `;
+            content.appendChild(card);
+        }
+    });
+    document.getElementById("overlayDoneCount").innerText = done;
+    document.getElementById("overlayCancelCount").innerText = cancel;
+}
+
+function generateAndSharePDFReport() {
+    let now = new Date();
+    document.getElementById("pdfReportDate").innerText = now.toLocaleDateString('ar-SA');
+    document.getElementById("pdfReportTime").innerText = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById("pdfReportCooling").innerText = currentCoolingTemp ? currentCoolingTemp : "غير محدد";
+
+    let deliveryBody = document.getElementById("pdfDeliveryTableBody");
+    let batarjiBody = document.getElementById("pdfBatarjiTableBody");
+    let ruhailyBody = document.getElementById("pdfRuhailyTableBody");
+    
+    deliveryBody.innerHTML = ""; batarjiBody.innerHTML = ""; ruhailyBody.innerHTML = "";
+    let sumDel = 0, sumBat = 0, sumRuh = 0;
+    let globalDone = 0, globalCancel = 0, globalPending = 0;
+
+    meals.forEach(m => {
+        let act = tableStatus[m.number] || {};
+        let statusText = "⏳ قيد الانتظار";
+        if(act.status === "done") { statusText = "✅ مستلم"; globalDone++; }
+        else if(act.status === "cancel") { statusText = "❌ ملغى"; globalCancel++; }
+        else { globalPending++; }
+
+        let rowHTML = `<tr><td>#${m.number}</td><td><b>${m.name}</b></td><td>${statusText} ${act.time ? '('+act.time+')' : ''}</td><td>${act.by || '-'}</td></tr>`;
+
+        if(m.branch === "delivery") { deliveryBody.innerHTML += rowHTML; if(act.status === "done") sumDel++; }
+        else if(m.branch === "batarji") { batarjiBody.innerHTML += rowHTML; if(act.status === "done") sumBat++; }
+        else if(m.branch === "ruhaily") { ruhailyBody.innerHTML += rowHTML; if(act.status === "done") sumRuh++; }
+    });
+
+    document.getElementById("pdfSumDeliveryDone").innerText = sumDel;
+    document.getElementById("pdfSumBatarjiDone").innerText = sumBat;
+    document.getElementById("pdfSumRuhailyDone").innerText = sumRuh;
+    document.getElementById("pdfMetaGlobalDone").innerText = globalDone;
+    document.getElementById("pdfMetaGlobalCancel").innerText = globalCancel;
+    document.getElementById("pdfMetaGlobalPending").innerText = globalPending;
+
+    const element = document.getElementById('pdfReportTemplate');
+    element.style.display = 'block';
+    
+    var opt = {
+        margin: 0.4, filename: `تقرير_بروتين_وكارب_${now.toLocaleDateString('en-US')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; }).catch(err => { element.style.display = 'none'; alert("حدث خطأ في تحميل الـ PDF"); });
+}
 </script>
 </body>
 </html>
