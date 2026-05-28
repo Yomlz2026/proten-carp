@@ -1,4 +1,4 @@
-script.js
+
 
 var defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 
@@ -53,22 +53,24 @@ function initFirebase() {
         }
 
         db = firebase.database();
-        storage = firebase.storage();
+
+        try {
+            storage = firebase.storage();
+        } catch (storageError) {
+            storage = null;
+            console.warn("Storage غير متاح:", storageError);
+        }
 
         db.ref("pnc_data").on("value", function (snap) {
-            if (snap.exists()) {
-                applyCloudData(snap.val());
-            } else {
-                applyCloudData({});
-            }
-
+            applyCloudData(snap.exists() ? snap.val() : {});
             setStatus("🟢 متصل ومزامَن سحابياً");
         }, function (error) {
-            setStatus("❌ خطأ اتصال Firebase: " + error.message);
+            setStatus("❌ خطأ قاعدة البيانات: " + error.message);
         });
 
     } catch (error) {
-        setStatus("❌ خطأ تشغيل Firebase: " + error.message);
+        setStatus("❌ فشل تشغيل Firebase: " + error.message);
+        alert("❌ فشل تشغيل Firebase: " + error.message);
     }
 }
 
@@ -161,6 +163,7 @@ function loginMainSystem() {
     if (code === mainPassword || code === emergencyPassword || code === "1234") {
         document.getElementById("mainLoginScreen").style.display = "none";
         document.getElementById("app").style.display = "block";
+        document.body.classList.add("system-open");
         document.body.style.overflow = "auto";
     } else {
         alert("❌ رمز الدخول غير صحيح");
@@ -255,7 +258,7 @@ function saveAdminSettings() {
 
 function uploadBannerImage() {
     if (!storage || !db) {
-        alert("❌ Firebase Storage غير متصل");
+        alert("❌ Firebase Storage غير متصل أو غير مفعل. باقي النظام يعمل، فقط رفع الصور يحتاج تفعيل Storage.");
         return;
     }
 
@@ -1039,4 +1042,4 @@ function escapeHtml(text) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-}
+                        }
