@@ -1,10 +1,12 @@
+index.html
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بروتين وكارب</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>بروتين وكارب - الإشراف السحابي</title>
 
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
@@ -14,53 +16,236 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
 
-<div class="loginScreen" id="mainLogin">
-    <div class="loginBox">
-        <h1>🥗 بروتين وكارب</h1>
-        <input type="password" id="sitePassword" placeholder="كلمة مرور النظام">
-        <button onclick="loginSite()">دخول النظام</button>
+<div id="mainLoginScreen" class="login-screen">
+    <div class="login-card">
+        <div class="login-logo">🥗</div>
+        <h1>بروتين وكارب</h1>
+        <p>أدخل رمز الدخول للنظام</p>
+        <input id="mainLoginCode" type="password" placeholder="رمز الدخول">
+        <button onclick="loginMainSystem()">دخول النظام</button>
+        <div class="small-note">رمز الطوارئ: 7113</div>
     </div>
 </div>
 
-<div class="container">
-    <div class="header">
-        <h2>☁️ الإشراف السحابي</h2>
-        <button onclick="openAdminLogin()">⚙️ الإشراف</button>
+<div id="drawerOverlay" class="drawer-overlay" onclick="toggleSidebarDrawer(false)"></div>
+
+<div id="sidebarDrawer" class="sidebar-drawer">
+    <div class="drawer-header">
+        <h3>☁️ القائمة السحابية</h3>
+        <button onclick="toggleSidebarDrawer(false)">✕</button>
     </div>
 
-    <div class="card" id="adminPanel" style="display:none;">
-        <h3>لوحة الإشراف</h3>
+    <div class="drawer-card">
+        <h4>📊 إحصائيات الفروع</h4>
 
-        <input type="file" id="pdfFile" accept=".pdf">
-        <button onclick="processPDF()">📄 رفع وتحليل PDF</button>
+        <div class="drawer-summary-row delivery" onclick="toggleSidebarDrawer(false); switchBranchView('delivery'); openReports();">
+            <span>🚚 التوصيل</span>
+            <span id="drawerDelSum">0 مستلم / 0 باقي</span>
+        </div>
 
-        <input type="text" id="newSiteCode" placeholder="تغيير رمز الصفحة الرئيسية">
-        <input type="text" id="newAdminCode" placeholder="تغيير رمز لوحة الإشراف">
-        <button onclick="saveCodes()">💾 حفظ الرموز</button>
+        <div class="drawer-summary-row batarji" onclick="toggleSidebarDrawer(false); switchBranchView('batarji'); openReports();">
+            <span>🏪 البترجي</span>
+            <span id="drawerBatSum">0 مستلم / 0 باقي</span>
+        </div>
 
-        <button class="closeBtn" onclick="closeAdminPanel()">إغلاق الإشراف</button>
+        <div class="drawer-summary-row ruhaily" onclick="toggleSidebarDrawer(false); switchBranchView('ruhaily'); openReports();">
+            <span>🏪 الرحيلي</span>
+            <span id="drawerRuhSum">0 مستلم / 0 باقي</span>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>📋 قائمة المشتركين</h3>
-        <div id="mealCardsContainer"></div>
+    <div class="drawer-card">
+        <h4>📄 التقارير</h4>
+        <button class="pdfShareBtn" onclick="generatePDFReport()">⬇️ تحميل تقرير PDF</button>
+    </div>
+
+    <div class="drawer-card">
+        <h4>📂 الأرشيف</h4>
+        <div id="archiveContainer"></div>
     </div>
 </div>
 
-<div id="adminModal" class="adminModal">
-    <div class="adminBox">
-        <h3>🔐 دخول الإشراف</h3>
-        <input type="password" id="adminPassword" placeholder="كلمة مرور الإشراف">
-        <button onclick="checkAdminPassword()">دخول</button>
-        <button class="closeBtn" onclick="closeAdminLogin()">إغلاق</button>
+<div id="adminLoginModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-icon">🔐</div>
+        <h3>دخول الإشراف</h3>
+        <p>أدخل رمز لوحة الإشراف</p>
+        <input id="adminLoginCode" type="password" placeholder="رمز الإشراف">
+        <button onclick="loginAdminPanel()">دخول الإشراف</button>
+        <button class="danger-light" onclick="closeAdminLogin()">إغلاق</button>
     </div>
+</div>
+
+<div id="customAlertModal" class="modal-overlay">
+    <div class="modal-card alert-card">
+        <div id="alertIcon" class="modal-icon">👤</div>
+        <h3 id="alertTitle">تنبيه</h3>
+        <div id="alertMessage" class="alert-message">...</div>
+
+        <div id="modalDynamicFields"></div>
+
+        <div id="modalActionButtons" class="modal-actions">
+            <button id="modalConfirmBtn" class="success-btn">✅ تأكيد التسليم</button>
+            <button id="modalCancelBtn" class="danger-btn">❌ إلغاء اليوم</button>
+        </div>
+
+        <button class="danger-light" onclick="closeCustomAlert()">إغلاق</button>
+    </div>
+</div>
+
+<div id="reportsOverlay" class="reports-overlay">
+    <div class="reports-header">
+        <button onclick="closeReports()">⬅️ إغلاق</button>
+        <div id="reportsOverlayTitle">📋 سجل الفرز</div>
+        <button onclick="closeReports()">✕</button>
+    </div>
+
+    <div class="reports-tabs">
+        <button id="tab-done" class="reports-tab active-tab" onclick="switchTab('done')">✅ المستلمون</button>
+        <button id="tab-cancel" class="reports-tab" onclick="switchTab('cancel')">❌ الملغيون</button>
+        <button id="tab-pending" class="reports-tab" onclick="switchTab('pending')">⏳ الانتظار</button>
+    </div>
+
+    <div id="reportsContent" class="reports-content"></div>
+</div>
+
+<div id="app" class="app-shell">
+    <div class="container">
+
+        <div id="topBanner" class="top-banner"></div>
+
+        <div class="header">
+            <button class="menu-btn" onclick="toggleSidebarDrawer(true)">⋮</button>
+            <div class="brand-title">بروتين وكارب</div>
+            <button class="admin-open-btn" onclick="openAdminLogin()">⚙️ الإشراف</button>
+        </div>
+
+        <div id="adminPanel" class="card control-panel">
+            <h3 class="section-title">⚙️ لوحة الإشراف</h3>
+
+            <div class="admin-block">
+                <span class="admin-label">📄 رفع ملف PDF وقراءة المشتركين تلقائياً</span>
+                <input id="pdfFileInput" type="file" accept="application/pdf,.pdf">
+                <button class="purple-btn" onclick="processPDFFile()">🚀 قراءة PDF وتحديث السحابة</button>
+                <div id="pdfStatus" class="status-line"></div>
+            </div>
+
+            <div class="admin-block">
+                <span class="admin-label">🖼️ تغيير صورة البانر</span>
+                <input id="bannerImageUpload" type="file" accept="image/*">
+                <button class="blue-btn" onclick="uploadBannerImage()">⬆️ رفع صورة البانر</button>
+                <div id="uploadProgress" class="status-line"></div>
+            </div>
+
+            <div class="admin-block">
+                <span class="admin-label">🔐 كلمات المرور</span>
+                <input id="mainCodeInput" type="text" placeholder="رمز الصفحة الرئيسية">
+                <input id="adminCodeInput" type="text" placeholder="رمز لوحة الإشراف">
+                <button class="green-btn" onclick="savePasswords()">💾 حفظ كلمات المرور</button>
+            </div>
+
+            <div class="admin-block">
+                <span class="admin-label">📱 رقم واتساب المشرف</span>
+                <input id="whatsappInput" type="tel" placeholder="9665xxxxxxxx">
+            </div>
+
+            <div class="admin-block">
+                <span class="admin-label">🌡️ درجة برودة التوصيل</span>
+                <input id="coolingTempInput" type="text" placeholder="مثال: 4°C">
+            </div>
+
+            <div class="admin-block">
+                <span class="admin-label">👥 طاقم العمل</span>
+
+                <div class="staff-title">🏪 موظفي البترجي</div>
+                <div class="staff-row"><input id="bName1" placeholder="اسم الموظف 1"><input id="bCode1" placeholder="الكود"></div>
+                <div class="staff-row"><input id="bName2" placeholder="اسم الموظف 2"><input id="bCode2" placeholder="الكود"></div>
+                <div class="staff-row"><input id="bName3" placeholder="اسم الموظف 3"><input id="bCode3" placeholder="الكود"></div>
+
+                <div class="staff-title">🏪 موظف الرحيلي</div>
+                <div class="staff-row"><input id="rName1" placeholder="اسم الموظف"><input id="rCode1" placeholder="الكود"></div>
+
+                <div class="staff-title">🚚 موظف التوصيل</div>
+                <div class="staff-row"><input id="dName1" placeholder="اسم الموظف"><input id="dCode1" placeholder="الكود"></div>
+            </div>
+
+            <button class="green-btn" onclick="saveAdminSettings()">💾 حفظ إعدادات الإشراف</button>
+            <button class="danger-light" onclick="closeAdminPanel()">إغلاق اللوحة</button>
+        </div>
+
+        <div class="branch-filters-container">
+            <button id="btn-view-delivery" class="branch-filter-btn active-branch-selected" onclick="switchBranchView('delivery')">🚚 التوصيل</button>
+            <button id="btn-view-batarji" class="branch-filter-btn" onclick="switchBranchView('batarji')">🏪 البترجي</button>
+            <button id="btn-view-ruhaily" class="branch-filter-btn" onclick="switchBranchView('ruhaily')">🏪 الرحيلي</button>
+        </div>
+
+        <div class="card">
+            <input id="mealInput" type="text" placeholder="🔍 اكتب اسم المشترك أو رقم الاشتراك..." oninput="renderCards()">
+            <button class="searchBtn" onclick="checkMealFromInput()">🔍 ابدأ البحث</button>
+            <button id="deliverAllBtn" class="deliverAllBtn" onclick="triggerDeliverAllDelivery()">⚡ تسليم الكل للتوصيل</button>
+            <div id="status" class="main-status">⏳ جاري الاتصال بالسحابة...</div>
+        </div>
+
+        <div class="card">
+            <div class="hint-row">
+                <span>💡 اضغط على الحالة لفلترة القائمة</span>
+                <button id="logoutStaffBtn" onclick="logoutCurrentStaff()">🚪 خروج الموظف</button>
+            </div>
+
+            <div class="stats">
+                <div id="stat-pending" class="stat yellowBox" onclick="toggleMainListFilter('pending')">انتظار: <span id="pendingMeals">0</span></div>
+                <div id="stat-done" class="stat greenBox" onclick="toggleMainListFilter('done')">مستلم: <span id="doneMeals">0</span></div>
+                <div id="stat-cancel" class="stat redBox" onclick="toggleMainListFilter('cancel')">ملغى: <span id="cancelMeals">0</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 id="listTitle" class="section-title">قائمة التوصيل المباشرة:</h3>
+            <div id="mealCardsContainer"></div>
+        </div>
+
+    </div>
+</div>
+
+<div class="whatsapp-bottom-bar">
+    <a id="waLink" class="whatsapp-btn-link" href="#" target="_blank">التواصل الفوري عبر الواتساب للمشرف</a>
+</div>
+
+<div class="ticker-wrap">
+    <div class="ticker-text">تصميم وتطوير مأمون محمد</div>
+</div>
+
+<div id="pdfReportTemplate">
+    <div class="pdf-header">
+        <div class="pdf-title">🥗 تقرير الفرز اليومي - بروتين وكارب</div>
+        <div class="pdf-meta">
+            <div><b>التاريخ:</b> <span id="pdfReportDate">--</span></div>
+            <div><b>الوقت:</b> <span id="pdfReportTime">--</span></div>
+            <div><b>درجة البرودة:</b> <span id="pdfReportCooling">--</span></div>
+        </div>
+    </div>
+
+    <div class="pdf-grid-summary">
+        <div class="pdf-sum-box"><div>التوصيل</div><b id="pdfSumDeliveryDone">0</b></div>
+        <div class="pdf-sum-box"><div>البترجي</div><b id="pdfSumBatarjiDone">0</b></div>
+        <div class="pdf-sum-box"><div>الرحيلي</div><b id="pdfSumRuhailyDone">0</b></div>
+    </div>
+
+    <h3>🚚 التوصيل</h3>
+    <table class="pdf-table"><thead><tr><th>الرقم</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
+
+    <h3>🏪 البترجي</h3>
+    <table class="pdf-table"><thead><tr><th>الرقم</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
+
+    <h3>🏪 الرحيلي</h3>
+    <table class="pdf-table"><thead><tr><th>الرقم</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
 </div>
 
 <script src="script.js"></script>
-
 </body>
-</html>
+                    </html>
