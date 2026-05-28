@@ -17,7 +17,6 @@ let firebaseStarted = false;
 let meals = [];
 let tableStatus = {};
 let archivesData = {};
-
 let currentBranchView = "delivery";
 let activeMainFilter = "all";
 let activeTab = "done";
@@ -26,42 +25,23 @@ let waNum = "966506546313";
 let currentBannerUrl = "";
 let currentCoolingTemp = "";
 
-let systemPasswords = {
-    main: "1234",
-    admin: "0000"
-};
-
+let systemPasswords = { main: "1234", admin: "0000" };
 let emergencyPassword = "7113";
 
-let currentLoggedStaff = {
-    delivery: null,
-    batarji: null,
-    ruhaily: null
-};
+let currentLoggedStaff = { delivery: null, batarji: null, ruhaily: null };
 
 let staffData = {
-    batarji: [
-        { name: "", code: "" },
-        { name: "", code: "" },
-        { name: "", code: "" }
-    ],
-    ruhaily: [
-        { name: "", code: "" }
-    ],
-    delivery: [
-        { name: "", code: "" }
-    ]
+    batarji: [{ name: "", code: "" }, { name: "", code: "" }, { name: "", code: "" }],
+    ruhaily: [{ name: "", code: "" }],
+    delivery: [{ name: "", code: "" }]
 };
 
 window.onload = function () {
     const input = document.getElementById("mainLoginCode");
-
     if (input) {
         input.focus();
         input.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") {
-                loginMainSystem();
-            }
+            if (e.key === "Enter") loginMainSystem();
         });
     }
 };
@@ -70,9 +50,7 @@ function connectFirebase() {
     if (firebaseStarted) return;
 
     try {
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
         db = firebase.database();
 
@@ -95,13 +73,8 @@ function connectFirebase() {
             currentBannerUrl = data.bannerUrl || "";
             currentCoolingTemp = data.coolingTemp || "";
 
-            if (data.passwords) {
-                systemPasswords = data.passwords;
-            }
-
-            if (data.staff) {
-                staffData = fixStaffData(data.staff);
-            }
+            if (data.passwords) systemPasswords = data.passwords;
+            if (data.staff) staffData = fixStaffData(data.staff);
 
             applyDataToUI();
             setStatus("🟢 متصل بالسحابة");
@@ -167,11 +140,7 @@ function setValue(id, value) {
 function loginMainSystem() {
     const code = document.getElementById("mainLoginCode").value.trim();
 
-    if (
-        code !== systemPasswords.main &&
-        code !== "1234" &&
-        code !== emergencyPassword
-    ) {
+    if (code !== systemPasswords.main && code !== "1234" && code !== emergencyPassword) {
         customAlert("❌", "رمز خاطئ", "رمز الصفحة الرئيسية غير صحيح");
         return;
     }
@@ -185,7 +154,6 @@ function loginMainSystem() {
 
 function openAdminLogin() {
     document.getElementById("adminLoginModal").style.display = "flex";
-
     setTimeout(function () {
         const input = document.getElementById("adminLoginCode");
         if (input) input.focus();
@@ -200,21 +168,14 @@ function closeAdminLogin() {
 function loginAdminPanel() {
     const code = document.getElementById("adminLoginCode").value.trim();
 
-    if (
-        code !== systemPasswords.admin &&
-        code !== "0000" &&
-        code !== emergencyPassword
-    ) {
+    if (code !== systemPasswords.admin && code !== "0000" && code !== emergencyPassword) {
         customAlert("❌", "رمز خاطئ", "رمز لوحة الإشراف غير صحيح");
         return;
     }
 
     closeAdminLogin();
     document.getElementById("adminPanel").style.display = "block";
-    document.getElementById("adminPanel").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    document.getElementById("adminPanel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function closeAdminPanel() {
@@ -250,10 +211,7 @@ function savePasswords() {
         return;
     }
 
-    db.ref("pnc_data/passwords").set({
-        main: main,
-        admin: admin
-    }).then(function () {
+    db.ref("pnc_data/passwords").set({ main, admin }).then(function () {
         customAlert("✅", "تم الحفظ", "تم تحديث كلمات المرور بنجاح");
     }).catch(function (error) {
         customAlert("❌", "خطأ", error.message);
@@ -271,30 +229,15 @@ function saveAdminSettings() {
         coolingTemp: document.getElementById("coolingTempInput").value.trim(),
         staff: {
             batarji: [
-                {
-                    name: document.getElementById("bName1").value.trim(),
-                    code: document.getElementById("bCode1").value.trim()
-                },
-                {
-                    name: document.getElementById("bName2").value.trim(),
-                    code: document.getElementById("bCode2").value.trim()
-                },
-                {
-                    name: document.getElementById("bName3").value.trim(),
-                    code: document.getElementById("bCode3").value.trim()
-                }
+                { name: document.getElementById("bName1").value.trim(), code: document.getElementById("bCode1").value.trim() },
+                { name: document.getElementById("bName2").value.trim(), code: document.getElementById("bCode2").value.trim() },
+                { name: document.getElementById("bName3").value.trim(), code: document.getElementById("bCode3").value.trim() }
             ],
             ruhaily: [
-                {
-                    name: document.getElementById("rName1").value.trim(),
-                    code: document.getElementById("rCode1").value.trim()
-                }
+                { name: document.getElementById("rName1").value.trim(), code: document.getElementById("rCode1").value.trim() }
             ],
             delivery: [
-                {
-                    name: document.getElementById("dName1").value.trim(),
-                    code: document.getElementById("dCode1").value.trim()
-                }
+                { name: document.getElementById("dName1").value.trim(), code: document.getElementById("dCode1").value.trim() }
             ]
         }
     };
@@ -345,7 +288,6 @@ async function uploadBannerImage() {
 
         progress.innerHTML = "✅ تم رفع الصورة بنجاح";
         fileInput.value = "";
-
     } catch (error) {
         progress.innerHTML = "❌ فشل رفع الصورة";
         customAlert("❌", "فشل رفع الصورة", error.message || "تحقق من صلاحيات Storage");
@@ -353,11 +295,8 @@ async function uploadBannerImage() {
 }
 
 function toggleSidebarDrawer(open) {
-    document.getElementById("sidebarDrawer").className =
-        open ? "sidebar-drawer open" : "sidebar-drawer";
-
-    document.getElementById("drawerOverlay").className =
-        open ? "drawer-overlay open" : "drawer-overlay";
+    document.getElementById("sidebarDrawer").className = open ? "sidebar-drawer open" : "sidebar-drawer";
+    document.getElementById("drawerOverlay").className = open ? "drawer-overlay open" : "drawer-overlay";
 }
 
 function switchBranchView(view) {
@@ -374,12 +313,7 @@ function switchBranchView(view) {
         el.classList.remove("inactive-filter");
     });
 
-    const names = {
-        delivery: "التوصيل",
-        batarji: "البترجي",
-        ruhaily: "الرحيلي"
-    };
-
+    const names = { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" };
     document.getElementById("listTitle").innerHTML = "قائمة فرز " + names[view];
 
     renderCards();
@@ -390,15 +324,11 @@ function switchBranchView(view) {
 
 function updateDeliverAllBtnVisibility() {
     const btn = document.getElementById("deliverAllBtn");
-    if (btn) {
-        btn.style.display = currentBranchView === "delivery" ? "block" : "none";
-    }
+    if (btn) btn.style.display = currentBranchView === "delivery" ? "block" : "none";
 }
 
 function recalculateStats() {
-    let pending = 0;
-    let done = 0;
-    let cancel = 0;
+    let pending = 0, done = 0, cancel = 0;
 
     meals.forEach(function (meal) {
         if (meal.branch !== currentBranchView) return;
@@ -418,18 +348,14 @@ function recalculateStats() {
 function toggleMainListFilter(status) {
     if (activeMainFilter === status) {
         activeMainFilter = "all";
-
         document.querySelectorAll(".stat").forEach(function (el) {
             el.classList.remove("inactive-filter");
         });
-
     } else {
         activeMainFilter = status;
-
         document.querySelectorAll(".stat").forEach(function (el) {
             el.classList.add("inactive-filter");
         });
-
         document.getElementById("stat-" + status).classList.remove("inactive-filter");
     }
 
@@ -457,8 +383,7 @@ function renderCards() {
 
     if (query) {
         filtered = filtered.filter(function (m) {
-            return String(m.number).includes(query) ||
-                String(m.name || "").toLowerCase().includes(query);
+            return String(m.number).includes(query) || String(m.name || "").toLowerCase().includes(query);
         });
     }
 
@@ -469,22 +394,14 @@ function renderCards() {
 
     filtered.forEach(function (meal) {
         const act = tableStatus[meal.number] || {};
-
         let badge = "<span style='color:#facc15;'>⏳ انتظار</span>";
 
-        if (act.status === "done") {
-            badge = "<span style='color:#22c55e;'>✅ مستلم</span>";
-        }
-
-        if (act.status === "cancel") {
-            badge = "<span style='color:#ef4444;'>❌ ملغى</span>";
-        }
+        if (act.status === "done") badge = "<span style='color:#22c55e;'>✅ مستلم</span>";
+        if (act.status === "cancel") badge = "<span style='color:#ef4444;'>❌ ملغى</span>";
 
         const div = document.createElement("div");
         div.className = "meal-row-card";
-        div.onclick = function () {
-            checkMeal(meal);
-        };
+        div.onclick = function () { checkMeal(meal); };
 
         div.innerHTML =
             "<div class='meal-card-main-info'>" +
@@ -501,7 +418,6 @@ function customAlert(icon, title, message) {
     document.getElementById("alertIcon").innerHTML = icon;
     document.getElementById("alertTitle").innerHTML = title;
     document.getElementById("alertMessage").innerHTML = message;
-
     document.getElementById("modalDynamicFields").style.display = "none";
     document.getElementById("modalActionButtons").style.display = "none";
     document.getElementById("customAlertModal").style.display = "flex";
@@ -539,11 +455,7 @@ function checkMeal(meal) {
     };
 
     if (meal.branch !== currentBranchView) {
-        customAlert(
-            "⚠️",
-            "موقع خاطئ",
-            "هذا المشترك مخصص إلى:<br><b>" + branchLabels[meal.branch] + "</b>"
-        );
+        customAlert("⚠️", "موقع خاطئ", "هذا المشترك مخصص إلى:<br><b>" + branchLabels[meal.branch] + "</b>");
         return;
     }
 
@@ -594,13 +506,8 @@ function showMealActionModal(meal) {
 function executeDirectAction(num, action) {
     checkStaffLoginRequirement(function () {
         const staffName = currentLoggedStaff[currentBranchView] || "موظف معتمد";
-
         const now = new Date();
-        const time = now.toLocaleTimeString("ar-SA", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-        });
+        const time = now.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit", hour12: true });
 
         db.ref("pnc_data/actions/" + num).set({
             status: action,
@@ -631,13 +538,9 @@ function checkStaffLoginRequirement(callback) {
 
     if (currentBranchView === "batarji") {
         let html = "<select id='loginStaffSelect'>";
-
         branchStaff.forEach(function (s, i) {
-            if (s.name) {
-                html += "<option value='" + i + "'>" + escapeHtml(s.name) + "</option>";
-            }
+            if (s.name) html += "<option value='" + i + "'>" + escapeHtml(s.name) + "</option>";
         });
-
         html += "</select>";
         box.innerHTML += html;
     }
@@ -652,20 +555,14 @@ function checkStaffLoginRequirement(callback) {
 function submitStaffLogin() {
     const code = document.getElementById("loginStaffCode").value.trim();
     const branchStaff = staffData[currentBranchView] || [];
-
     let matched = null;
 
     if (currentBranchView === "batarji") {
         const select = document.getElementById("loginStaffSelect");
         const index = select ? select.value : 0;
-
-        if (branchStaff[index] && branchStaff[index].code === code) {
-            matched = branchStaff[index];
-        }
+        if (branchStaff[index] && branchStaff[index].code === code) matched = branchStaff[index];
     } else {
-        matched = branchStaff.find(function (s) {
-            return s.code === code && s.code;
-        });
+        matched = branchStaff.find(function (s) { return s.code === code && s.code; });
     }
 
     if (!matched) {
@@ -680,62 +577,48 @@ function submitStaffLogin() {
 
     closeCustomAlert();
 
-    if (typeof window.afterStaffLoginCallback === "function") {
-        window.afterStaffLoginCallback();
-    }
+    if (typeof window.afterStaffLoginCallback === "function") window.afterStaffLoginCallback();
 }
 
 function logoutCurrentStaff() {
     currentLoggedStaff[currentBranchView] = null;
-
     document.getElementById("logoutStaffBtn").style.display = "none";
-
     customAlert("✅", "تم الخروج", "تم تسجيل خروج الموظف بنجاح");
 }
 
 function triggerDeliverAllDelivery() {
-    confirmModal(
-        "⚡ تسليم الكل",
-        "هل تريد تسليم كل شحنات التوصيل قيد الانتظار؟",
-        function () {
-            checkStaffLoginRequirement(function () {
-                const staffName = currentLoggedStaff.delivery || "مسؤول التوصيل";
+    confirmModal("⚡ تسليم الكل", "هل تريد تسليم كل شحنات التوصيل قيد الانتظار؟", function () {
+        checkStaffLoginRequirement(function () {
+            const staffName = currentLoggedStaff.delivery || "مسؤول التوصيل";
+            const now = new Date();
+            const time = now.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit", hour12: true });
+            const updates = {};
 
-                const now = new Date();
-                const time = now.toLocaleTimeString("ar-SA", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true
-                });
+            meals.forEach(function (meal) {
+                const action = tableStatus[meal.number] || {};
+                const status = action.status || "pending";
 
-                const updates = {};
-
-                meals.forEach(function (meal) {
-                    const action = tableStatus[meal.number] || {};
-                    const status = action.status || "pending";
-
-                    if (meal.branch === "delivery" && status === "pending") {
-                        updates["pnc_data/actions/" + meal.number] = {
-                            status: "done",
-                            time: time,
-                            by: staffName
-                        };
-                    }
-                });
-
-                if (Object.keys(updates).length === 0) {
-                    customAlert("ℹ️", "لا يوجد", "لا توجد شحنات قيد الانتظار");
-                    return;
+                if (meal.branch === "delivery" && status === "pending") {
+                    updates["pnc_data/actions/" + meal.number] = {
+                        status: "done",
+                        time: time,
+                        by: staffName
+                    };
                 }
-
-                db.ref().update(updates).then(function () {
-                    customAlert("✅", "تم التسليم", "تم تسليم جميع شحنات التوصيل قيد الانتظار");
-                }).catch(function (error) {
-                    customAlert("❌", "خطأ", error.message);
-                });
             });
-        }
-    );
+
+            if (Object.keys(updates).length === 0) {
+                customAlert("ℹ️", "لا يوجد", "لا توجد شحنات قيد الانتظار");
+                return;
+            }
+
+            db.ref().update(updates).then(function () {
+                customAlert("✅", "تم التسليم", "تم تسليم جميع شحنات التوصيل قيد الانتظار");
+            }).catch(function (error) {
+                customAlert("❌", "خطأ", error.message);
+            });
+        });
+    });
 }
 
 function confirmModal(title, message, onConfirm) {
@@ -774,127 +657,120 @@ async function processPDFFile() {
         return;
     }
 
-    confirmModal(
-        "تحديث القائمة",
-        "هل تريد أرشفة اليوم الحالي ورفع قائمة PDF الجديدة؟",
-        async function () {
-            try {
-                status.innerHTML = "⏳ جاري قراءة PDF...";
+    confirmModal("تحديث القائمة", "هل تريد أرشفة اليوم الحالي ورفع قائمة PDF الجديدة؟", async function () {
+        try {
+            status.innerHTML = "⏳ جاري قراءة PDF...";
 
-                pdfjsLib.GlobalWorkerOptions.workerSrc =
-                    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 
-                const file = fileInput.files[0];
-                const buffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+            const file = fileInput.files[0];
+            const buffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
 
-                const newMeals = [];
-                const seen = {};
-                const failedPages = [];
+            const newMeals = [];
+            const seen = {};
+            let expectedTotal = 0;
 
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    status.innerHTML = "⏳ قراءة الصفحة " + pageNum + " من " + pdf.numPages;
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                status.innerHTML = "⏳ قراءة الصفحة " + pageNum + " من " + pdf.numPages;
 
-                    const page = await pdf.getPage(pageNum);
-                    const textContent = await page.getTextContent();
+                const page = await pdf.getPage(pageNum);
+                const textContent = await page.getTextContent();
 
-                    const meal = extractMealFromPdfItems(textContent.items);
+                const pageText = textContent.items.map(function (i) {
+                    return String(i.str || "");
+                }).join(" ");
 
-                    if (meal) {
-                        if (!seen[meal.number]) {
-                            seen[meal.number] = true;
-                            newMeals.push(meal);
-                        }
-                    } else {
-                        if (pageNum !== 1) {
-                            failedPages.push(pageNum);
-                        }
-                    }
+                const pageCountMatch = pageText.match(/Page\s+\d+\s+of\s+(\d+)/i);
+                if (pageCountMatch) expectedTotal = parseInt(pageCountMatch[1], 10);
+
+                const meal = extractMealFromPdfItems(textContent.items, pageText);
+
+                if (meal && !seen[meal.number]) {
+                    seen[meal.number] = true;
+                    newMeals.push(meal);
                 }
-
-                if (newMeals.length === 0) {
-                    status.innerHTML = "❌ لم يتم استخراج أي مشترك";
-                    customAlert("❌", "فشل القراءة", "لم يتم استخراج أي مشترك من الملف");
-                    return;
-                }
-
-                const now = new Date();
-                const archiveKey = "Arch_" + now.getTime();
-
-                let totalDone = 0;
-
-                Object.keys(tableStatus).forEach(function (k) {
-                    if (tableStatus[k].status === "done") totalDone++;
-                });
-
-                await db.ref("pnc_data/archives/" + archiveKey).set({
-                    date: now.toLocaleDateString("ar-SA"),
-                    totalDone: totalDone,
-                    actions: tableStatus,
-                    meals: meals
-                });
-
-                await db.ref("pnc_data/actions").remove();
-                await db.ref("pnc_data/mealsList").set(newMeals);
-
-                fileInput.value = "";
-
-                let msg = "تم استخراج ورفع " + newMeals.length + " مشترك بنجاح";
-
-                if (failedPages.length > 0) {
-                    msg += "<br><br>⚠️ صفحات لم تُقرأ: " + failedPages.join(", ");
-                }
-
-                status.innerHTML = "✅ " + msg;
-                customAlert("✅", "تم التحديث", msg);
-
-            } catch (error) {
-                status.innerHTML = "❌ خطأ قراءة PDF";
-                customAlert("❌", "خطأ", error.message);
             }
+
+            if (newMeals.length === 0) {
+                status.innerHTML = "❌ لم يتم استخراج أي مشترك";
+                customAlert("❌", "فشل القراءة", "لم يتم استخراج أي مشترك من الملف");
+                return;
+            }
+
+            const now = new Date();
+            const archiveKey = "Arch_" + now.getTime();
+
+            let totalDone = 0;
+            Object.keys(tableStatus).forEach(function (k) {
+                if (tableStatus[k].status === "done") totalDone++;
+            });
+
+            await db.ref("pnc_data/archives/" + archiveKey).set({
+                date: now.toLocaleDateString("ar-SA"),
+                totalDone: totalDone,
+                actions: tableStatus,
+                meals: meals
+            });
+
+            await db.ref("pnc_data/actions").remove();
+            await db.ref("pnc_data/mealsList").set(newMeals);
+
+            fileInput.value = "";
+
+            let msg = "تم استخراج ورفع " + newMeals.length + " مشترك بنجاح";
+            if (expectedTotal > 0 && newMeals.length !== expectedTotal) {
+                msg += "<br><br>⚠️ العدد المتوقع من الملف: " + expectedTotal;
+                msg += "<br>العدد المستخرج: " + newMeals.length;
+            }
+
+            status.innerHTML = "✅ " + msg;
+            customAlert("✅", "تم التحديث", msg);
+
+        } catch (error) {
+            status.innerHTML = "❌ خطأ قراءة PDF";
+            customAlert("❌", "خطأ", error.message);
         }
-    );
+    });
 }
 
-function extractMealFromPdfItems(items) {
+function extractMealFromPdfItems(items, fullText) {
     if (!items || !items.length) return null;
 
-    const rawParts = items
-        .map(function (item) { return String(item.str || "").trim(); })
-        .filter(Boolean);
+    fullText = String(fullText || "").replace(/Page\s+\d+\s+of\s+\d+/gi, " ");
 
-    const fullText = rawParts.join(" ").replace(/\s+/g, " ").trim();
+    const parts = items.map(function (item) {
+        return String(item.str || "").trim();
+    }).filter(Boolean);
 
     let number = null;
     let name = "";
 
-    for (let i = 0; i < rawParts.length; i++) {
-        const part = rawParts[i];
+    for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
         const match = part.match(/\[(\d{4,8})\]/);
 
         if (match) {
             number = parseInt(match[1], 10);
 
-            const sameLineName = part.replace(/\[(\d{4,8})\]/, "").trim();
-
-            if (sameLineName && !isPdfStopText(sameLineName)) {
-                name = sameLineName;
+            const samePartName = part.replace(/\[(\d{4,8})\]/, "").trim();
+            if (samePartName && !isPdfStopText(samePartName)) {
+                name = samePartName;
             } else {
                 const collected = [];
-
-                for (let j = i + 1; j < rawParts.length; j++) {
-                    const next = rawParts[j].trim();
+                for (let j = i + 1; j < parts.length; j++) {
+                    const next = parts[j].trim();
 
                     if (!next) continue;
-                    if (isPdfStopText(next)) break;
                     if (next.match(/\[(\d{4,8})\]/)) break;
+                    if (isPdfStopText(next)) break;
 
                     collected.push(next);
 
-                    if (collected.join(" ").length > 90) break;
+                    if (collected.join(" ").length > 80) break;
                     if (collected.length >= 6) break;
                 }
-
                 name = collected.join(" ");
             }
 
@@ -903,8 +779,7 @@ function extractMealFromPdfItems(items) {
     }
 
     if (!number) {
-        const fallback = fullText.match(/\[(\d{4,8})\]\s+(.+?)(?=\s+(Plan|Items|Captain|Delivery|Pickup|Total|Calories|Protein|Carbs|Fat)\b|$)/i);
-
+        const fallback = fullText.match(/\[(\d{4,8})\]\s+(.+?)(?=\s+(Items Count|Delivery Window|Pickup Branch|Plan Name|Captain|Calories|Protein|Carbs|Fat|Page)\b|$)/i);
         if (fallback) {
             number = parseInt(fallback[1], 10);
             name = fallback[2] || "";
@@ -926,17 +801,16 @@ function isPdfStopText(text) {
     const t = String(text || "").toLowerCase();
 
     return (
-        t.includes("plan") ||
-        t.includes("items") ||
+        t.includes("items count") ||
+        t.includes("delivery window") ||
+        t.includes("pickup branch") ||
+        t.includes("plan name") ||
         t.includes("captain") ||
-        t.includes("delivery") ||
-        t.includes("pickup") ||
-        t.includes("branch") ||
-        t.includes("total") ||
         t.includes("calories") ||
         t.includes("protein") ||
         t.includes("carbs") ||
         t.includes("fat") ||
+        t.includes("page") ||
         t.includes("address") ||
         t.includes("phone")
     );
@@ -944,12 +818,12 @@ function isPdfStopText(text) {
 
 function cleanName(name) {
     return String(name || "")
-        .replace(/\bPlan\b.*$/i, "")
-        .replace(/\bItems\b.*$/i, "")
+        .replace(/Page\s+\d+\s+of\s+\d+/gi, "")
+        .replace(/\bItems Count\b.*$/i, "")
+        .replace(/\bDelivery Window\b.*$/i, "")
+        .replace(/\bPickup Branch\b.*$/i, "")
+        .replace(/\bPlan Name\b.*$/i, "")
         .replace(/\bCaptain\b.*$/i, "")
-        .replace(/\bDelivery\b.*$/i, "")
-        .replace(/\bPickup\b.*$/i, "")
-        .replace(/\bTotal\b.*$/i, "")
         .replace(/\bCalories\b.*$/i, "")
         .replace(/\bProtein\b.*$/i, "")
         .replace(/\bCarbs\b.*$/i, "")
@@ -1003,11 +877,8 @@ function calculateAllBranchesLiveReport() {
         const act = tableStatus[meal.number] || {};
         const status = act.status || "pending";
 
-        if (status === "done") {
-            stats[meal.branch].done++;
-        } else if (status !== "cancel") {
-            stats[meal.branch].pending++;
-        }
+        if (status === "done") stats[meal.branch].done++;
+        else if (status !== "cancel") stats[meal.branch].pending++;
     });
 
     document.getElementById("drawerDelSum").innerHTML =
@@ -1038,7 +909,6 @@ function renderArchives() {
 
         const div = document.createElement("div");
         div.className = "archive-item";
-
         div.innerHTML =
             "<div>" +
             "<b>📅 " + escapeHtml(arc.date || "-") + "</b><br>" +
@@ -1066,7 +936,6 @@ function switchTab(tab) {
     });
 
     document.getElementById("tab-" + tab).classList.add("active-tab");
-
     updateReports();
 }
 
@@ -1085,43 +954,38 @@ function updateReports() {
     document.getElementById("reportsOverlayTitle").innerHTML =
         "📋 سجل فرز " + names[currentBranchView];
 
-    meals
-        .filter(function (m) { return m.branch === currentBranchView; })
-        .forEach(function (meal) {
-            const act = tableStatus[meal.number] || {};
-            const status = act.status || "pending";
+    meals.filter(function (m) {
+        return m.branch === currentBranchView;
+    }).forEach(function (meal) {
+        const act = tableStatus[meal.number] || {};
+        const status = act.status || "pending";
 
-            if (status !== activeTab) return;
+        if (status !== activeTab) return;
 
-            const div = document.createElement("div");
-            div.className = "meal-row-card";
+        const div = document.createElement("div");
+        div.className = "meal-row-card";
+        div.innerHTML =
+            "<div class='meal-card-main-info'>" +
+            "<span class='meal-card-num'>#" + escapeHtml(meal.number) + "</span>" +
+            "<span>" + escapeHtml(act.time || "⏳") + "</span>" +
+            "</div>" +
+            "<div class='meal-card-name'>" + escapeHtml(meal.name) + "</div>" +
+            "<div style='font-size:11px;color:#94a3b8;'>المسؤول: " + escapeHtml(act.by || "-") + "</div>";
 
-            div.innerHTML =
-                "<div class='meal-card-main-info'>" +
-                "<span class='meal-card-num'>#" + escapeHtml(meal.number) + "</span>" +
-                "<span>" + escapeHtml(act.time || "⏳") + "</span>" +
-                "</div>" +
-                "<div class='meal-card-name'>" + escapeHtml(meal.name) + "</div>" +
-                "<div style='font-size:11px;color:#94a3b8;'>المسؤول: " + escapeHtml(act.by || "-") + "</div>";
+        content.appendChild(div);
+    });
 
-            content.appendChild(div);
-        });
-
-    if (!content.innerHTML) {
-        content.innerHTML = "<div class='status-line'>لا توجد بيانات</div>";
-    }
+    if (!content.innerHTML) content.innerHTML = "<div class='status-line'>لا توجد بيانات</div>";
 }
 
 function generatePDFReport() {
     const now = new Date();
 
     document.getElementById("pdfReportDate").innerHTML = now.toLocaleDateString("ar-SA");
-
     document.getElementById("pdfReportTime").innerHTML = now.toLocaleTimeString("ar-SA", {
         hour: "2-digit",
         minute: "2-digit"
     });
-
     document.getElementById("pdfReportCooling").innerHTML = currentCoolingTemp || "غير محدد";
 
     const bodies = {
@@ -1134,25 +998,18 @@ function generatePDFReport() {
     bodies.batarji.innerHTML = "";
     bodies.ruhaily.innerHTML = "";
 
-    let sums = {
-        delivery: 0,
-        batarji: 0,
-        ruhaily: 0
-    };
+    let sums = { delivery: 0, batarji: 0, ruhaily: 0 };
 
     meals.forEach(function (meal) {
         const act = tableStatus[meal.number] || {};
-
         let statusText = "⏳ انتظار";
 
         if (act.status === "done") {
             statusText = "✅ مستلم";
-            sums[meal.branch]++;
+            if (sums[meal.branch] !== undefined) sums[meal.branch]++;
         }
 
-        if (act.status === "cancel") {
-            statusText = "❌ ملغى";
-        }
+        if (act.status === "cancel") statusText = "❌ ملغى";
 
         const row =
             "<tr>" +
@@ -1162,9 +1019,7 @@ function generatePDFReport() {
             "<td>" + escapeHtml(act.by || "-") + "</td>" +
             "</tr>";
 
-        if (bodies[meal.branch]) {
-            bodies[meal.branch].innerHTML += row;
-        }
+        if (bodies[meal.branch]) bodies[meal.branch].innerHTML += row;
     });
 
     document.getElementById("pdfSumDeliveryDone").innerHTML = sums.delivery;
@@ -1174,34 +1029,16 @@ function generatePDFReport() {
     const element = document.getElementById("pdfReportTemplate");
     element.style.display = "block";
 
-    html2pdf()
-        .set({
-            margin: [8, 8, 8, 8],
-            filename: "تقرير-بروتين-وكارب.pdf",
-            image: {
-                type: "jpeg",
-                quality: .98
-            },
-            html2canvas: {
-                scale: 2,
-                useCORS: true,
-                scrollX: 0,
-                scrollY: 0
-            },
-            jsPDF: {
-                unit: "mm",
-                format: "a4",
-                orientation: "portrait"
-            },
-            pagebreak: {
-                mode: ["css", "legacy"]
-            }
-        })
-        .from(element)
-        .save()
-        .then(function () {
-            element.style.display = "none";
-        });
+    html2pdf().set({
+        margin: [8, 8, 8, 8],
+        filename: "تقرير-بروتين-وكارب.pdf",
+        image: { type: "jpeg", quality: .98 },
+        html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"] }
+    }).from(element).save().then(function () {
+        element.style.display = "none";
+    });
 }
 
 function escapeHtml(value) {
@@ -1211,4 +1048,4 @@ function escapeHtml(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-}
+        }
