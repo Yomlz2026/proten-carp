@@ -131,9 +131,7 @@ function fixStaffData(data) {
 
 function applyDataToUI() {
     const waLink = document.getElementById("waLink");
-    if (waLink) {
-        waLink.href = "https://wa.me/" + waNum;
-    }
+    if (waLink) waLink.href = "https://wa.me/" + waNum;
 
     setValue("whatsappInput", waNum);
     setValue("coolingTempInput", currentCoolingTemp);
@@ -202,12 +200,8 @@ function loginAdminPanel() {
     }
 
     closeAdminLogin();
-
     document.getElementById("adminPanel").style.display = "block";
-    document.getElementById("adminPanel").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    document.getElementById("adminPanel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function closeAdminPanel() {
@@ -243,10 +237,7 @@ function savePasswords() {
         return;
     }
 
-    db.ref("pnc_data/passwords").set({
-        main: main,
-        admin: admin
-    }).then(function () {
+    db.ref("pnc_data/passwords").set({ main, admin }).then(function () {
         customAlert("✅", "تم الحفظ", "تم تحديث كلمات المرور بنجاح");
     }).catch(function (error) {
         customAlert("❌", "خطأ", error.message);
@@ -264,30 +255,15 @@ function saveAdminSettings() {
         coolingTemp: document.getElementById("coolingTempInput").value.trim(),
         staff: {
             batarji: [
-                {
-                    name: document.getElementById("bName1").value.trim(),
-                    code: document.getElementById("bCode1").value.trim()
-                },
-                {
-                    name: document.getElementById("bName2").value.trim(),
-                    code: document.getElementById("bCode2").value.trim()
-                },
-                {
-                    name: document.getElementById("bName3").value.trim(),
-                    code: document.getElementById("bCode3").value.trim()
-                }
+                { name: document.getElementById("bName1").value.trim(), code: document.getElementById("bCode1").value.trim() },
+                { name: document.getElementById("bName2").value.trim(), code: document.getElementById("bCode2").value.trim() },
+                { name: document.getElementById("bName3").value.trim(), code: document.getElementById("bCode3").value.trim() }
             ],
             ruhaily: [
-                {
-                    name: document.getElementById("rName1").value.trim(),
-                    code: document.getElementById("rCode1").value.trim()
-                }
+                { name: document.getElementById("rName1").value.trim(), code: document.getElementById("rCode1").value.trim() }
             ],
             delivery: [
-                {
-                    name: document.getElementById("dName1").value.trim(),
-                    code: document.getElementById("dCode1").value.trim()
-                }
+                { name: document.getElementById("dName1").value.trim(), code: document.getElementById("dCode1").value.trim() }
             ]
         }
     };
@@ -345,11 +321,8 @@ async function uploadBannerImage() {
 }
 
 function toggleSidebarDrawer(open) {
-    document.getElementById("sidebarDrawer").className =
-        open ? "sidebar-drawer open" : "sidebar-drawer";
-
-    document.getElementById("drawerOverlay").className =
-        open ? "drawer-overlay open" : "drawer-overlay";
+    document.getElementById("sidebarDrawer").className = open ? "sidebar-drawer open" : "sidebar-drawer";
+    document.getElementById("drawerOverlay").className = open ? "drawer-overlay open" : "drawer-overlay";
 }
 
 function switchBranchView(view) {
@@ -373,8 +346,7 @@ function switchBranchView(view) {
         ruhaily: "الرحيلي"
     };
 
-    document.getElementById("listTitle").innerHTML =
-        "قائمة فرز " + names[view];
+    document.getElementById("listTitle").innerHTML = "قائمة فرز " + names[view];
 
     renderCards();
     recalculateStats();
@@ -384,15 +356,11 @@ function switchBranchView(view) {
 
 function updateDeliverAllBtnVisibility() {
     const btn = document.getElementById("deliverAllBtn");
-    if (btn) {
-        btn.style.display = currentBranchView === "delivery" ? "block" : "none";
-    }
+    if (btn) btn.style.display = currentBranchView === "delivery" ? "block" : "none";
 }
 
 function recalculateStats() {
-    let pending = 0;
-    let done = 0;
-    let cancel = 0;
+    let pending = 0, done = 0, cancel = 0;
 
     meals.forEach(function (meal) {
         if (meal.branch !== currentBranchView) return;
@@ -465,13 +433,8 @@ function renderCards() {
         const act = tableStatus[meal.number] || {};
         let badge = "<span style='color:#facc15;'>⏳ انتظار</span>";
 
-        if (act.status === "done") {
-            badge = "<span style='color:#22c55e;'>✅ مستلم</span>";
-        }
-
-        if (act.status === "cancel") {
-            badge = "<span style='color:#ef4444;'>❌ ملغى</span>";
-        }
+        if (act.status === "done") badge = "<span style='color:#22c55e;'>✅ مستلم</span>";
+        if (act.status === "cancel") badge = "<span style='color:#ef4444;'>❌ ملغى</span>";
 
         const div = document.createElement("div");
         div.className = "meal-row-card";
@@ -537,11 +500,7 @@ function checkMeal(meal) {
     };
 
     if (meal.branch !== currentBranchView) {
-        customAlert(
-            "⚠️",
-            "موقع خاطئ",
-            "هذا المشترك مخصص إلى:<br><b>" + branchLabels[meal.branch] + "</b>"
-        );
+        customAlert("⚠️", "موقع خاطئ", "هذا المشترك مخصص إلى:<br><b>" + branchLabels[meal.branch] + "</b>");
         return;
     }
 
@@ -881,25 +840,22 @@ function extractMealFromPdfPage(pageText) {
     let number = null;
     let name = "";
 
-    let patternAfter = text.match(/\[(\d{4,8})\]\s+(.+?)\s+Plan\s+name/i);
-
-    if (patternAfter) {
-        number = parseInt(patternAfter[1], 10);
-        name = patternAfter[2];
+    let after = text.match(/\[(\d{4,8})\]\s+(.+?)\s+Plan\s+name/i);
+    if (after) {
+        number = parseInt(after[1], 10);
+        name = after[2];
     }
 
     if (!number) {
-        let patternBefore = text.match(/PROTEIN\s+AND\s+CARB\s+(.+?)\s+\[(\d{4,8})\]\s+Plan\s+name/i);
-
-        if (patternBefore) {
-            name = patternBefore[1];
-            number = parseInt(patternBefore[2], 10);
+        let before = text.match(/PROTEIN\s+AND\s+CARB\s+(.+?)\s+\[(\d{4,8})\]\s+Plan\s+name/i);
+        if (before) {
+            name = before[1];
+            number = parseInt(before[2], 10);
         }
     }
 
     if (!number) {
         let fallbackAfter = text.match(/\[(\d{4,8})\]\s+(.+?)(?=\s+(Plan name|عدد الأصناف|Items Count|Notes|District|Captain Name|Service Type|Pickup Branch|# ORDERS|Page))/i);
-
         if (fallbackAfter) {
             number = parseInt(fallbackAfter[1], 10);
             name = fallbackAfter[2];
@@ -908,7 +864,6 @@ function extractMealFromPdfPage(pageText) {
 
     if (!number) {
         let fallbackBefore = text.match(/([A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF\s.'\-]{2,80})\s+\[(\d{4,8})\]/);
-
         if (fallbackBefore) {
             name = fallbackBefore[1];
             number = parseInt(fallbackBefore[2], 10);
@@ -945,8 +900,17 @@ function cleanSubscriberName(name) {
         .trim();
 }
 
+function normalizeBranchText(text) {
+    return String(text || "")
+        .toLowerCase()
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .replace(/[•●·.،,_\-–—:؛]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
 function detectBranch(text) {
-    const lower = String(text || "").toLowerCase();
+    const lower = normalizeBranchText(text);
 
     if (
         lower.includes("pickup branch") &&
@@ -964,7 +928,7 @@ function detectBranch(text) {
     if (
         lower.includes("pickup branch") &&
         (
-            lower.includes("al-rhili") ||
+            lower.includes("al rhili") ||
             lower.includes("alrhili") ||
             lower.includes("rhili") ||
             lower.includes("ruhaily") ||
@@ -1153,7 +1117,6 @@ function generatePDFReport() {
 
         if (act.status === "done") {
             statusText = "✅ مستلم";
-
             if (sums[meal.branch] !== undefined) {
                 sums[meal.branch]++;
             }
