@@ -1166,3 +1166,248 @@ function escapeHtml(value) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
         }
+/* =========================
+   إصلاح نهائي لقراءة PDF
+   الصقه آخر script.js
+========================= */
+
+async function processPDFFile() {
+    const fileInput = document.getElementById("pdfFileInput");
+    const status = document.getElementById("pdfStatus");
+
+    if (!fileInput.files.length) {
+        customAlert("⚠️", "ملف غير موجود", "اختر ملف PDF أولاً");
+        return;
+    }
+
+    if (!db) {
+        customAlert("❌", "لا يوجد اتصال", "انتظر الاتصال بالسحابة ثم حاول مرة أخرى");
+        return;
+    }
+
+    confirmModal("تحديث القائمة", "هل تريد أرشفة اليوم الحالي ورفع قائمة PDF الجديدة؟", async function () {
+        try {
+            status.innerHTML = "⏳ جاري قراءة PDF...";
+
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+            const file = fileInput.files[0];
+            const buffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+
+            const newMeals = [];
+            const seen = {};
+            let expectedTotal = 0;
+            const failedPages = [];
+
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                status.innerHTML = "⏳ قراءة الصفحة " + pageNum + " من " + pdf.numPages;
+
+                const page = await pdf.getPage(pageNum);
+                const textContent = await page.getTextContent();
+
+                const pageText = textContent.items.map(function (i) {
+                    return String(i.str || "");
+                }).join(" ");
+
+                const pageCountMatch = pageText.match(/Page\s+\d+\s+of\s+(\d+)/i);
+                if (pageCountMatch) {
+                    expectedTotal = parseInt(pageCountMatch[1], 10);
+                }
+
+                if (!pageCountMatch) continue;
+
+                const meal = extractMealByBracketLine(textContent.items, pageText);
+
+                if (meal && !seen[meal.number]) {
+                    seen[meal.number] = true;
+                    newMeals.push(meal);
+                } else {
+                    failedPages.push(pageNum);
+                }
+            }
+
+            if (newMeals.length === 0) {
+                status.innerHTML = "❌ لم يتم استخراج أي مشترك";
+                customAlert("❌", "فشل القراءة", "لم يتم استخراج أي مشترك من الملف");
+                return;
+            }
+
+            const now = new Date();
+            const archiveKey = "Arch_" + now.getTime();
+
+            let totalDone = 0;
+            Object.keys(tableStatus).forEach(function (k) {
+                if (tableStatus[k].status === "done") totalDone++;
+            });
+
+            await db.ref("pnc_data/archives/" + archiveKey).set({
+                date: now.toLocaleDateString("ar-SA"),
+                totalDone: totalDone,
+                actions: tableStatus,
+                meals: meals
+            });
+
+            await db.ref("pnc_data/actions").remove();
+            await db.ref("pnc_data/mealsList").set(newMeals);
+
+            fileInput.value = "";
+
+            let msg = "تم استخراج ورفع " + newMeals.length + " مشترك بنجاح";
+
+            if (expectedTotal > 0 && newMeals.length !== expectedTotal) {
+                msg += "<br><br>⚠️ العدد المتوقع من الملف: " + expectedTotal;
+                msg += "<br>العدد المستخرج: " + newMeals.length;
+                msg += "<br>صفحات تحتاج مراجعة: " + failedPages.join(", ");
+            }
+
+            status.innerHTML = "✅ " + msg;
+            customAlert("✅", "تم التحديث", msg);
+
+        } catch (error) {
+            status.innerHTML = "❌ خطأ قراءة PDF";
+            customAlert("❌", "خطأ", error.message);
+        }
+    });
+}
+
+function extractMealByBracketLine(items, pageText) {
+    const lines = groupPdfItemsIntoLines(items);
+
+    let targetLine = "";
+
+    for (let i = 0; i < lines.length; i++) {
+        if (/\[\d{4,8}\]/.test(lines[i])) {
+            targetLine = lines[i];
+            break;
+        }
+    }
+
+    if (!targetLine) return null;
+
+    let number = null;
+    let name = "";
+
+    let after = targetLine.match(/\[(\d{4,8})\]\s*(.+)$/);
+    if (after) {
+        number = parseInt(after[1], 10);
+        name = after[2];
+    }
+
+    if (!name || name.length < 2) {
+        let before = targetLine.match(/^(.+?)\s*\[(\d{4,8})\]/);
+        if (before) {
+            name = before[1];
+            number = parseInt(before[2], 10);
+        }
+    }
+
+    name = cleanSubscriberName(name);
+
+    if (!number || name.length < 2) return null;
+
+    return {
+        number: number,
+        name: name,
+        branch: detectBranch(pageText)
+    };
+}
+
+function groupPdfItemsIntoLines(items) {
+    const rows = [];
+
+    items.forEach(function (item) {
+        const text = String(item.str || "").trim();
+        if (!text) return;
+
+        const y = Math.round(item.transform ? item.transform[5] : 0);
+        const x = item.transform ? item.transform[4] : 0;
+
+        let row = rows.find(function (r) {
+            return Math.abs(r.y - y) <= 3;
+        });
+
+        if (!row) {
+            row = { y: y, items: [] };
+            rows.push(row);
+        }
+
+        row.items.push({ x: x, text: text });
+    });
+
+    rows.sort(function (a, b) {
+        return b.y - a.y;
+    });
+
+    return rows.map(function (row) {
+        const original = row.items.map(function (i) { return i.text; }).join(" ");
+        const byX = row.items.slice().sort(function (a, b) { return a.x - b.x; })
+            .map(function (i) { return i.text; }).join(" ");
+
+        if (/\[\d{4,8}\]/.test(original)) return original.replace(/\s+/g, " ").trim();
+        return byX.replace(/\s+/g, " ").trim();
+    });
+}
+
+function cleanSubscriberName(name) {
+    return String(name || "")
+        .replace(/\[\d{4,8}\]/g, "")
+        .replace(/PROTEIN\s+AND\s+CARB/gi, "")
+        .replace(/\bPlan\s+name\b.*$/i, "")
+        .replace(/\bItems\s+Count\b.*$/i, "")
+        .replace(/\bNotes\b.*$/i, "")
+        .replace(/\bDistrict\b.*$/i, "")
+        .replace(/\bCaptain\s+Name\b.*$/i, "")
+        .replace(/\bService\s+Type\b.*$/i, "")
+        .replace(/\bPickup\s+Branch\b.*$/i, "")
+        .replace(/\bPage\s+\d+\s+of\s+\d+\b/gi, "")
+        .replace(/^\d{8,20}\s*/, "")
+        .replace(/^\d{4}-\d{2}-\d{2}\s*/, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function normalizeBranchText(text) {
+    return String(text || "")
+        .toLowerCase()
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .replace(/[•●·.،,_\-–—:؛]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function detectBranch(text) {
+    const lower = normalizeBranchText(text);
+
+    if (
+        lower.includes("pickup branch") &&
+        (
+            lower.includes("albatarji") ||
+            lower.includes("batarji") ||
+            lower.includes("al batarji") ||
+            lower.includes("بترجي") ||
+            lower.includes("البترجي")
+        )
+    ) {
+        return "batarji";
+    }
+
+    if (
+        lower.includes("pickup branch") &&
+        (
+            lower.includes("al rhili") ||
+            lower.includes("alrhili") ||
+            lower.includes("rhili") ||
+            lower.includes("ruhaily") ||
+            lower.includes("alruhaily") ||
+            lower.includes("al ruhaily") ||
+            lower.includes("رحيلي") ||
+            lower.includes("الرحيلي")
+        )
+    ) {
+        return "ruhaily";
+    }
+
+    return "delivery";
+}
