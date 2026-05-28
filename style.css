@@ -767,3 +767,287 @@ input::placeholder{
     }
 
 }
+/* =========================
+   مودال احترافي
+========================= */
+
+#customAlertModal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    backdrop-filter:blur(6px);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999999;
+    padding:20px;
+}
+
+#customAlertModal .modal-box{
+
+    width:100%;
+    max-width:420px;
+
+    background:#111827;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:28px;
+
+    padding:24px;
+
+    box-shadow:
+    0 25px 80px rgba(0,0,0,.55);
+
+    animation:modalPop .25s ease;
+}
+
+@keyframes modalPop{
+
+    from{
+        opacity:0;
+        transform:scale(.9) translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+
+}
+
+#alertIcon{
+
+    font-size:55px;
+    margin-bottom:12px;
+    text-align:center;
+}
+
+#alertTitle{
+
+    font-size:22px;
+    font-weight:900;
+    text-align:center;
+    margin-bottom:12px;
+    color:#fff;
+}
+
+#alertMessage{
+
+    color:#cbd5e1;
+    font-size:15px;
+    line-height:1.9;
+    text-align:center;
+}
+
+#modalDynamicFields{
+
+    margin-top:18px;
+}
+
+#modalDynamicFields input,
+#modalDynamicFields select{
+
+    width:100%;
+
+    background:#1e293b;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    color:white;
+
+    border-radius:16px;
+
+    padding:14px;
+
+    margin-bottom:12px;
+
+    font-size:15px;
+}
+
+#modalDynamicFields button{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:16px;
+
+    padding:14px;
+
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+#modalActionButtons{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-top:22px;
+}
+
+#modalActionButtons button{
+
+    flex:1;
+
+    border:none;
+
+    border-radius:18px;
+
+    padding:15px;
+
+    font-size:15px;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+#modalActionButtons button:hover{
+
+    transform:translateY(-2px);
+}
+
+#modalConfirmBtn{
+
+    background:
+    linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a
+    );
+
+    color:white;
+}
+
+#modalCancelBtn{
+
+    background:
+    linear-gradient(
+        135deg,
+        #ef4444,
+        #dc2626
+    );
+
+    color:white;
+}
+
+/* =========================
+   تحسين البطاقات
+========================= */
+
+.meal-row-card{
+
+    background:#111827;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:22px;
+
+    padding:16px;
+
+    margin-bottom:14px;
+
+    transition:.2s;
+
+    cursor:pointer;
+}
+
+.meal-row-card:hover{
+
+    transform:translateY(-2px);
+
+    border-color:rgba(34,197,94,.4);
+}
+
+.meal-card-main-info{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:10px;
+}
+
+.meal-card-num{
+
+    font-size:16px;
+
+    font-weight:900;
+
+    color:#22c55e;
+}
+
+.meal-card-name{
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    line-height:1.7;
+}
+
+#pdfReportTemplate{
+
+    direction:rtl;
+
+    background:white;
+
+    color:black;
+
+    padding:25px;
+
+    width:100%;
+}
+
+#pdfReportTemplate table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:12px;
+
+    table-layout:fixed;
+
+    word-break:break-word;
+}
+
+#pdfReportTemplate th,
+#pdfReportTemplate td{
+
+    border:1px solid #ccc;
+
+    padding:10px;
+
+    text-align:center;
+
+    font-size:12px;
+}
+
+#pdfReportTemplate td{
+
+    white-space:normal;
+}
+
+#pdfReportTemplate h2,
+#pdfReportTemplate h3,
+#pdfReportTemplate p{
+
+    text-align:center;
+}
