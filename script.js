@@ -1,5 +1,3 @@
-
-
 var defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 
 var firebaseConfig = {
@@ -369,11 +367,7 @@ async function processPDFFile() {
             var page = await pdf.getPage(pageNum);
             var textContent = await page.getTextContent();
 
-            var pageText = textContent.items.map(function (item) {
-                return item.str;
-            }).join(" ");
-
-            var meal = extractMealFromPage(pageText);
+            var meal = extractMealSmart(textContent.items);
 
             if (meal && !seen[meal.number]) {
                 seen[meal.number] = true;
@@ -421,43 +415,106 @@ async function processPDFFile() {
     }
 }
 
-function extractMealFromPage(text) {
-    if (!text) return null;
+function extractMealSmart(items) {
+    if (!items || !items.length) return null;
 
-    var clean = text
-        .replace(/\s+/g, " ")
-        .replace(/[\u200E\u200F]/g, " ")
-        .trim();
+    var parts = items.map(function (item) {
+        return item.str || "";
+    }).filter(function (str) {
+        return str.trim() !== "";
+    });
 
-    var match = clean.match(/\[(\d{4,8})\]\s+(.+?)(?=\s+(Plan\s*name|Items\s*Count|Captain\s*Name|Delivery|Pickup\s*Branch|Total|Calories|Protein|Carbs|Fat)\b|$)/i);
+    var fullText = parts.join(" ").replace(/\s+/g, " ").trim();
 
-    if (!match) {
-        match = clean.match(/(\d{4,8})\s+([A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF\s.'\-]{2,80}?)(?=\s+(Plan\s*name|Items\s*Count|Captain\s*Name|Delivery|Pickup\s*Branch|Total|Calories|Protein|Carbs|Fat)\b|$)/i);
+    var number = null;
+    var name = "";
+
+    for (var i = 0; i < parts.length; i++) {
+        var txt = parts[i].trim();
+        var numMatch = txt.match(/\[(\d{4,8})\]/);
+
+        if (numMatch) {
+            number = parseInt(numMatch[1], 10);
+
+            var afterNumber = txt.replace(/\[(\d{4,8})\]/, "").trim();
+
+            if (afterNumber.length > 1 && !isPdfStopWord(afterNumber)) {
+                name = afterNumber;
+            } else {
+                var nameParts = [];
+
+                for (var j = i + 1; j < parts.length; j++) {
+                    var next = parts[j].trim();
+
+                    if (!next || isPdfStopWord(next)) break;
+                    if (next.match(/^\d+$/)) break;
+                    if (next.match(/^\[(\d{4,8})\]/)) break;
+
+                    nameParts.push(next);
+
+                    if (nameParts.join(" ").length > 80) break;
+                }
+
+                name = nameParts.join(" ").trim();
+            }
+
+            break;
+        }
     }
 
-    if (!match) return null;
+    if (!number) {
+        var fallback = fullText.match(/\[(\d{4,8})\]\s+(.+?)(?=\s+(Plan\s*name|Items\s*Count|Captain\s*Name|Delivery|Pickup\s*Branch|Total|Calories|Protein|Carbs|Fat)\b|$)/i);
 
-    var number = parseInt(match[1], 10);
-    var name = match[2] || "";
+        if (fallback) {
+            number = parseInt(fallback[1], 10);
+            name = fallback[2] || "";
+        }
+    }
 
-    name = name
+    name = cleanSubscriberName(name);
+
+    if (!number || name.length < 2) return null;
+
+    return {
+        number: number,
+        name: name,
+        branch: detectBranch(fullText)
+    };
+}
+
+function isPdfStopWord(text) {
+    var t = (text || "").toLowerCase();
+
+    return (
+        t.indexOf("plan name") !== -1 ||
+        t.indexOf("items count") !== -1 ||
+        t.indexOf("captain name") !== -1 ||
+        t.indexOf("delivery") !== -1 ||
+        t.indexOf("pickup branch") !== -1 ||
+        t.indexOf("address") !== -1 ||
+        t.indexOf("phone") !== -1 ||
+        t.indexOf("total") !== -1 ||
+        t.indexOf("calories") !== -1 ||
+        t.indexOf("protein") !== -1 ||
+        t.indexOf("carbs") !== -1 ||
+        t.indexOf("fat") !== -1
+    );
+}
+
+function cleanSubscriberName(name) {
+    return String(name || "")
         .replace(/\bPlan\s*name\b.*$/i, "")
         .replace(/\bItems\s*Count\b.*$/i, "")
         .replace(/\bCaptain\s*Name\b.*$/i, "")
         .replace(/\bDelivery\b.*$/i, "")
         .replace(/\bPickup\s*Branch\b.*$/i, "")
+        .replace(/\bTotal\b.*$/i, "")
+        .replace(/\bCalories\b.*$/i, "")
+        .replace(/\bProtein\b.*$/i, "")
+        .replace(/\bCarbs\b.*$/i, "")
+        .replace(/\bFat\b.*$/i, "")
         .replace(/\s+/g, " ")
         .trim();
-
-    if (!number || name.length < 2) return null;
-
-    var branch = detectBranch(clean);
-
-    return {
-        number: number,
-        name: name,
-        branch: branch
-    };
 }
 
 function detectBranch(text) {
@@ -555,6 +612,12 @@ function recalculateStats() {
     document.getElementById("cancelMeals").innerText = cancel;
 }
 
+function normalizeStatus(status) {
+    if (status === "done") return "done";
+    if (status === "cancel") return "cancel";
+    return "pending";
+}
+
 function toggleMainListFilter(status) {
     if (activeMainFilter === status) {
         activeMainFilter = "all";
@@ -590,7 +653,7 @@ function renderCards() {
     if (activeMainFilter !== "all") {
         filtered = filtered.filter(function (meal) {
             var act = tableStatus[meal.number] || {};
-            return (act.status || "pending") === activeMainFilter;
+            return normalizeStatus(act.status) === activeMainFilter;
         });
     }
 
@@ -827,7 +890,7 @@ function triggerDeliverAllDelivery() {
         meals.forEach(function (m) {
             var act = tableStatus[m.number] || {};
 
-            if (m.branch === "delivery" && (!act.status || act.status === "pending")) {
+            if (m.branch === "delivery" && normalizeStatus(act.status) === "pending") {
                 updates["pnc_data/actions/" + m.number] = {
                     status: "done",
                     time: time,
@@ -944,7 +1007,7 @@ function updateReports() {
 
     filtered.forEach(function (meal) {
         var act = tableStatus[meal.number] || {};
-        var status = act.status || "pending";
+        var status = normalizeStatus(act.status);
 
         if (activeTab === status) {
             var color = status === "done" ? "#22c55e" : status === "cancel" ? "#ef4444" : "#facc15";
@@ -1025,11 +1088,21 @@ function generatePDFReport() {
     element.style.display = "block";
 
     html2pdf().set({
-        margin: 8,
+        margin: [6, 6, 6, 6],
         filename: "تقرير-بروتين-وكارب.pdf",
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: 760
+        },
+        jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait"
+        }
     }).from(element).save().then(function () {
         element.style.display = "none";
     });
@@ -1042,4 +1115,4 @@ function escapeHtml(text) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-                        }
+}
