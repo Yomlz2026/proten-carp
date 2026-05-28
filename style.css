@@ -943,9 +943,7 @@ input::placeholder{
     color:white;
 }
 
-/* =========================
-   تحسين البطاقات
-========================= */
+
 
 .meal-row-card{
 
@@ -1050,4 +1048,101 @@ input::placeholder{
 #pdfReportTemplate p{
 
     text-align:center;
+}
+/* ==
+
+.modal-card,
+.alert-card{
+    border-radius:28px !important;
+    background:linear-gradient(145deg,#1e293b,#0f172a) !important;
+    border:1px solid rgba(255,255,255,.12) !important;
+    box-shadow:0 30px 70px rgba(0,0,0,.55) !important;
+    animation:modalPop .22s ease !important;
+}
+
+@keyframes modalPop{
+    from{
+        opacity:0;
+        transform:scale(.92) translateY(18px);
+    }
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+}
+
+#modalActionButtons,
+.modal-actions{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+}
+
+#modalActionButtons button,
+.modal-actions button{
+    flex:1;
+    border:none !important;
+    border-radius:18px !important;
+    padding:15px 10px !important;
+    font-size:14px !important;
+    font-weight:900 !important;
+    color:white !important;
+    cursor:pointer;
+    box-shadow:0 12px 24px rgba(0,0,0,.25);
+}
+
+#modalConfirmBtn{
+    background:linear-gradient(135deg,#22c55e,#16a34a) !important;
+}
+
+#modalCancelBtn{
+    background:linear-gradient(135deg,#ef4444,#dc2626) !important;
+}
+
+#modalDynamicFields input,
+#modalDynamicFields select{
+    background:#0f172a !important;
+    color:white !important;
+    border:1px solid rgba(255,255,255,.12) !important;
+    border-radius:16px !important;
+    padding:14px !important;
+    margin-bottom:10px !important;
+}
+
+#modalDynamicFields button{
+    width:100%;
+    border:none !important;
+    border-radius:16px !important;
+    padding:14px !important;
+    background:linear-gradient(135deg,#22c55e,#16a34a) !important;
+    color:white !important;
+    font-size:14px !important;
+    font-weight:900 !important;
+}
+
+.archive-item{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.archive-info{
+    font-size:12px;
+    color:#e2e8f0;
+}
+
+.archive-delete-btn{
+    background:rgba(239,68,68,.18);
+    color:#ef4444;
+    border:1px solid rgba(239,68,68,.35);
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:900;
 }
