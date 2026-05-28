@@ -1,4 +1,3 @@
-var defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 // إعدادات فايربيس المكتملة لربط مشروعك بالسحابة فوراً
 var firebaseConfig = { 
     apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc", 
@@ -10,6 +9,7 @@ var firebaseConfig = {
     databaseURL: "https://protencarp-default-rtdb.firebaseio.com/" 
 };
 
+var defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 var db, meals = [], tableStatus = {}, archivesData = {}, activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery";
 var currentCoolingTemp = "";
@@ -17,7 +17,7 @@ var activeMainFilter = "all";
 var currentLoggedStaff = { delivery: null, batarji: null, ruhaily: null };
 var staffData = { batarji: [ {name:"", code:""}, {name:"", code:""}, {name:"", code:""} ], ruhaily: [ {name:"", code:""} ], delivery: [ {name:"", code:""} ] };
 
-// بدء الاتصال فور تحميل الملف
+// تفعيل الاتصال والمستمعات فوراً
 startFirebaseConnection();
 
 function startFirebaseConnection() {
@@ -352,7 +352,7 @@ function executeDirectAction(num, action) {
 }
 
 function triggerDeliverAllDelivery() {
-    if(confirm("هل أنت متأكد من تسليم كافة شحنات قسم التوصيل المنتظرة دفعة واحدة Momment?")) {
+    if(confirm("هل أنت متأكد من تسليم كافة شحنات قسم التوصيل المنتظرة دفعة واحدة؟")) {
         checkStaffLoginRequirement(function() {
             var staffName = currentLoggedStaff["delivery"] || "مسؤول التوصيل";
             var now = new Date(), timeString = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
