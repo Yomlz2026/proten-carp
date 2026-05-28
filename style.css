@@ -1,129 +1,221 @@
-/* إعدادات الخطوط والصفحة العامة */
-html, body { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #0f172a; color: #f8fafc; min-height: 100vh; padding: 15px; padding-bottom: 140px; overflow-x: hidden; position: relative; }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بروتين وكارب - الإشراف السحابي</title>
+    
+    <!-- خطوط جوجل منسقة -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- 🔗 ربط ملف التنسيق والألوان الخارجي -->
+    <link rel="stylesheet" href="style.css">
 
-/* الهيدر والبانر الرئيسي */
-.top-banner { width: 100%; height: 110px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,254,0.08); }
-.container { width: 100%; max-width: 650px; margin: auto; position: relative; z-index: 10; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(30,41,59,0.45); padding: 12px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-.brand-title { font-size: 20px; font-weight: 700; }
+    <!-- مكتبات فايربيس ومحررات التقارير الاستباقية الخفيفة -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
 
-/* تصميم الصناديق الكرتونية والأزرار للفروع */
-.card { background: rgba(30, 41, 59, 0.45); border: 1px solid rgba(255, 255, 255, 0.06); padding: 20px; border-radius: 20px; margin-bottom: 15px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-.control-panel { background: rgba(20, 83, 45, 0.25); border: 1px solid rgba(34, 197, 94, 0.2); display: none; }
-.admin-grid-inputs { display: grid; gap: 8px; margin-bottom: 10px; }
-.admin-grid-label { font-size: 12px; color: #a855f7; font-weight: bold; display: block; margin-bottom: 5px; text-align: right; }
+<!-- الستارة الشفافة خلف السلايدر الجانبي -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebarDrawer(false)"></div>
 
-input, select { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23, 42, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.08); outline: none; font-size: 15px; font-weight: 700; }
-.staff-row { display: flex; gap: 8px; margin-bottom: 5px; }
-.staff-row input { padding: 10px; font-size: 13px; }
+<!-- السلايدر الجانبي (القائمة السحابية) -->
+<div class="sidebar-drawer" id="sidebarDrawer">
+    <div class="drawer-header">
+        <h3>☁️ القائمة السحابية</h3>
+        <button onclick="toggleSidebarDrawer(false)">✕</button>
+    </div>
+    
+    <div class="drawer-section">
+        <h4>📊 إحصائيات الفروع (اضغط للسجل)</h4>
+        <div class="drawer-summary-card">
+            <div class="drawer-summary-row row-delivery" onclick="toggleSidebarDrawer(false); switchBranchView('delivery'); openReports();">
+                <span>🚚 قسم التوصيل</span><span id="drawerDelSum">0 مستلم / 0 باقي</span>
+            </div>
+            <div class="drawer-summary-row row-batarji" onclick="toggleSidebarDrawer(false); switchBranchView('batarji'); openReports();">
+                <span>🏪 فرع البترجي</span><span id="drawerBatSum">0 مستلم / 0 باقي</span>
+            </div>
+            <div class="drawer-summary-row row-ruhaily" onclick="toggleSidebarDrawer(false); switchBranchView('ruhaily'); openReports();">
+                <span>🏪 فرع الرحيلي</span><span id="drawerRuhSum">0 مستلم / 0 باقي</span>
+            </div>
+        </div>
+    </div>
 
-button { cursor: pointer; transition: all 0.2s ease; border: none; }
-button:active { transform: scale(0.98); }
+    <div class="drawer-section green-section">
+        <h4>📄 التقارير الشاملة</h4>
+        <button class="pdfShareBtn" onclick="generateAndSharePDFReport()">⬇️ تحميل تقرير PDF الشامل فوراً</button>
+    </div>
 
-.branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
-.branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; color: #94a3b8; background: rgba(30, 41, 59, 0.45); text-align: center; }
-.branch-filter-btn.active-branch-selected { color: #ffffff; background: rgba(34, 197, 94, 0.85); border-color: #22c55e; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4); }
+    <div class="drawer-section flex-section">
+        <h4>📂 أرشيف الأيام السابقة</h4>
+        <div id="archiveContainer"></div>
+    </div>
+</div>
 
-/* أزرار البحث والفرز الكلي */
-.searchBtn { background: linear-gradient(135deg, #a855f7, #7c3aed); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2); }
-.deliverAllBtn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: bold; width: 100%; margin-top: 10px; display: none; }
-.pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: bold; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
+<!-- النافذة المنبثقة المنظمة لتأكيد التسليم أو الإلغاء -->
+<div id="customAlertModal">
+    <div class="alert-card">
+        <span id="alertIcon" class="alert-status-icon">👤</span>
+        <div id="alertTitle" class="alert-title-text">تفاصيل المشترك</div>
+        <div id="alertMessage" class="alert-message-text">جاري التحميل...</div>
+        <div id="modalDynamicFields" style="display: none;"></div>
+        <div id="modalActionButtons" class="modal-actions-group" style="display: none;">
+            <button class="modal-btn modal-btn-deliver" id="modalConfirmBtn">✅ تأكيد التسليم</button>
+            <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">❌ إلغاء اليوم</button>
+        </div>
+        <button class="modal-btn modal-btn-close" onclick="closeCustomAlert()">إغلاق النافذة</button>
+    </div>
+</div>
 
-/* عدادات وصناديق الحالات الملونة */
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.stats .stat { padding: 10px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,254,0.04); }
-.stats .stat.inactive-filter { opacity: 0.4; filter: grayscale(50%); }
-.greenBox { background: rgba(34, 197, 94, 0.12); color: #22c55e; border-color: rgba(34, 197, 94, 0.2); } 
-.red { background: rgba(239, 68, 68, 0.12); color: #ef4444; border-color: rgba(239, 68, 68, 0.18); }
-.yellowBox { background: rgba(250, 204, 21, 0.12); color: #facc15; border-color: rgba(250, 204, 21, 0.18); }
+<!-- شاشة السجلات والتقارير الحية الملونة لفروع الفرز -->
+<div class="reports-overlay" id="reportsOverlay">
+    <div class="reports-header">
+        <button onclick="closeReports();" class="btn-back-report">⬅️ إغلاق السجل</button>
+        <div id="reportsOverlayTitle">📋 سجل الفرز</div>
+        <button onclick="closeReports()" style="color:white; font-size:20px; background:none;">✕</button>
+    </div>
+    <div class="reports-tabs">
+        <button class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">✅ المستلمون</button>
+        <button class="reports-tab" id="tab-cancel" onclick="switchTab('cancel')">❌ الملغيون</button>
+        <button class="reports-tab" id="tab-pending" onclick="switchTab('pending')">⏳ قيد الانتظار</button>
+    </div>
+    <div class="reports-content" id="reportsContent"></div>
+</div>
 
-.meal-row-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 16px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
-.meal-card-main-info { display: flex; justify-content: space-between; align-items: center; }
-.meal-card-num { color: #facc15; font-weight: 700; font-size: 15px; }
-.meal-card-name { font-size: 14px; color: #e2e8f0; font-weight: 700; }
+<!-- كرت الواجهة الأساسي للمستخدم -->
+<div class="container">
+    <div class="top-banner" id="topBanner"></div>
+    <div class="header">
+        <button onclick="toggleSidebarDrawer(true)" style="background:none; color:white; font-size:22px;">⋮</button>
+        <div class="brand-title">بروتين وكارب</div>
+        <button onclick="openAdmin()" class="btn-admin-panel">⚙️ الإشراف</button>
+    </div>
 
-/* النوافذ المنبثقة والسلايدر المعزول */
-#customAlertModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 20000; display: none; justify-content: center; align-items: center; padding: 20px; }
-.alert-card { background: linear-gradient(145deg, #1e293b, #0f172a); border-radius: 28px; padding: 35px 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255, 255, 255, 0.1); }
-.alert-status-icon { font-size: 55px; margin-bottom: 15px; display: inline-block; }
-.alert-title-text { font-size: 22px; font-weight: 900; color: #f8fafc; margin-bottom: 15px; }
-.alert-message-text { font-size: 15px; color: #cbd5e1; line-height: 1.8; margin-bottom: 25px; text-align: right; background: rgba(0, 0, 0, 0.2); padding: 18px; border-radius: 16px; }
-.modal-actions-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
-.modal-btn { width: 100%; padding: 16px; border-radius: 16px; font-weight: 800; border: none; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.modal-btn-deliver { background: linear-gradient(135deg, #22c55e, #16a34a); color: #ffffff; box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3); }
-.modal-btn-cancel { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-.modal-btn-close { background: transparent; color: #94a3b8; width: 100%; margin-top: 5px; font-size: 14px; }
-.modal-select-style { width: 100%; padding: 15px; border-radius: 14px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 15px; margin-bottom: 15px; outline: none; font-weight: bold; }
-.modal-input-style { width: 100%; padding: 15px; border-radius: 14px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 15px; text-align: center; margin-bottom: 15px; outline: none; }
+    <!-- لوحة التحكم الإدارية المستقرة وعزل الرفع السحابي -->
+    <div class="card control-panel" id="adminPanel">
+        <span class="admin-label">📄 رفع ملف PDF الجديد:</span>
+        <input accept=".pdf" id="pdfFile" type="file" style="margin-bottom:12px; font-size:12px;"/>
+        <div id="pdfProgress" class="progress-lbl">⏳ جاري قراءة وتصنيف وجبات الـ PDF حالياً سحابياً...</div>
+        
+        <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب المشرف..."/>
+        
+        <div class="upload-container">
+            <span class="admin-label-purple">🖼️ تغيير صورة البانر العلوية:</span>
+            <input id="bannerImageUpload" type="file" accept="image/*" style="font-size:12px; color: white;">
+            <div id="uploadProgress" class="upload-lbl">⏳ جاري رفع الصورة للسحابة...</div>
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+            <span class="admin-label-blue">🌡️ درجة برودة التوصيل الحالي:</span>
+            <input id="coolingTempInput" type="text" placeholder="مثال: 4°C" style="padding:10px; font-size:14px; text-align:center;">
+        </div>
 
-/* السلايدر الجانبي المطور */
-.sidebar-drawer { position: fixed; top: 0; right: -320px; width: 320px; height: 100%; background: #1e293b; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.5); transition: right 0.3s ease; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-.sidebar-drawer.open { right: 0; }
-.drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 9998; display: none; }
-.drawer-overlay.open { display: block; }
-.drawer-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.drawer-header h3 { font-size: 18px; color: #facc15; font-weight:900; }
-.drawer-header button { background: rgba(255,255,255,0.05); color: #94a3b8; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; }
-.drawer-section { background: rgba(15, 23, 42, 0.4); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.04); }
-.drawer-section h4 { font-size: 13px; color: #94a3b8; margin-bottom: 12px; }
-.green-section { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); }
-.green-section h4 { color: #10b981; }
-.flex-section { flex: 1; }
-.drawer-summary-card { background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 5px 12px; display: flex; flex-direction: column; }
-.drawer-summary-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,254,0.08); }
-.drawer-summary-row:last-child { border-bottom: none; }
-.row-delivery { color: #38bdf8; }
-.row-batarji { color: #10b981; }
-.row-ruhaily { color: #a855f7; }
+        <div class="staff-section">
+            <span class="staff-title">👥 طاقم العمل والموظفين المصرحين بالفرز:</span>
+            <div class="admin-grid-inputs">
+                <span class="admin-grid-label">🏪 موظفي البترجي (3 خانات)</span>
+                <div class="staff-row"><input id="bName1" placeholder="اسم الموظف 1"><input id="bCode1" placeholder="الكود" style="width:40%;"></div>
+                <div class="staff-row"><input id="bName2" placeholder="اسم الموظف 2"><input id="bCode2" placeholder="الكود" style="width:40%;"></div>
+                <div class="staff-row"><input id="bName3" placeholder="اسم الموظف 3"><input id="bCode3" placeholder="الكود" style="width:40%;"></div>
+            </div>
+            <div class="admin-grid-inputs">
+                <span class="admin-grid-label">🏪 موظف الرحيلي (خانة واحدة)</span>
+                <div class="staff-row"><input id="rName1" placeholder="اسم الموظف"><input id="rCode1" placeholder="الكود" style="width:40%;"></div>
+            </div>
+            <div class="admin-grid-inputs">
+                <span class="admin-grid-label">🚚 موظف التوصيل (خانة واحدة)</span>
+                <div class="staff-row"><input id="dName1" placeholder="اسم الموظف"><input id="dCode1" placeholder="الكود" style="width:40%;"></div>
+            </div>
+        </div>
+        <button id="saveAdminBtn" onclick="saveAdminSettings()" class="btn-save-admin-settings">💾 حفظ الإعدادات السحابية فوراً</button>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" class="btn-close-admin-panel">إغلاق اللوحة</button>
+    </div>
 
-/* شاشة السجلات المنبثقة للفرع */
-.reports-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 5000; display: none; flex-direction: column; }
-.reports-overlay.open { display: flex; }
-.reports-header { display: flex; align-items: center; justify-content: space-between; padding: 20px; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.btn-back-report { background:rgba(255,255,254,0.1); color:#facc15; font-size:13px; font-weight:bold; padding:6px 12px; border-radius:10px; }
-.reports-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.05); background: #151f32; }
-.reports-tab { flex: 1; padding: 14px 5px; text-align: center; font-size: 12px; font-weight: 700; color: #94a3b8; background: transparent; }
-.reports-tab.active-tab { color: #22c55e; border-bottom: 2px solid #22c55e; background: rgba(34, 197, 94, 0.05); }
-.reports-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 190px; }
-.report-card { background: rgba(255,255,253,0.03); border-radius: 14px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+    <!-- أزرار التنقل السريع والتبديل بين الفروع الثلاثة -->
+    <div class="branch-filters-container">
+        <button class="branch-filter-btn active-branch-selected" id="btn-view-delivery" onclick="switchBranchView('delivery')">🚚 التوصيل</button>
+        <button class="branch-filter-btn" id="btn-view-batarji" onclick="switchBranchView('batarji')">🏪 البترجي</button>
+        <button class="branch-filter-btn" id="btn-view-ruhaily" onclick="switchBranchView('ruhaily')">🏪 الرحيلي</button>
+    </div>
 
-/* تذييل بار الواتساب والبانر المتحرك */
-.whatsapp-bottom-bar { position: fixed; bottom: 38px; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.06); padding: 8px 15px; z-index: 998; display: flex; justify-content: center; align-items: center; }
-.whatsapp-btn-link { background: #25d366; color: white; width: 100%; max-width: 500px; padding: 8px; border-radius: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; font-size: 13px; font-weight: bold; }
-.ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #0f172a; padding: 10px 0; z-index: 999; overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.06); }
-.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 14s linear infinite; font-size: 13px; font-weight: 700; color: #cbd5e1; }
-@keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+    <!-- حقل البحث ومفاتيح التحكم بالوجبات -->
+    <div class="card">
+        <input id="mealInput" placeholder="🔍 اكتب اسم المشترك أو رقم الاشتراك هنا للفرز والفلترة الفورية..." type="text" oninput="renderCards()"/>
+        <button class="searchBtn" onclick="checkMealFromInput()">🔍 ابدأ الفرز والبحث</button>
+        <button class="deliverAllBtn" id="deliverAllBtn" onclick="triggerDeliverAllDelivery()">⚡ تسليم الكل (قسم التوصيل)</button>
+        <div id="status" class="connection-status">⏳ جاري الاتصال بالسحابة الآمنة...</div>
+    </div>
 
-/* أجزاء الإدارة الإضافية */
-.progress-lbl, .upload-lbl { font-size:12px; font-weight:bold; display:none; margin-bottom:10px; }
-.progress-lbl { color:#facc15; }
-.upload-lbl { color: #22c55e; margin-top: 8px; }
-.admin-label, .admin-label-purple, .admin-label-blue { font-size:12px; font-weight:bold; margin-bottom:5px; display:block; }
-.admin-label { color:#facc15; }
-.admin-label-purple { color:#a855f7; }
-.admin-label-blue { color:#3b82f6; }
-.upload-container { margin: 12px 0; background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 14px; border: 1px dashed rgba(168, 85, 247, 0.4); text-align: center; }
-.staff-section { border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; margin-bottom:12px; }
-.staff-title { font-size:13px; color:#facc15; font-weight:bold; display:block; margin-bottom:10px; }
-.btn-save-admin-settings { margin-bottom:5px; background:#a855f7; color:white; padding:12px; border-radius:12px; width:100%; font-weight:bold; }
-.btn-close-admin-panel { width:100%; padding:8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius:12px; }
-.connection-status { margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700; }
-.hint-container { font-size:11px; color:#94a3b8; text-align:center; margin-bottom:8px; display: flex; justify-content: center; align-items: center; gap: 10px; }
-.hint-container button { display:none; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); padding:3px 8px; border-radius:8px; font-size:11px; font-weight:bold; }
-#listTitle { font-size:14px; font-weight:700; margin-bottom:10px; }
+    <!-- لوحة إحصائيات وعدادات الحالات التلقائية للفروع -->
+    <div class="card">
+        <div class="hint-container">
+            <span>💡 اضغط على صندوق الحالة لفلترة القائمة بالأسفل</span>
+            <button id="logoutStaffBtn" onclick="logoutCurrentStaff()">🚪 خروج الموظف</button>
+        </div>
+        <div class="stats">
+            <div class="stat yellowBox" id="stat-pending" onclick="toggleMainListFilter('pending')" style="cursor:pointer;">انتظار: <span id="pendingMeals">0</span></div>
+            <div class="stat greenBox" id="stat-done" onclick="toggleMainListFilter('done')" style="cursor:pointer;">مستلم: <span id="doneMeals">0</span></div>
+            <div class="stat red" id="stat-cancel" onclick="toggleMainListFilter('cancel')" style="cursor:pointer;">ملغى: <span id="cancelMeals">0</span></div>
+        </div>
+    </div>
 
-/* تنسيق الـ PDF المطبوع المخفي */
-#pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; }
-.pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-.pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
-.pdf-meta { font-size: 12px; color: #64748b; text-align: left; }
-.pdf-cooling-lbl { margin-top:5px; color:#1d4ed8; font-weight:bold; }
-.pdf-grid-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
-.pdf-sum-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; background: #f8fafc; }
-.pdf-sum-box .sum-val { font-size:16px; font-weight:900; margin-top:4px; }
-.pdf-sec-title { font-size: 14px; font-weight: bold; color: #0f172a; border-right: 4px solid #facc15; padding-right: 8px; margin-bottom: 12px; margin-top: 20px; }
-.pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
-.pdf-table th { background: #0f172a; color: #ffffff; padding: 10px; text-align: right; font-weight: bold; }
-.pdf-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; color: #0f172a; }
+    <!-- الحاوية الديناميكية لظهور كروت المشتركين والوجبات المباشرة -->
+    <div class="card">
+        <h3 id="listTitle">قائمة التوصيل المباشرة:</h3>
+        <div id="mealCardsContainer"></div>
+    </div>
+</div>
+
+<!-- الشريط السفلي والبنرات المتحركة للموقع -->
+<div class="whatsapp-bottom-bar"><a class="whatsapp-btn-link" id="waLink" href="#" target="_blank">التواصل الفوري عبر الواتساب للمشرف</a></div>
+<div class="ticker-wrap"><div class="ticker-text">تصميم وتطوير مأمون محمد</div></div>
+
+<!-- قالب الـ PDF الإداري المخفي لطباعة السجلات اليومية الشاملة للفروع -->
+<div id="pdfReportTemplate">
+    <div class="pdf-header">
+        <div><div class="pdf-title">🥗 كشف الفرز اليومي - بروتين وكارب</div></div>
+        <div class="pdf-meta">
+            <div><b>التاريخ:</b> <span id="pdfReportDate">--</span></div>
+            <div><b>الوقت:</b> <span id="pdfReportTime">--</span></div>
+            <div class="pdf-cooling-lbl"><b>درجة برودة التوصيل:</b> <span id="pdfReportCooling">--</span></div>
+        </div>
+    </div>
+    <div class="pdf-grid-summary">
+        <div class="pdf-sum-box" style="color:#3b82f6;"><div>شحنات التوصيل</div><div class="sum-val" id="pdfSumDeliveryDone">0</div></div>
+        <div class="pdf-sum-box" style="color:#10b981;"><div>مستلمي البترجي</div><div class="sum-val" id="pdfSumBatarjiDone">0</div></div>
+        <div class="pdf-sum-box" style="color:#a855f7;"><div>مستلمي الرحيلي</div><div class="sum-val" id="pdfSumRuhailyDone">0</div></div>
+    </div>
+    
+    <div class="pdf-sec-title">🚚 تفاصيل فرز قسم التوصيل</div>
+    <table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
+    
+    <div class="pdf-sec-title">🏪 تفاصيل فرز فرع البترجي</div>
+    <table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
+    
+    <div class="pdf-sec-title">🏪 تفاصيل فرز فرع الرحيلي</div>
+    <table class="pdf-table"><thead><tr><th>الاشتراك</th><th>الاسم</th><th>الحالة</th><th>المسؤول</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
+</div>
+
+<!-- لضمان عمل الواجهة بسرعة قصوى وتلافي التجميد، نضع متغير الربط البرمجي الخاص بـ Firebase والتهيئة للمستمعات هنا قبل إغلاق ملف جافاسكريبت المرفق الخارجي المسمى script.js -->
+<script>
+    // تمرير متغير التكوين البرمجي لملف الجافاسكريبت المستقل
+    var firebaseConfig = { 
+        apiKey: "AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc", 
+        authDomain: "protencarp.firebaseapp.com", 
+        projectId: "protencarp", 
+        storageBucket: "protencarp.firebasestorage.app", 
+        messagingSenderId: "37899247050", 
+        appId: "1:37899247050:web:e8464a6386510174e2c333", 
+        databaseURL: "https://protencarp-default-rtdb.firebaseio.com/" 
+    };
+</script>
+
+<!-- 🔗 ربط ملف البرمجة الخارجي والمتحكم بالسحابة والمزامنة السريعة -->
+<script src="script.js"></script>
+</body>
+</html>
 
