@@ -1,4 +1,4 @@
-style.css
+
 
 *{
     margin:0;
@@ -101,6 +101,19 @@ input::placeholder{
 
 .app-shell{
     display:none;
+}
+
+.whatsapp-bottom-bar,
+.ticker-wrap{
+    display:none;
+}
+
+body.system-open .whatsapp-bottom-bar{
+    display:flex;
+}
+
+body.system-open .ticker-wrap{
+    display:block;
 }
 
 .container{
@@ -646,7 +659,6 @@ input::placeholder{
     background:#1e293b;
     padding:8px 15px;
     z-index:998;
-    display:flex;
     justify-content:center;
 }
 
@@ -788,4 +800,4 @@ input::placeholder{
         font-size:12px;
         padding:10px 5px;
     }
-  }
+}
