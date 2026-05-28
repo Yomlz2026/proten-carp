@@ -17,6 +17,7 @@ let firebaseStarted = false;
 let meals = [];
 let tableStatus = {};
 let archivesData = {};
+
 let currentBranchView = "delivery";
 let activeMainFilter = "all";
 let activeTab = "done";
@@ -28,20 +29,36 @@ let currentCoolingTemp = "";
 let systemPasswords = { main: "1234", admin: "0000" };
 let emergencyPassword = "7113";
 
-let currentLoggedStaff = { delivery: null, batarji: null, ruhaily: null };
+let currentLoggedStaff = {
+    delivery: null,
+    batarji: null,
+    ruhaily: null
+};
 
 let staffData = {
-    batarji: [{ name: "", code: "" }, { name: "", code: "" }, { name: "", code: "" }],
-    ruhaily: [{ name: "", code: "" }],
-    delivery: [{ name: "", code: "" }]
+    batarji: [
+        { name: "", code: "" },
+        { name: "", code: "" },
+        { name: "", code: "" }
+    ],
+    ruhaily: [
+        { name: "", code: "" }
+    ],
+    delivery: [
+        { name: "", code: "" }
+    ]
 };
 
 window.onload = function () {
     const input = document.getElementById("mainLoginCode");
+
     if (input) {
         input.focus();
+
         input.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") loginMainSystem();
+            if (e.key === "Enter") {
+                loginMainSystem();
+            }
         });
     }
 };
@@ -50,7 +67,9 @@ function connectFirebase() {
     if (firebaseStarted) return;
 
     try {
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
 
         db = firebase.database();
 
@@ -69,12 +88,18 @@ function connectFirebase() {
             meals = Array.isArray(data.mealsList) ? data.mealsList : [];
             tableStatus = data.actions || {};
             archivesData = data.archives || {};
+
             waNum = data.whatsapp || "966506546313";
             currentBannerUrl = data.bannerUrl || "";
             currentCoolingTemp = data.coolingTemp || "";
 
-            if (data.passwords) systemPasswords = data.passwords;
-            if (data.staff) staffData = fixStaffData(data.staff);
+            if (data.passwords) {
+                systemPasswords = data.passwords;
+            }
+
+            if (data.staff) {
+                staffData = fixStaffData(data.staff);
+            }
 
             applyDataToUI();
             setStatus("🟢 متصل بالسحابة");
@@ -106,7 +131,9 @@ function fixStaffData(data) {
 
 function applyDataToUI() {
     const waLink = document.getElementById("waLink");
-    if (waLink) waLink.href = "https://wa.me/" + waNum;
+    if (waLink) {
+        waLink.href = "https://wa.me/" + waNum;
+    }
 
     setValue("whatsappInput", waNum);
     setValue("coolingTempInput", currentCoolingTemp);
@@ -154,6 +181,7 @@ function loginMainSystem() {
 
 function openAdminLogin() {
     document.getElementById("adminLoginModal").style.display = "flex";
+
     setTimeout(function () {
         const input = document.getElementById("adminLoginCode");
         if (input) input.focus();
@@ -174,8 +202,12 @@ function loginAdminPanel() {
     }
 
     closeAdminLogin();
+
     document.getElementById("adminPanel").style.display = "block";
-    document.getElementById("adminPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("adminPanel").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 }
 
 function closeAdminPanel() {
@@ -211,7 +243,10 @@ function savePasswords() {
         return;
     }
 
-    db.ref("pnc_data/passwords").set({ main, admin }).then(function () {
+    db.ref("pnc_data/passwords").set({
+        main: main,
+        admin: admin
+    }).then(function () {
         customAlert("✅", "تم الحفظ", "تم تحديث كلمات المرور بنجاح");
     }).catch(function (error) {
         customAlert("❌", "خطأ", error.message);
@@ -229,15 +264,30 @@ function saveAdminSettings() {
         coolingTemp: document.getElementById("coolingTempInput").value.trim(),
         staff: {
             batarji: [
-                { name: document.getElementById("bName1").value.trim(), code: document.getElementById("bCode1").value.trim() },
-                { name: document.getElementById("bName2").value.trim(), code: document.getElementById("bCode2").value.trim() },
-                { name: document.getElementById("bName3").value.trim(), code: document.getElementById("bCode3").value.trim() }
+                {
+                    name: document.getElementById("bName1").value.trim(),
+                    code: document.getElementById("bCode1").value.trim()
+                },
+                {
+                    name: document.getElementById("bName2").value.trim(),
+                    code: document.getElementById("bCode2").value.trim()
+                },
+                {
+                    name: document.getElementById("bName3").value.trim(),
+                    code: document.getElementById("bCode3").value.trim()
+                }
             ],
             ruhaily: [
-                { name: document.getElementById("rName1").value.trim(), code: document.getElementById("rCode1").value.trim() }
+                {
+                    name: document.getElementById("rName1").value.trim(),
+                    code: document.getElementById("rCode1").value.trim()
+                }
             ],
             delivery: [
-                { name: document.getElementById("dName1").value.trim(), code: document.getElementById("dCode1").value.trim() }
+                {
+                    name: document.getElementById("dName1").value.trim(),
+                    code: document.getElementById("dCode1").value.trim()
+                }
             ]
         }
     };
@@ -295,8 +345,11 @@ async function uploadBannerImage() {
 }
 
 function toggleSidebarDrawer(open) {
-    document.getElementById("sidebarDrawer").className = open ? "sidebar-drawer open" : "sidebar-drawer";
-    document.getElementById("drawerOverlay").className = open ? "drawer-overlay open" : "drawer-overlay";
+    document.getElementById("sidebarDrawer").className =
+        open ? "sidebar-drawer open" : "sidebar-drawer";
+
+    document.getElementById("drawerOverlay").className =
+        open ? "drawer-overlay open" : "drawer-overlay";
 }
 
 function switchBranchView(view) {
@@ -307,14 +360,21 @@ function switchBranchView(view) {
         btn.classList.remove("active-branch-selected");
     });
 
-    document.getElementById("btn-view-" + view).classList.add("active-branch-selected");
+    const btn = document.getElementById("btn-view-" + view);
+    if (btn) btn.classList.add("active-branch-selected");
 
     document.querySelectorAll(".stat").forEach(function (el) {
         el.classList.remove("inactive-filter");
     });
 
-    const names = { delivery: "التوصيل", batarji: "البترجي", ruhaily: "الرحيلي" };
-    document.getElementById("listTitle").innerHTML = "قائمة فرز " + names[view];
+    const names = {
+        delivery: "التوصيل",
+        batarji: "البترجي",
+        ruhaily: "الرحيلي"
+    };
+
+    document.getElementById("listTitle").innerHTML =
+        "قائمة فرز " + names[view];
 
     renderCards();
     recalculateStats();
@@ -324,11 +384,15 @@ function switchBranchView(view) {
 
 function updateDeliverAllBtnVisibility() {
     const btn = document.getElementById("deliverAllBtn");
-    if (btn) btn.style.display = currentBranchView === "delivery" ? "block" : "none";
+    if (btn) {
+        btn.style.display = currentBranchView === "delivery" ? "block" : "none";
+    }
 }
 
 function recalculateStats() {
-    let pending = 0, done = 0, cancel = 0;
+    let pending = 0;
+    let done = 0;
+    let cancel = 0;
 
     meals.forEach(function (meal) {
         if (meal.branch !== currentBranchView) return;
@@ -348,15 +412,19 @@ function recalculateStats() {
 function toggleMainListFilter(status) {
     if (activeMainFilter === status) {
         activeMainFilter = "all";
+
         document.querySelectorAll(".stat").forEach(function (el) {
             el.classList.remove("inactive-filter");
         });
     } else {
         activeMainFilter = status;
+
         document.querySelectorAll(".stat").forEach(function (el) {
             el.classList.add("inactive-filter");
         });
-        document.getElementById("stat-" + status).classList.remove("inactive-filter");
+
+        const active = document.getElementById("stat-" + status);
+        if (active) active.classList.remove("inactive-filter");
     }
 
     renderCards();
@@ -383,7 +451,8 @@ function renderCards() {
 
     if (query) {
         filtered = filtered.filter(function (m) {
-            return String(m.number).includes(query) || String(m.name || "").toLowerCase().includes(query);
+            return String(m.number).includes(query) ||
+                String(m.name || "").toLowerCase().includes(query);
         });
     }
 
@@ -396,12 +465,19 @@ function renderCards() {
         const act = tableStatus[meal.number] || {};
         let badge = "<span style='color:#facc15;'>⏳ انتظار</span>";
 
-        if (act.status === "done") badge = "<span style='color:#22c55e;'>✅ مستلم</span>";
-        if (act.status === "cancel") badge = "<span style='color:#ef4444;'>❌ ملغى</span>";
+        if (act.status === "done") {
+            badge = "<span style='color:#22c55e;'>✅ مستلم</span>";
+        }
+
+        if (act.status === "cancel") {
+            badge = "<span style='color:#ef4444;'>❌ ملغى</span>";
+        }
 
         const div = document.createElement("div");
         div.className = "meal-row-card";
-        div.onclick = function () { checkMeal(meal); };
+        div.onclick = function () {
+            checkMeal(meal);
+        };
 
         div.innerHTML =
             "<div class='meal-card-main-info'>" +
@@ -418,8 +494,10 @@ function customAlert(icon, title, message) {
     document.getElementById("alertIcon").innerHTML = icon;
     document.getElementById("alertTitle").innerHTML = title;
     document.getElementById("alertMessage").innerHTML = message;
+
     document.getElementById("modalDynamicFields").style.display = "none";
     document.getElementById("modalActionButtons").style.display = "none";
+
     document.getElementById("customAlertModal").style.display = "flex";
 }
 
@@ -436,8 +514,12 @@ function checkMealFromInput() {
     }
 
     const meal =
-        meals.find(function (m) { return String(m.number) === value; }) ||
-        meals.find(function (m) { return String(m.name).toLowerCase().includes(value); });
+        meals.find(function (m) {
+            return String(m.number) === value;
+        }) ||
+        meals.find(function (m) {
+            return String(m.name).toLowerCase().includes(value);
+        });
 
     if (!meal) {
         customAlert("🔍", "غير موجود", "لم يتم العثور على المشترك");
@@ -455,7 +537,11 @@ function checkMeal(meal) {
     };
 
     if (meal.branch !== currentBranchView) {
-        customAlert("⚠️", "موقع خاطئ", "هذا المشترك مخصص إلى:<br><b>" + branchLabels[meal.branch] + "</b>");
+        customAlert(
+            "⚠️",
+            "موقع خاطئ",
+            "هذا المشترك مخصص إلى:<br><b>" + branchLabels[meal.branch] + "</b>"
+        );
         return;
     }
 
@@ -479,6 +565,7 @@ function checkMeal(meal) {
 function showMealActionModal(meal) {
     document.getElementById("alertIcon").innerHTML = "👤";
     document.getElementById("alertTitle").innerHTML = "تفاصيل المشترك";
+
     document.getElementById("alertMessage").innerHTML =
         "👤 الاسم: <b>" + escapeHtml(meal.name) + "</b><br>" +
         "📌 الاشتراك: #" + escapeHtml(meal.number) + "<br>" +
@@ -507,7 +594,12 @@ function executeDirectAction(num, action) {
     checkStaffLoginRequirement(function () {
         const staffName = currentLoggedStaff[currentBranchView] || "موظف معتمد";
         const now = new Date();
-        const time = now.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+        const time = now.toLocaleTimeString("ar-SA", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        });
 
         db.ref("pnc_data/actions/" + num).set({
             status: action,
@@ -538,9 +630,13 @@ function checkStaffLoginRequirement(callback) {
 
     if (currentBranchView === "batarji") {
         let html = "<select id='loginStaffSelect'>";
+
         branchStaff.forEach(function (s, i) {
-            if (s.name) html += "<option value='" + i + "'>" + escapeHtml(s.name) + "</option>";
+            if (s.name) {
+                html += "<option value='" + i + "'>" + escapeHtml(s.name) + "</option>";
+            }
         });
+
         html += "</select>";
         box.innerHTML += html;
     }
@@ -560,9 +656,14 @@ function submitStaffLogin() {
     if (currentBranchView === "batarji") {
         const select = document.getElementById("loginStaffSelect");
         const index = select ? select.value : 0;
-        if (branchStaff[index] && branchStaff[index].code === code) matched = branchStaff[index];
+
+        if (branchStaff[index] && branchStaff[index].code === code) {
+            matched = branchStaff[index];
+        }
     } else {
-        matched = branchStaff.find(function (s) { return s.code === code && s.code; });
+        matched = branchStaff.find(function (s) {
+            return s.code === code && s.code;
+        });
     }
 
     if (!matched) {
@@ -573,16 +674,25 @@ function submitStaffLogin() {
     currentLoggedStaff[currentBranchView] = matched.name || "موظف معتمد";
 
     const logoutBtn = document.getElementById("logoutStaffBtn");
-    if (logoutBtn) logoutBtn.style.display = "inline-block";
+    if (logoutBtn) {
+        logoutBtn.style.display = "inline-block";
+    }
 
     closeCustomAlert();
 
-    if (typeof window.afterStaffLoginCallback === "function") window.afterStaffLoginCallback();
+    if (typeof window.afterStaffLoginCallback === "function") {
+        window.afterStaffLoginCallback();
+    }
 }
 
 function logoutCurrentStaff() {
     currentLoggedStaff[currentBranchView] = null;
-    document.getElementById("logoutStaffBtn").style.display = "none";
+
+    const logoutBtn = document.getElementById("logoutStaffBtn");
+    if (logoutBtn) {
+        logoutBtn.style.display = "none";
+    }
+
     customAlert("✅", "تم الخروج", "تم تسجيل خروج الموظف بنجاح");
 }
 
@@ -591,7 +701,13 @@ function triggerDeliverAllDelivery() {
         checkStaffLoginRequirement(function () {
             const staffName = currentLoggedStaff.delivery || "مسؤول التوصيل";
             const now = new Date();
-            const time = now.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+            const time = now.toLocaleTimeString("ar-SA", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+            });
+
             const updates = {};
 
             meals.forEach(function (meal) {
@@ -625,6 +741,7 @@ function confirmModal(title, message, onConfirm) {
     document.getElementById("alertIcon").innerHTML = "⚠️";
     document.getElementById("alertTitle").innerHTML = title;
     document.getElementById("alertMessage").innerHTML = message;
+
     document.getElementById("modalDynamicFields").style.display = "none";
     document.getElementById("modalActionButtons").style.display = "flex";
 
@@ -633,7 +750,10 @@ function confirmModal(title, message, onConfirm) {
 
     document.getElementById("modalConfirmBtn").onclick = function () {
         closeCustomAlert();
-        if (typeof onConfirm === "function") onConfirm();
+
+        if (typeof onConfirm === "function") {
+            onConfirm();
+        }
     };
 
     document.getElementById("modalCancelBtn").onclick = function () {
@@ -671,6 +791,7 @@ async function processPDFFile() {
             const newMeals = [];
             const seen = {};
             let expectedTotal = 0;
+            const failedPages = [];
 
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 status.innerHTML = "⏳ قراءة الصفحة " + pageNum + " من " + pdf.numPages;
@@ -683,13 +804,19 @@ async function processPDFFile() {
                 }).join(" ");
 
                 const pageCountMatch = pageText.match(/Page\s+\d+\s+of\s+(\d+)/i);
-                if (pageCountMatch) expectedTotal = parseInt(pageCountMatch[1], 10);
+                if (pageCountMatch) {
+                    expectedTotal = parseInt(pageCountMatch[1], 10);
+                }
 
-                const meal = extractMealFromPdfItems(textContent.items, pageText);
+                const meal = extractMealFromPdfPage(pageText);
 
                 if (meal && !seen[meal.number]) {
                     seen[meal.number] = true;
                     newMeals.push(meal);
+                } else {
+                    if (pageCountMatch) {
+                        failedPages.push(pageNum);
+                    }
                 }
             }
 
@@ -704,7 +831,9 @@ async function processPDFFile() {
 
             let totalDone = 0;
             Object.keys(tableStatus).forEach(function (k) {
-                if (tableStatus[k].status === "done") totalDone++;
+                if (tableStatus[k].status === "done") {
+                    totalDone++;
+                }
             });
 
             await db.ref("pnc_data/archives/" + archiveKey).set({
@@ -720,9 +849,14 @@ async function processPDFFile() {
             fileInput.value = "";
 
             let msg = "تم استخراج ورفع " + newMeals.length + " مشترك بنجاح";
+
             if (expectedTotal > 0 && newMeals.length !== expectedTotal) {
                 msg += "<br><br>⚠️ العدد المتوقع من الملف: " + expectedTotal;
                 msg += "<br>العدد المستخرج: " + newMeals.length;
+
+                if (failedPages.length > 0) {
+                    msg += "<br>صفحات تحتاج مراجعة: " + failedPages.join(", ");
+                }
             }
 
             status.innerHTML = "✅ " + msg;
@@ -735,99 +869,78 @@ async function processPDFFile() {
     });
 }
 
-function extractMealFromPdfItems(items, fullText) {
-    if (!items || !items.length) return null;
+function extractMealFromPdfPage(pageText) {
+    let text = String(pageText || "")
+        .replace(/\s+/g, " ")
+        .trim();
 
-    fullText = String(fullText || "").replace(/Page\s+\d+\s+of\s+\d+/gi, " ");
-
-    const parts = items.map(function (item) {
-        return String(item.str || "").trim();
-    }).filter(Boolean);
+    if (!text.match(/Page\s+\d+\s+of\s+\d+/i)) {
+        return null;
+    }
 
     let number = null;
     let name = "";
 
-    for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
-        const match = part.match(/\[(\d{4,8})\]/);
+    let patternAfter = text.match(/\[(\d{4,8})\]\s+(.+?)\s+Plan\s+name/i);
 
-        if (match) {
-            number = parseInt(match[1], 10);
+    if (patternAfter) {
+        number = parseInt(patternAfter[1], 10);
+        name = patternAfter[2];
+    }
 
-            const samePartName = part.replace(/\[(\d{4,8})\]/, "").trim();
-            if (samePartName && !isPdfStopText(samePartName)) {
-                name = samePartName;
-            } else {
-                const collected = [];
-                for (let j = i + 1; j < parts.length; j++) {
-                    const next = parts[j].trim();
+    if (!number) {
+        let patternBefore = text.match(/PROTEIN\s+AND\s+CARB\s+(.+?)\s+\[(\d{4,8})\]\s+Plan\s+name/i);
 
-                    if (!next) continue;
-                    if (next.match(/\[(\d{4,8})\]/)) break;
-                    if (isPdfStopText(next)) break;
-
-                    collected.push(next);
-
-                    if (collected.join(" ").length > 80) break;
-                    if (collected.length >= 6) break;
-                }
-                name = collected.join(" ");
-            }
-
-            break;
+        if (patternBefore) {
+            name = patternBefore[1];
+            number = parseInt(patternBefore[2], 10);
         }
     }
 
     if (!number) {
-        const fallback = fullText.match(/\[(\d{4,8})\]\s+(.+?)(?=\s+(Items Count|Delivery Window|Pickup Branch|Plan Name|Captain|Calories|Protein|Carbs|Fat|Page)\b|$)/i);
-        if (fallback) {
-            number = parseInt(fallback[1], 10);
-            name = fallback[2] || "";
+        let fallbackAfter = text.match(/\[(\d{4,8})\]\s+(.+?)(?=\s+(Plan name|عدد الأصناف|Items Count|Notes|District|Captain Name|Service Type|Pickup Branch|# ORDERS|Page))/i);
+
+        if (fallbackAfter) {
+            number = parseInt(fallbackAfter[1], 10);
+            name = fallbackAfter[2];
         }
     }
 
-    name = cleanName(name);
+    if (!number) {
+        let fallbackBefore = text.match(/([A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF\s.'\-]{2,80})\s+\[(\d{4,8})\]/);
 
-    if (!number || name.length < 2) return null;
+        if (fallbackBefore) {
+            name = fallbackBefore[1];
+            number = parseInt(fallbackBefore[2], 10);
+        }
+    }
+
+    name = cleanSubscriberName(name);
+
+    if (!number || name.length < 2) {
+        return null;
+    }
 
     return {
         number: number,
         name: name,
-        branch: detectBranch(fullText)
+        branch: detectBranch(text)
     };
 }
 
-function isPdfStopText(text) {
-    const t = String(text || "").toLowerCase();
-
-    return (
-        t.includes("items count") ||
-        t.includes("delivery window") ||
-        t.includes("pickup branch") ||
-        t.includes("plan name") ||
-        t.includes("captain") ||
-        t.includes("calories") ||
-        t.includes("protein") ||
-        t.includes("carbs") ||
-        t.includes("fat") ||
-        t.includes("page") ||
-        t.includes("address") ||
-        t.includes("phone")
-    );
-}
-
-function cleanName(name) {
+function cleanSubscriberName(name) {
     return String(name || "")
-        .replace(/Page\s+\d+\s+of\s+\d+/gi, "")
-        .replace(/\bItems Count\b.*$/i, "")
-        .replace(/\bDelivery Window\b.*$/i, "")
-        .replace(/\bPickup Branch\b.*$/i, "")
-        .replace(/\bPlan Name\b.*$/i, "")
-        .replace(/\bCaptain\b.*$/i, "")
-        .replace(/\bCalories\b.*$/i, "")
-        .replace(/\bProtein\b.*$/i, "")
-        .replace(/\bCarbs\b.*$/i, "")
-        .replace(/\bFat\b.*$/i, "")
+        .replace(/PROTEIN\s+AND\s+CARB/gi, "")
+        .replace(/\bPlan\s+name\b.*$/i, "")
+        .replace(/\bItems\s+Count\b.*$/i, "")
+        .replace(/\bNotes\b.*$/i, "")
+        .replace(/\bDistrict\b.*$/i, "")
+        .replace(/\bCaptain\s+Name\b.*$/i, "")
+        .replace(/\bService\s+Type\b.*$/i, "")
+        .replace(/\bPickup\s+Branch\b.*$/i, "")
+        .replace(/\bPage\s+\d+\s+of\s+\d+\b/gi, "")
+        .replace(/^\d{8,20}\s*/, "")
+        .replace(/^\d{4}-\d{2}-\d{2}\s*/, "")
         .replace(/\s+/g, " ")
         .trim();
 }
@@ -851,6 +964,9 @@ function detectBranch(text) {
     if (
         lower.includes("pickup branch") &&
         (
+            lower.includes("al-rhili") ||
+            lower.includes("alrhili") ||
+            lower.includes("rhili") ||
             lower.includes("ruhaily") ||
             lower.includes("alruhaily") ||
             lower.includes("al ruhaily") ||
@@ -877,8 +993,11 @@ function calculateAllBranchesLiveReport() {
         const act = tableStatus[meal.number] || {};
         const status = act.status || "pending";
 
-        if (status === "done") stats[meal.branch].done++;
-        else if (status !== "cancel") stats[meal.branch].pending++;
+        if (status === "done") {
+            stats[meal.branch].done++;
+        } else if (status !== "cancel") {
+            stats[meal.branch].pending++;
+        }
     });
 
     document.getElementById("drawerDelSum").innerHTML =
@@ -909,13 +1028,30 @@ function renderArchives() {
 
         const div = document.createElement("div");
         div.className = "archive-item";
+
         div.innerHTML =
-            "<div>" +
+            "<div class='archive-info'>" +
             "<b>📅 " + escapeHtml(arc.date || "-") + "</b><br>" +
             "<span>المستلمين: " + escapeHtml(arc.totalDone || 0) + "</span>" +
-            "</div>";
+            "</div>" +
+            "<button class='archive-delete-btn' onclick=\"deleteArchive('" + key + "')\">🗑️ حذف</button>";
 
         container.appendChild(div);
+    });
+}
+
+function deleteArchive(key) {
+    confirmModal("🗑️ حذف الأرشيف", "هل تريد حذف هذا اليوم من الأرشيف؟", function () {
+        if (!db) {
+            customAlert("❌", "لا يوجد اتصال", "انتظر الاتصال بالسحابة");
+            return;
+        }
+
+        db.ref("pnc_data/archives/" + key).remove().then(function () {
+            customAlert("✅", "تم الحذف", "تم حذف الأرشيف بنجاح");
+        }).catch(function (error) {
+            customAlert("❌", "خطأ", error.message);
+        });
     });
 }
 
@@ -935,7 +1071,9 @@ function switchTab(tab) {
         btn.classList.remove("active-tab");
     });
 
-    document.getElementById("tab-" + tab).classList.add("active-tab");
+    const btn = document.getElementById("tab-" + tab);
+    if (btn) btn.classList.add("active-tab");
+
     updateReports();
 }
 
@@ -964,6 +1102,7 @@ function updateReports() {
 
         const div = document.createElement("div");
         div.className = "meal-row-card";
+
         div.innerHTML =
             "<div class='meal-card-main-info'>" +
             "<span class='meal-card-num'>#" + escapeHtml(meal.number) + "</span>" +
@@ -975,17 +1114,21 @@ function updateReports() {
         content.appendChild(div);
     });
 
-    if (!content.innerHTML) content.innerHTML = "<div class='status-line'>لا توجد بيانات</div>";
+    if (!content.innerHTML) {
+        content.innerHTML = "<div class='status-line'>لا توجد بيانات</div>";
+    }
 }
 
 function generatePDFReport() {
     const now = new Date();
 
     document.getElementById("pdfReportDate").innerHTML = now.toLocaleDateString("ar-SA");
+
     document.getElementById("pdfReportTime").innerHTML = now.toLocaleTimeString("ar-SA", {
         hour: "2-digit",
         minute: "2-digit"
     });
+
     document.getElementById("pdfReportCooling").innerHTML = currentCoolingTemp || "غير محدد";
 
     const bodies = {
@@ -998,7 +1141,11 @@ function generatePDFReport() {
     bodies.batarji.innerHTML = "";
     bodies.ruhaily.innerHTML = "";
 
-    let sums = { delivery: 0, batarji: 0, ruhaily: 0 };
+    let sums = {
+        delivery: 0,
+        batarji: 0,
+        ruhaily: 0
+    };
 
     meals.forEach(function (meal) {
         const act = tableStatus[meal.number] || {};
@@ -1006,10 +1153,15 @@ function generatePDFReport() {
 
         if (act.status === "done") {
             statusText = "✅ مستلم";
-            if (sums[meal.branch] !== undefined) sums[meal.branch]++;
+
+            if (sums[meal.branch] !== undefined) {
+                sums[meal.branch]++;
+            }
         }
 
-        if (act.status === "cancel") statusText = "❌ ملغى";
+        if (act.status === "cancel") {
+            statusText = "❌ ملغى";
+        }
 
         const row =
             "<tr>" +
@@ -1019,7 +1171,9 @@ function generatePDFReport() {
             "<td>" + escapeHtml(act.by || "-") + "</td>" +
             "</tr>";
 
-        if (bodies[meal.branch]) bodies[meal.branch].innerHTML += row;
+        if (bodies[meal.branch]) {
+            bodies[meal.branch].innerHTML += row;
+        }
     });
 
     document.getElementById("pdfSumDeliveryDone").innerHTML = sums.delivery;
