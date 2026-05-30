@@ -269,43 +269,13 @@ closeModal();
 };
 }
 
-// 📐 تجميع الأسطر هندسياً لمنع ضياع أو تداخل كتل الـ PDF أفقياً وعمودياً
-function groupPdfItemsIntoLines(items) {
-    const rows = [];
-    items.forEach(item => {
-        const text = String(item.str || "").trim();
-        if (!text) return;
-
-        const y = Math.round(item.transform ? item.transform[5] : 0);
-        const x = item.transform ? item.transform[4] : 0;
-
-        let row = rows.find(r => Math.abs(r.y - y) <= 4);
-        if (!row) {
-            row = { y: y, items: [] };
-            rows.push(row);
-        }
-        row.items.push({ x: x, text: text });
-    });
-
-    rows.sort((a, b) => b.y - a.y);
-
-    return rows.map(row => {
-        return row.items
-            .sort((a, b) => a.x - b.x)
-            .map(i => i.text)
-            .join(" ")
-            .replace(/\s+/g, " ")
-            .trim();
-    });
-}
-
-// 🚀 محرك القراءة الموحد الحاسم: يضمن قراءة الكشوفات المرنة بأسماء صافية وفروع دقيقة
+// 🚀 دالة قراءة وفرز الـ PDF الأصلية والقديمة (اللي صممتها لك وكنت شغال عليها بكفاءة)
 async function readPDF(){
 const file=document.getElementById("pdf").files[0];
 if(!file){alertBox("⚠️","تنبيه","اختر PDF");return;}
 
 const st=document.getElementById("pdfStatus");
-st.innerHTML="⏳ جاري البدء الفوري...";
+st.innerHTML="⏳ جاري القراءة...";
 
 try{
     pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
@@ -314,99 +284,115 @@ try{
         data:await file.arrayBuffer()
     }).promise;
 
-    let result = [];
-    let seen = {};
-    let expected = 0;
+    var countPromises = [];
+    for (var j = 1; j <= pdf.numPages; j++) {
+        countPromises.push(
+            pdf.getPage(j).then(function (page) {
+                return page.getTextContent().then(function (textContent) {
+                    return textContent.items.map(function (item) {
+                        return item.str;
+                    }).join(" [SPLIT] ");
+                });
+            })
+        );
+    }
 
-    // القراءة المتسلسلة المستقرة: صفحة بصفحة (كل مشترك بمشترك مستقل كلياً)
-    for(let i=1; i<=pdf.numPages; i++){
-        st.innerHTML="⏳ جاري معالجة الصفحة " + i + " / " + pdf.numPages;
-        const page = await pdf.getPage(i);
-        const txt = await page.getTextContent();
-        
-        const lines = groupPdfItemsIntoLines(txt.items);
-        
-        let pageNumber = null;
-        let pageName = "";
-        let pageBranch = "delivery"; // فرع التوصيل تلقائي إذا كانت حقول الفرع فارغة
-        let lowerPageText = "";
+    const pageTexts = await Promise.all(countPromises);
+    var text = pageTexts.join(" [SPLIT] ");
+    
+    var newMeals = [];
+    var tokens = text.split(" [SPLIT] ");
+    var cleanedTokens = [];
 
-        lines.forEach(lineText => {
-            lowerPageText += " " + lineText.toLowerCase();
+    for (var i = 0; i < tokens.length; i++) {
+        var t = String(tokens[i]).trim();
+        if (t && t !== "[SPLIT]") cleanedTokens.push(t);
+    }
 
-            const pMatch = lineText.match(/Page\s+\d+\s+of\s+(\d+)/i);
-            if(pMatch) expected = parseInt(pMatch[1]);
+    for (var i = 0; i < cleanedTokens.length; i++) {
+        var token = cleanedTokens[i];
+        var numMatch = token.match(/\[?(\d{4,8})\]?/);
+        if (!numMatch) continue;
 
-            // التقاط رقم الاشتراك المكون من 4 إلى 8 أرقام من السطر
-            const numMatch = lineText.match(/(?:\[|\s|^)(\d{4,8})(?:\]|\s|$)/);
-            
-            if (numMatch && !pageNumber) {
-                // استبعاد أسطر الترويسة الأساسية للنظام لتجنب التشوهات
-                if(!lineText.toLowerCase().includes("plan name") && !lineText.toLowerCase().includes("protein and carb")) {
-                    pageNumber = String(numMatch[1]);
-                    
-                    // اقتطاع الاسم التابع للرقم مباشرة
-                    let afterNumText = lineText.split(numMatch[1])[1] || "";
-                    afterNumText = afterNumText.replace(/[\[\]]/g, "").trim();
-                    
-                    // 🧠 خوارزمية التوقف الذكي المحدثة: تنظف وتوقف التقاط الاسم فوراً عند ظهور حقول الوجبات الإدارية
-                    let nameWords = afterNumText.split(" ");
-                    let cleanParts = [];
-                    
-                    for(let w=0; w<nameWords.length; w++) {
-                        let word = nameWords[w].trim();
-                        let lw = word.toLowerCase();
-                        if(!word) continue;
-                        
-                        if(
-                            lw.includes("plan") || lw.includes("meals") || lw.includes("item") ||
-                            lw.includes("low") || lw.includes("carb") || lw.includes("وجبتين") ||
-                            lw.includes("رئيسية") || lw.includes("count") || lw.includes("notes") ||
-                            lw.includes("district") || lw.includes("captain") || lw.includes("service") ||
-                            word.includes(":") || word === "-" || word === "*"
-                        ) {
-                            break;
-                        }
-                        cleanParts.push(word);
-                    }
-                    pageName = cleanParts.join(" ").trim();
-                }
+        var num = String(numMatch[1]);
+        var nameParts = [];
+        var contextText = "";
+        var checkLimit = Math.min(i + 12, cleanedTokens.length);
+
+        for (var nextIdx = i + 1; nextIdx < checkLimit; nextIdx++) {
+            var nextToken = cleanedTokens[nextIdx];
+            if (/\[?\d{4,8}\]?/.test(nextToken)) break;
+            contextText += " " + nextToken;
+
+            if (
+                nextToken.length > 1 &&
+                nextToken.indexOf(":") === -1 &&
+                nextToken.indexOf("/") === -1 &&
+                nextToken !== "-" &&
+                nextToken !== "*"
+            ) {
+                nameParts.push(nextToken);
             }
-        });
-
-        // حماية تكميلية: إذا لم يتم العثور على الاسم ملتصقاً بالرقم في أسطر الجدول
-        if (!pageName && lines.length > 0 && pageNumber) {
-            pageName = lines[0].replace(pageNumber, "").replace(/[\[\]]/g, "").trim();
         }
 
-        if (pageNumber && pageName && pageName.length > 1) {
-            pageName = pageName.replace(/[•●·.،,_\-–—:؛*]/g, " ").replace(/\s+/g, " ").trim();
+        var fullName = nameParts.join(" ").replace(/\s+/g, " ").trim();
 
-            // فحص الصفحة الشامل لتحديد فرع العميل (بترجي / رحيلي / توصيل)
-            if (lowerPageText.includes("بترجي") || lowerPageText.includes("batarji")) {
-                pageBranch = "batarji";
-            } else if (lowerPageText.includes("رحيلي") || lowerPageText.includes("ruhaily") || lowerPageText.includes("rhili")) {
-                pageBranch = "ruhaily";
+        fullName = fullName
+            .replace(/pickup branch/ig, "")
+            .replace(/plan name/ig, "")
+            .replace(/service type/ig, "")
+            .replace(/captain name/ig, "")
+            .replace(/district/ig, "")
+            .replace(/notes/ig, "")
+            .replace(/items count/ig, "")
+            .replace(/\[SPLIT\]/ig, "")
+            .replace(/\d{4,8}/g, "")
+            .trim();
+
+        if (fullName.length > 2) {
+            var branch = "delivery";
+            var lowerContext = (contextText + " " + fullName)
+                .toLowerCase()
+                .replace(/[\u200B-\u200D\uFEFF]/g, "")
+                .replace(/[•●·.،,_\-–—:؛]/g, " ")
+                .replace(/\s+/g, " ");
+
+            if (
+                lowerContext.indexOf("بترجي") !== -1 ||
+                lowerContext.indexOf("البترجي") !== -1 ||
+                lowerContext.indexOf("batarji") !== -1
+            ) {
+                branch = "batarji";
+            } else if (
+                lowerContext.indexOf("رحيلي") !== -1 ||
+                lowerContext.indexOf("الرحيلي") !== -1 ||
+                lowerContext.indexOf("ruhaily") !== -1 ||
+                lowerContext.indexOf("rhili") !== -1
+            ) {
+                branch = "ruhaily";
             }
 
-            if (!seen[pageNumber]) {
-                seen[pageNumber] = 1;
-                result.push({
-                    number: pageNumber,
-                    name: pageName,
-                    branch: pageBranch
+            var alreadyExists = newMeals.some(function (m) {
+                return m.number === num;
+            });
+
+            if (!alreadyExists) {
+                newMeals.push({
+                    number: num,
+                    name: fullName,
+                    branch: branch
                 });
             }
         }
     }
 
-    if(result.length === 0) {
-        alertBox("⚠️", "تنبيه", "لم يتم استخراج أي اشتراكات! تأكد من جودة وتصدير ملف الـ PDF.");
-        st.innerHTML = "❌ فشل الاستخراج";
+    if (newMeals.length === 0) {
+        alertBox("⚠️", "تنبيه", "لم يتم استخراج أي اشتراكات من ملف PDF");
+        st.innerHTML = "❌ فشل استخراج البيانات";
         return;
     }
 
-    // الأرشفة التلقائية لليوم الحالي وتحديث كشوفات فايربيس فوراً وبأمان كامل
+    // الأرشفة والمزامنة السحابية المتوافقة تماماً
     await db.ref("pnc_data/archives/Arch_"+Date.now()).set({
         date: new Date().toLocaleDateString("ar-SA"),
         actions: actions || {},
@@ -414,10 +400,10 @@ try{
     });
 
     await db.ref("pnc_data/actions").remove();
-    await db.ref("pnc_data/mealsList").set(result);
+    await db.ref("pnc_data/mealsList").set(newMeals);
 
-    alertBox("✅", "اكتمل الفرز الموحد", "تم نجاح استخراج " + result.length + " مشترك وتوزيعهم للفروع بدقة تامة.");
-    st.innerHTML = "✅ مكتمل (" + result.length + ")";
+    alertBox("✅", "تم الحفظ", "تمت القراءة بنجاح واستخراج " + newMeals.length + " مشترك وتوزيعهم للفروع.");
+    st.innerHTML = "✅ مكتمل (" + newMeals.length + ")";
 
 }catch(e){
     alertBox("❌","خطأ",e.message);
