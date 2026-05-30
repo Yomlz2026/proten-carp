@@ -53,10 +53,29 @@ button { cursor: pointer; } /* لضمان استجابة أجهزة آبل لل�
 .reports-footer-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 5001; }
 .reports-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .report-stat-box { padding: 10px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: bold; }
+.daily-summary-strip { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-bottom:15px; }
+.daily-summary-box { background: rgba(30,41,59,0.6); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:10px 6px; text-align:center; font-size:11px; font-weight:700; cursor:pointer; transition:0.2s; }
+.daily-summary-box b { display:block; font-size:15px; margin-top:3px; }
+.daily-summary-box.active-summary-waiting { background: rgba(250,204,21,0.14); border-color: rgba(250,204,21,0.45); box-shadow:0 0 18px rgba(250,204,21,0.14); }
+.daily-summary-box.active-summary-done { background: rgba(34,197,94,0.14); border-color: rgba(34,197,94,0.45); box-shadow:0 0 18px rgba(34,197,94,0.14); }
+.daily-summary-box.active-summary-cancel { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.45); box-shadow:0 0 18px rgba(239,68,68,0.14); }
+.cold-admin-box { background: rgba(14,165,233,0.10); border: 1px solid rgba(56,189,248,0.35); border-radius: 14px; padding: 12px; margin-top: 10px; }
+.cold-admin-box label { display:block; color:#38bdf8; font-size:12px; font-weight:900; margin-bottom:7px; }
+.cold-admin-box input { border-color: rgba(56,189,248,0.35); color:#7dd3fc; text-align:center; font-size:18px; }
+.pdf-cold-box { border: 2px solid #7dd3fc; background: #eff6ff; border-radius: 14px; padding: 14px; margin-bottom: 22px; text-align:center; }
+.pdf-cold-title { color:#0369a1; font-size:13px; font-weight:900; margin-bottom:4px; }
+.pdf-cold-value { color:#075985; font-size:24px; font-weight:900; }
+@media (max-width:520px){ .daily-summary-strip { grid-template-columns: repeat(3, 1fr); } }
 
 .branch-filters-container { display: flex; gap: 8px; margin-bottom: 15px; }
 .branch-filter-btn { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13px; font-weight: 700; color: #94a3b8; background: rgba(30, 41, 59, 0.45); display: flex; justify-content: center; align-items: center; gap: 4px; font-family: 'Noto Kufi Arabic', sans-serif; }
 .branch-filter-btn.active-branch-selected { color: #ffffff !important; background: rgba(34, 197, 94, 0.85) !important; border-color: #22c55e !important; box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4) !important; }
+
+.main-list-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.main-list-tab { flex: 1; padding: 12px 6px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06); background: rgba(15,23,42,0.45); color: #94a3b8; font-size: 13px; font-weight: 800; font-family: 'Noto Kufi Arabic', sans-serif; }
+.main-list-tab.active-waiting { color: #facc15; background: rgba(250,204,21,0.12); border-color: rgba(250,204,21,0.35); }
+.main-list-tab.active-done { color: #22c55e; background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.35); }
+.main-list-tab.active-cancel { color: #ef4444; background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.35); }
 
 .top-banner { width: 100%; height: 110px; background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08); }
 .container { width: 100%; max-width: 650px; margin: auto; }
@@ -178,13 +197,13 @@ input[type="number"] { font-size: 20px; text-align: center; }
 
 <div class="reports-overlay" id="reportsOverlay">
     <div class="reports-header">
-        <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">📋 سجل فرز (قسم التوصيل)</div>
+        <div style="font-weight:700; color:#facc15;" id="reportsOverlayTitle">☰ لوحة التشغيل</div>
         <button type="button" onclick="closeReports()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
     </div>
     <div class="reports-tabs">
-        <button type="button" class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">✅ المستلمون</button>
-        <button type="button" class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">❌ الملغيون</button>
-        <button type="button" class="reports-tab archive-tab" id="tab-archive" onclick="switchTab('archive')">📊 أرشيف الأيام</button>
+        <button type="button" class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">📊 ملخص التشغيل</button>
+        <button type="button" class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">🚚 التوصيل</button>
+        <button type="button" class="reports-tab archive-tab" id="tab-archive" onclick="switchTab('archive')">📂 الأرشيف</button>
     </div>
     <div class="reports-content" id="reportsContent"></div>
     <div class="reports-footer-stats">
@@ -207,7 +226,11 @@ input[type="number"] { font-size: 20px; text-align: center; }
     <div class="card control-panel" id="adminPanel">
         <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:12px; font-size:12px;"/>
         <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب المشرف..."/>
-        <input id="bannerUrlInput" type="url" placeholder="رابط صورة البانر العلوية..." style="margin-top:12px; margin-bottom:12px;"/>
+        <div class="cold-admin-box" style="margin-top:12px; margin-bottom:12px;">
+            <label>🖼️ صورة البانر من المعرض</label>
+            <input id="bannerImageInput" type="file" accept="image/*" onchange="handleBannerImageFile(this.files[0])" style="font-size:12px; padding:10px;">
+            <small style="display:block; color:#94a3b8; font-size:10px; margin-top:6px; text-align:center;">اختر صورة من المعرض ثم اضغط حفظ الإعدادات</small>
+        </div>
         <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; margin-bottom:12px;">
             <span style="font-size:12px; color:#facc15; font-weight:bold; display:block; margin-bottom:8px;">👥 إداري طاقم الميدان والأكواد السرية:</span>
             <div class="admin-grid-inputs">
@@ -226,6 +249,10 @@ input[type="number"] { font-size: 20px; text-align: center; }
                 <span class="admin-grid-label" style="color:#ef4444;">⚙️ كود لوحة التحكم الرئيسي للمشرف:</span>
                 <input id="adminMasterPassInput" type="text" value="71138" style="padding:8px; font-size:13px; text-align:center; color:#ef4444; border-color:rgba(239,68,68,0.3);">
             </div>
+            <div class="cold-admin-box">
+                <label>❄️ درجة برودة سيارة التوصيل</label>
+                <input id="deliveryColdTempInput" type="number" step="0.1" placeholder="مثال: -18" inputmode="decimal">
+            </div>
         </div>
         <button type="button" onclick="saveAdminSettings()" style="margin-bottom:5px; background:#a855f7; color:white; padding:12px; border-radius:12px; width:100%; font-weight:bold; border:none; cursor:pointer; font-family:'Noto Kufi Arabic',sans-serif;">💾 حفظ الإعدادات والصلاحيات السحابية</button>
         <button type="button" onclick="document.getElementById('adminPanel').style.display='none'" class="modal-btn modal-btn-cancel" style="width:100%; padding:8px;">إغلاق اللوحة</button>
@@ -243,15 +270,14 @@ input[type="number"] { font-size: 20px; text-align: center; }
         <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;">⏳ جاري المزامنة...</div>
     </div>
 
-    <div class="card">
-        <div class="stats">
-            <div class="stat greenBox">تسليم القسم: <span id="doneMeals">0</span></div>
-            <div class="stat red">إلغاء القسم: <span id="cancelMeals">0</span></div>
-        </div>
+    <div class="daily-summary-strip">
+        <div class="daily-summary-box active-summary-waiting" id="summaryBoxWaiting" onclick="switchMainList('waiting')" style="color:#facc15;">⏳ قائمة الانتظار<b id="summaryTotal">0</b></div>
+        <div class="daily-summary-box" id="summaryBoxDone" onclick="switchMainList('done')" style="color:#22c55e;">✅ المستلم<b id="summaryDone">0</b></div>
+        <div class="daily-summary-box" id="summaryBoxCancel" onclick="switchMainList('cancel')" style="color:#ef4444;">❌ الملغي<b id="summaryCancel">0</b></div>
     </div>
 
     <div class="card">
-        <h3 style="font-size:14px; font-weight:700; margin-bottom:5px;" id="listTitle">قائمة فرز التوصيل المباشرة:</h3>
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:5px;" id="listTitle">قائمة انتظار التوصيل:</h3>
         <div id="mealCardsContainer"></div>
     </div>
 </div>
@@ -278,10 +304,14 @@ input[type="number"] { font-size: 20px; text-align: center; }
             <div><b>وقت التوليد:</b> <span id="pdfReportTime">--</span></div>
         </div>
     </div>
+    <div class="pdf-cold-box">
+        <div class="pdf-cold-title">❄️ درجة برودة سيارة التوصيل</div>
+        <div class="pdf-cold-value"><span id="pdfDeliveryColdTemp">--</span>°C</div>
+    </div>
     <div style="background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 14px; padding: 15px; margin-bottom: 25px;">
         <div style="font-size:14px; font-weight:bold; color:#0f172a; margin-bottom:10px; text-align:center; border-bottom:1px solid #cbd5e1; padding-bottom:5px;">📊 الإجمالي العام الموحد (كافة الأقسام والفروع)</div>
         <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; text-align:center;">
-            <div><small style="color:#475569; font-weight:bold; font-size:11px;">إجمالي الكشف</small><div style="font-size:16px; font-weight:900; color:#0f172a;" id="pdfMetaGlobalTotal">0</div></div>
+            <div><small style="color:#475569; font-weight:bold; font-size:11px;">مجموع المشتركين</small><div style="font-size:16px; font-weight:900; color:#0f172a;" id="pdfMetaGlobalTotal">0</div></div>
             <div><small style="color:#16a34a; font-weight:bold; font-size:11px;">المشحون والمستلم</small><div style="font-size:16px; font-weight:900; color:#16a34a;" id="pdfMetaGlobalDone">0</div></div>
             <div><small style="color:#2563eb; font-weight:bold; font-size:11px;">قيد الانتظار</small><div style="font-size:16px; font-weight:900; color:#2563eb;" id="pdfMetaGlobalPending">0</div></div>
             <div><small style="color:#dc2626; font-weight:bold; font-size:11px;">الملغي اليوم</small><div style="font-size:16px; font-weight:900; color:#dc2626;" id="pdfMetaGlobalCancel">0</div></div>
@@ -335,7 +365,9 @@ var defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q
 
 var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery";
+var currentMainListMode = "waiting";
 var deliveryTotalCount = 70;
+var deliveryColdTemp = "";
 var currentMasterPassword = "71138";
 
 var staffData = {
@@ -380,6 +412,7 @@ db.ref("pnc_data").on("value", function(snapshot) {
         waNum = data.whatsapp || "966506546313";
         currentBannerUrl = data.bannerUrl || defaultBanner;
         if (data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
+        if (data.deliveryColdTemp !== undefined) deliveryColdTemp = data.deliveryColdTemp;
         if (data.masterPassword !== undefined) currentMasterPassword = data.masterPassword;
 
         if (data.staff) {
@@ -392,10 +425,10 @@ db.ref("pnc_data").on("value", function(snapshot) {
         if (waEl) waEl.href = "https://wa.me/" + waNum;
         var waInput = document.getElementById("whatsappInput");
         if (waInput) waInput.value = waNum;
-        var bannerInput = document.getElementById("bannerUrlInput");
-        if (bannerInput) bannerInput.value = currentBannerUrl === defaultBanner ? "" : currentBannerUrl;
         var masterInput = document.getElementById("adminMasterPassInput");
         if (masterInput) masterInput.value = currentMasterPassword;
+        var coldInput = document.getElementById("deliveryColdTempInput");
+        if (coldInput) coldInput.value = deliveryColdTemp || "";
         var topBanner = document.getElementById("topBanner");
         if (topBanner) topBanner.style.backgroundImage = "linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('" + currentBannerUrl + "')";
 
@@ -417,7 +450,7 @@ db.ref("pnc_data").on("value", function(snapshot) {
         }
 
         var statusEl = document.getElementById("status");
-        if (statusEl) statusEl.innerHTML = meals.length > 0 ? "🟢 متصل بالسيرفر الفوري: " + meals.length : "🟢 متصل: بانتظار الـ PDF.";
+        if (statusEl) statusEl.innerHTML = meals.length > 0 ? "🟢 الموقع نشط | مجموع المشتركين: " + meals.length : "🟢 الموقع نشط | بانتظار رفع PDF";
 
         recalculateStats();
         renderCards();
@@ -443,11 +476,28 @@ function verifyAdminCode() {
     }
 }
 
+function handleBannerImageFile(file) {
+    if (!file) return;
+    if (!file.type || file.type.indexOf("image/") !== 0) {
+        alert("الرجاء اختيار ملف صورة فقط");
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        currentBannerUrl = e.target.result;
+        var topBanner = document.getElementById("topBanner");
+        if (topBanner) topBanner.style.backgroundImage = "linear-gradient(rgba(15,23,42,0.3), rgba(15,23,42,0.9)), url('" + currentBannerUrl + "')";
+        showCustomAlert("🖼️", "تم اختيار صورة البانر", "تم تجهيز صورة البانر. اضغط حفظ الإعدادات لتثبيتها على الموقع.", true);
+    };
+    reader.readAsDataURL(file);
+}
+
 function saveAdminSettings() {
     var updateData = {
         whatsapp: document.getElementById("whatsappInput").value.trim(),
-        bannerUrl: document.getElementById("bannerUrlInput").value.trim() || defaultBanner,
+        bannerUrl: currentBannerUrl || defaultBanner,
         masterPassword: document.getElementById("adminMasterPassInput").value.trim() || "71138",
+        deliveryColdTemp: document.getElementById("deliveryColdTempInput").value.trim(),
         staff: {
             batarji: { name: document.getElementById("workerNameBatarji").value.trim() || "مسؤول فرع البترجي", code: document.getElementById("workerCodeBatarji").value.trim() || "1111" },
             ruhaily: { name: document.getElementById("workerNameRuhaily").value.trim() || "مسؤول فرع الرحيلي", code: document.getElementById("workerCodeRuhaily").value.trim() || "2222" },
@@ -455,7 +505,7 @@ function saveAdminSettings() {
         }
     };
     db.ref("pnc_data").update(updateData);
-    showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة بيانات الموظفين والأكواد بنجاح!", true);
+    showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة بيانات الموظفين والأكواد ودرجة برودة سيارة التوصيل بنجاح!", true);
 }
 
 function updateDeliveryManualCount(val) {
@@ -494,7 +544,6 @@ function switchBranchView(view) {
     if (view === 'batarji') document.getElementById("btn-view-batarji").classList.add("active-branch-selected");
     if (view === 'ruhaily') document.getElementById("btn-view-ruhaily").classList.add("active-branch-selected");
     var label = view === 'delivery' ? "قسم التوصيل" : (view === 'batarji' ? "فرع البترجي" : "فرع الرحيلي");
-    document.getElementById("listTitle").innerHTML = "قائمة فرز " + label + " المباشرة:";
     document.getElementById("reportsOverlayTitle").innerHTML = "📋 سجل فرز (" + label + ")";
     recalculateStats(); renderCards(); updateReports();
 }
@@ -510,7 +559,7 @@ function archiveCurrentDayData() {
     if (doneCount > 0 || cancelCount > 0) {
         var now = new Date(), options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
         var dateString = now.toLocaleDateString('ar-SA', options);
-        db.ref("pnc_data/archive/" + now.getTime()).set({ date: dateString, done: doneCount, cancel: cancelCount });
+        db.ref("pnc_data/archive/" + now.getTime()).set({ date: dateString, done: doneCount, cancel: cancelCount, coldTemp: deliveryColdTemp || "" });
     }
 }
 
@@ -638,36 +687,96 @@ function recalculateStats() {
     var od = document.getElementById("overlayDoneCount"), oc = document.getElementById("overlayCancelCount");
     if (od) od.innerHTML = d;
     if (oc) oc.innerHTML = c;
+
+    var totalAll = meals.length, doneAll = 0, cancelAll = 0;
+    for (var allKey in tableStatus) {
+        if (tableStatus.hasOwnProperty(allKey)) {
+            if (tableStatus[allKey].status === "done") doneAll++;
+            if (tableStatus[allKey].status === "cancel") cancelAll++;
+        }
+    }
+    var pendingAll = Math.max(0, totalAll - doneAll - cancelAll);
+    if (document.getElementById("summaryTotal")) document.getElementById("summaryTotal").innerHTML = pendingAll;
+    if (document.getElementById("summaryDone")) document.getElementById("summaryDone").innerHTML = doneAll;
+    if (document.getElementById("summaryCancel")) document.getElementById("summaryCancel").innerHTML = cancelAll;
+}
+
+function updateMainTabsUI() {
+    var waitBox = document.getElementById("summaryBoxWaiting");
+    var doneBox = document.getElementById("summaryBoxDone");
+    var cancelBox = document.getElementById("summaryBoxCancel");
+    if (waitBox) waitBox.className = "daily-summary-box" + (currentMainListMode === "waiting" ? " active-summary-waiting" : "");
+    if (doneBox) doneBox.className = "daily-summary-box" + (currentMainListMode === "done" ? " active-summary-done" : "");
+    if (cancelBox) cancelBox.className = "daily-summary-box" + (currentMainListMode === "cancel" ? " active-summary-cancel" : "");
+}
+
+function switchMainList(mode) {
+    currentMainListMode = mode;
+    renderCards();
+}
+
+function getCurrentBranchLabel() {
+    return currentBranchView === 'delivery' ? "قسم التوصيل" : (currentBranchView === 'batarji' ? "فرع البترجي" : "فرع الرحيلي");
 }
 
 function renderCards() {
     var container = document.getElementById("mealCardsContainer");
-    var numbers = Array.from(searchedNumbers);
-    var filteredNumbers = [];
-    for(var i=0; i<numbers.length; i++){
-        for(var j=0; j<meals.length; j++){
-            if(meals[j] && meals[j].number == numbers[i] && meals[j].branch === currentBranchView) {
-                filteredNumbers.push(numbers[i]);
-                break;
-            }
+    if (!container) return;
+    updateMainTabsUI();
+
+    var list = [];
+    for (var i = 0; i < meals.length; i++) {
+        var m = meals[i];
+        if (!m || !m.number || m.branch !== currentBranchView) continue;
+        var action = tableStatus[m.number];
+        if (currentMainListMode === "waiting") {
+            if (!action || (action.status !== "done" && action.status !== "cancel")) list.push(m);
+        } else if (currentMainListMode === "done") {
+            if (action && action.status === "done") list.push(m);
+        } else if (currentMainListMode === "cancel") {
+            if (action && action.status === "cancel") list.push(m);
         }
     }
-    if (filteredNumbers.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px;">لا توجد عمليات فرز في هذا القسم حالياً.</p>';
+
+    var label = getCurrentBranchLabel();
+    var titleText = "قائمة انتظار " + label + ":";
+    var emptyText = "✅ لا توجد اشتراكات في قائمة الانتظار لهذا القسم.";
+    var headerColor = "#facc15";
+    var statusText = "⏳ انتظار";
+    var statusSub = "لم يتم التسليم أو الإلغاء";
+
+    if (currentMainListMode === "done") {
+        titleText = "قائمة المستلمين - " + label + ":";
+        emptyText = "لا يوجد مستلمون في هذا القسم حالياً.";
+        headerColor = "#22c55e";
+        statusText = "✅ مستلم";
+        statusSub = "تم تسليم الوجبة";
+    } else if (currentMainListMode === "cancel") {
+        titleText = "قائمة الملغيين - " + label + ":";
+        emptyText = "لا يوجد ملغيون في هذا القسم حالياً.";
+        headerColor = "#ef4444";
+        statusText = "❌ ملغي";
+        statusSub = "تم إلغاء اليوم";
+    }
+
+    var titleEl = document.getElementById("listTitle");
+    if (titleEl) titleEl.innerHTML = titleText;
+
+    if (list.length === 0) {
+        container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px; font-weight:bold;">' + emptyText + '</p>';
         return;
     }
-    var html = "";
-    filteredNumbers.reverse().forEach(function(num) {
-        var meal = null;
-        for(var j=0; j<meals.length; j++){ if(meals[j] && meals[j].number == num) { meal = meals[j]; break; } }
-        var name = meal ? meal.name : "مشترك #" + num;
-        var item = tableStatus[num] || {};
-        var st = item.status || "pending", tm = item.time || "--:--", staffName = item.by || "غير معروف";
-        var txt = "⏳ معلق", col = "#facc15";
-        if (st === "done") { txt = "✅ مستلم"; col = "#22c55e"; }
-        if (st === "cancel") { txt = "❌ ملغى"; col = "#ef4444"; }
-        html += '<div class="meal-row-card"><div class="meal-card-main-info"><div class="meal-card-info"><span class="meal-card-num"># ' + num + '</span><span class="meal-card-name">' + name + '</span><small style="color:#64748b; font-size:10px;">المنفذ: ' + staffName + '</small></div><div style="text-align:left;"><span style="color:' + col + '; font-weight:700; font-size:13px;">' + txt + '</span><br><small style="color:#94a3b8; font-size:11px;">' + tm + '</small></div></div></div>';
-    });
+
+    var countLabel = currentMainListMode === "waiting" ? "عدد المنتظرين" : (currentMainListMode === "done" ? "عدد المستلمين" : "عدد الملغيين");
+    var html = '<div style="color:' + headerColor + '; font-size:12px; font-weight:bold; margin-bottom:10px; text-align:center;">' + countLabel + ' في هذا القسم: ' + list.length + '</div>';
+    for (var j = 0; j < list.length; j++) {
+        var meal = list[j];
+        var item = tableStatus[meal.number] || {};
+        var timeText = item.time ? item.time : "--:--";
+        var byText = item.by ? item.by : "غير معروف";
+        var details = currentMainListMode === "waiting" ? statusSub : (statusSub + " | " + timeText + " | " + byText);
+        html += '<div class="meal-row-card"><div class="meal-card-main-info"><div class="meal-card-info"><span class="meal-card-num"># ' + meal.number + '</span><span class="meal-card-name">' + meal.name + '</span><small style="color:#64748b; font-size:10px;">' + details + '</small></div><div style="text-align:left;"><span style="color:' + headerColor + '; font-weight:700; font-size:13px;">' + statusText + '</span><br><small style="color:#94a3b8; font-size:11px;">' + (currentMainListMode === "waiting" ? "بانتظار الإجراء" : timeText) + '</small></div></div></div>';
+    }
     container.innerHTML = html;
 }
 
@@ -683,14 +792,15 @@ function updateReports() {
     document.getElementById("tab-archive").className = "reports-tab archive-tab " + (activeTab === "archive" ? "active-tab" : "");
     var html = "";
     if (currentBranchView === "delivery" && activeTab !== 'archive') {
-        html += '<div class="delivery-manual-box"><label>📦 إجمالي الحقائب المسلّمة للتوصيل جملةً:</label><input type="number" id="deliveryManualInput" value="' + deliveryTotalCount + '" oninput="updateDeliveryManualCount(this.value)" placeholder="مثال: 70"><button type="button" class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">✅ تسليم باقي وجبات التوصيل جملة واحدة</button></div>';
+        html += '<div class="delivery-manual-box"><label>🚚 إقفال قسم التوصيل</label><button type="button" class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">✅ تسليم باقي وجبات التوصيل دفعة واحدة</button></div>';
     }
     if (activeTab === 'archive') {
         var archiveKeys = Object.keys(historyArchive);
         if (archiveKeys.length === 0) { content.innerHTML = html + '<div style="text-align:center; color:#64748b; padding:40px;">لا يوجد أيام مؤرشفة حتى الآن.</div>'; return; }
         archiveKeys.reverse().forEach(function(key) {
             var item = historyArchive[key];
-            html += '<div class="report-card" style="border-right: 4px solid #38bdf8;"><div><span style="color:#38bdf8; font-weight:bold; font-size:14px;">📅 ' + item.date + '</span><br><small style="color:#22c55e;">✅ مستلم: ' + item.done + '</small> | <small style="color:#ef4444;">❌ ملغى: ' + item.cancel + '</small></div><div><button type="button" class="delete-archive-btn" onclick="deleteArchiveItem(\'' + key + '\')">🗑️</button></div></div>';
+            var coldLine = item.coldTemp ? '<br><small style="color:#38bdf8;">❄️ برودة سيارة التوصيل: ' + item.coldTemp + '°C</small>' : '';
+            html += '<div class="report-card" style="border-right: 4px solid #38bdf8;"><div><span style="color:#38bdf8; font-weight:bold; font-size:14px;">📅 ' + item.date + '</span><br><small style="color:#22c55e;">✅ مستلم: ' + item.done + '</small> | <small style="color:#ef4444;">❌ ملغى: ' + item.cancel + '</small>' + coldLine + '</div><div><button type="button" class="delete-archive-btn" onclick="deleteArchiveItem(\'' + key + '\')">🗑️</button></div></div>';
         });
         content.innerHTML = html; return;
     }
@@ -723,10 +833,11 @@ function generateAndSharePDFReport() {
     var timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
     document.getElementById("pdfReportDate").innerText = dateStr;
     document.getElementById("pdfReportTime").innerText = timeStr;
+    document.getElementById("pdfDeliveryColdTemp").innerText = deliveryColdTemp || "--";
     document.getElementById("pdfLabelStaffBatarji").innerText = "المسؤول: " + (staffData.batarji.name || '');
     document.getElementById("pdfLabelStaffRuhaily").innerText = "المسؤول: " + (staffData.ruhaily.name || '');
     document.getElementById("pdfLabelStaffDelivery").innerText = "المسؤول: " + (staffData.delivery.name || '');
-    var delCancelCount = 0, batDone = 0, batPending = 0, batCancel = 0, ruhDone = 0, ruhPending = 0, ruhCancel = 0;
+    var deliveryCount = 0, delCancelCount = 0, batDone = 0, batPending = 0, batCancel = 0, ruhDone = 0, ruhPending = 0, ruhCancel = 0;
     var delRowsHtml = "", batRowsHtml = "", ruhRowsHtml = "";
     
     for(var i=0; i<meals.length; i++){
@@ -734,7 +845,7 @@ function generateAndSharePDFReport() {
         if (!m || !m.number) continue;
         var statusItem = tableStatus[m.number];
         var statusText = "⏳ قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = "--";
-        if (m.branch === 'delivery') { statusText = "مشحون"; statusClass = "badge-pdf-done"; staffLog = staffData.delivery.name || ""; }
+        if (m.branch === 'delivery') { deliveryCount++; statusText = "مشحون"; statusClass = "badge-pdf-done"; staffLog = staffData.delivery.name || ""; }
         if (statusItem) {
             staffLog = (statusItem.by || '--') + " / " + statusItem.time;
             if (statusItem.status === 'done') {
@@ -759,7 +870,7 @@ function generateAndSharePDFReport() {
         else if (m.branch === 'ruhaily') ruhRowsHtml += row;
     }
 
-    var deliveryNetFinal = Math.max(0, deliveryTotalCount - delCancelCount);
+    var deliveryNetFinal = Math.max(0, deliveryCount - delCancelCount);
     var globalTotal = meals.length;
     var globalCancel = delCancelCount + batCancel + ruhCancel;
     var globalDone = deliveryNetFinal + batDone + ruhDone;
