@@ -201,15 +201,16 @@ input[type="number"] { font-size: 20px; text-align: center; }
         <button type="button" onclick="closeReports()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
     </div>
     <div class="reports-tabs">
-        <button type="button" class="reports-tab active-tab" id="tab-done" onclick="switchTab('done')">📊 ملخص التشغيل</button>
-        <button type="button" class="reports-tab cancel-tab" id="tab-cancel" onclick="switchTab('cancel')">🚚 التوصيل</button>
+        <button type="button" class="reports-tab active-tab" id="tab-summary" onclick="switchTab('summary')">📊 الملخص</button>
+        <button type="button" class="reports-tab cancel-tab" id="tab-delivery" onclick="switchTab('delivery')">🚚 التوصيل</button>
+        <button type="button" class="reports-tab" id="tab-branches" onclick="switchTab('branches')">🏪 الفروع</button>
         <button type="button" class="reports-tab archive-tab" id="tab-archive" onclick="switchTab('archive')">📂 الأرشيف</button>
     </div>
     <div class="reports-content" id="reportsContent"></div>
     <div class="reports-footer-stats">
         <div class="reports-footer-grid">
-            <div class="report-stat-box greenBox">مستلمي القسم: <span id="overlayDoneCount">0</span></div>
-            <div class="report-stat-box red">ملغي القسم: <span id="overlayCancelCount">0</span></div>
+            <div class="report-stat-box greenBox">مستلمين اليوم: <span id="overlayDoneCount">0</span></div>
+            <div class="report-stat-box red">ملغي اليوم: <span id="overlayCancelCount">0</span></div>
         </div>
         <button type="button" class="pdfShareBtn" onclick="generateAndSharePDFReport()">📄 تحميل وإرسال تقرير PDF</button>
     </div>
@@ -363,9 +364,10 @@ var db = firebase.database();
 var masterSystemSecret = "0506546313";
 var defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 
-var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "done", waNum = "966506546313", currentBannerUrl = defaultBanner;
+var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "summary", waNum = "966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery";
 var currentMainListMode = "waiting";
+var expandedArchiveKey = null;
 var deliveryTotalCount = 70;
 var deliveryColdTemp = "";
 var currentMasterPassword = "71138";
@@ -457,8 +459,13 @@ db.ref("pnc_data").on("value", function(snapshot) {
         updateReports();
     } catch(err) {
         var stat = document.getElementById('status');
-        if(stat) stat.innerHTML = '<span style="color:#ef4444;">🚨 تعذر المزامنة</span>';
+        if(stat) stat.innerHTML = '<span style="color:#ef4444;">🚨 تعذر المزامنة: ' + err.message + '</span>';
+        console.error(err);
     }
+}, function(error) {
+    var stat = document.getElementById('status');
+    if(stat) stat.innerHTML = '<span style="color:#ef4444;">🚨 فشل الاتصال بقاعدة البيانات: ' + error.message + '</span>';
+    console.error(error);
 });
 
 function openAdmin() {
@@ -544,22 +551,34 @@ function switchBranchView(view) {
     if (view === 'batarji') document.getElementById("btn-view-batarji").classList.add("active-branch-selected");
     if (view === 'ruhaily') document.getElementById("btn-view-ruhaily").classList.add("active-branch-selected");
     var label = view === 'delivery' ? "قسم التوصيل" : (view === 'batarji' ? "فرع البترجي" : "فرع الرحيلي");
-    document.getElementById("reportsOverlayTitle").innerHTML = "📋 سجل فرز (" + label + ")";
+    document.getElementById("reportsOverlayTitle").innerHTML = "☰ لوحة التشغيل";
     recalculateStats(); renderCards(); updateReports();
 }
 
 function archiveCurrentDayData() {
-    var doneCount = 0, cancelCount = 0;
-    for (var k in tableStatus) {
-        if (tableStatus.hasOwnProperty(k)) {
-            if (tableStatus[k].status === "done") doneCount++;
-            if (tableStatus[k].status === "cancel") cancelCount++;
-        }
+    var doneCount = 0, cancelCount = 0, waitingCount = 0;
+    for (var i = 0; i < meals.length; i++) {
+        var m = meals[i];
+        if (!m || !m.number) continue;
+        var action = tableStatus[m.number];
+        if (action && action.status === "done") doneCount++;
+        else if (action && action.status === "cancel") cancelCount++;
+        else waitingCount++;
     }
-    if (doneCount > 0 || cancelCount > 0) {
+    if (meals.length > 0 || doneCount > 0 || cancelCount > 0) {
         var now = new Date(), options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
         var dateString = now.toLocaleDateString('ar-SA', options);
-        db.ref("pnc_data/archive/" + now.getTime()).set({ date: dateString, done: doneCount, cancel: cancelCount, coldTemp: deliveryColdTemp || "" });
+        var archiveData = {
+            date: dateString,
+            total: meals.length,
+            done: doneCount,
+            cancel: cancelCount,
+            waiting: waitingCount,
+            coldTemp: deliveryColdTemp || "",
+            mealsSnapshot: meals,
+            actionsSnapshot: tableStatus
+        };
+        db.ref("pnc_data/archive/" + now.getTime()).set(archiveData);
     }
 }
 
@@ -685,8 +704,15 @@ function recalculateStats() {
     if (dEl) dEl.innerHTML = d;
     if (cEl) cEl.innerHTML = c;
     var od = document.getElementById("overlayDoneCount"), oc = document.getElementById("overlayCancelCount");
-    if (od) od.innerHTML = d;
-    if (oc) oc.innerHTML = c;
+    var allDone = 0, allCancel = 0;
+    for (var kk in tableStatus) {
+        if (tableStatus.hasOwnProperty(kk)) {
+            if (tableStatus[kk].status === "done") allDone++;
+            if (tableStatus[kk].status === "cancel") allCancel++;
+        }
+    }
+    if (od) od.innerHTML = allDone;
+    if (oc) oc.innerHTML = allCancel;
 
     var totalAll = meals.length, doneAll = 0, cancelAll = 0;
     for (var allKey in tableStatus) {
@@ -717,198 +743,3 @@ function switchMainList(mode) {
 
 function getCurrentBranchLabel() {
     return currentBranchView === 'delivery' ? "قسم التوصيل" : (currentBranchView === 'batarji' ? "فرع البترجي" : "فرع الرحيلي");
-}
-
-function renderCards() {
-    var container = document.getElementById("mealCardsContainer");
-    if (!container) return;
-    updateMainTabsUI();
-
-    var list = [];
-    for (var i = 0; i < meals.length; i++) {
-        var m = meals[i];
-        if (!m || !m.number || m.branch !== currentBranchView) continue;
-        var action = tableStatus[m.number];
-        if (currentMainListMode === "waiting") {
-            if (!action || (action.status !== "done" && action.status !== "cancel")) list.push(m);
-        } else if (currentMainListMode === "done") {
-            if (action && action.status === "done") list.push(m);
-        } else if (currentMainListMode === "cancel") {
-            if (action && action.status === "cancel") list.push(m);
-        }
-    }
-
-    var label = getCurrentBranchLabel();
-    var titleText = "قائمة انتظار " + label + ":";
-    var emptyText = "✅ لا توجد اشتراكات في قائمة الانتظار لهذا القسم.";
-    var headerColor = "#facc15";
-    var statusText = "⏳ انتظار";
-    var statusSub = "لم يتم التسليم أو الإلغاء";
-
-    if (currentMainListMode === "done") {
-        titleText = "قائمة المستلمين - " + label + ":";
-        emptyText = "لا يوجد مستلمون في هذا القسم حالياً.";
-        headerColor = "#22c55e";
-        statusText = "✅ مستلم";
-        statusSub = "تم تسليم الوجبة";
-    } else if (currentMainListMode === "cancel") {
-        titleText = "قائمة الملغيين - " + label + ":";
-        emptyText = "لا يوجد ملغيون في هذا القسم حالياً.";
-        headerColor = "#ef4444";
-        statusText = "❌ ملغي";
-        statusSub = "تم إلغاء اليوم";
-    }
-
-    var titleEl = document.getElementById("listTitle");
-    if (titleEl) titleEl.innerHTML = titleText;
-
-    if (list.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:15px; font-size:13px; font-weight:bold;">' + emptyText + '</p>';
-        return;
-    }
-
-    var countLabel = currentMainListMode === "waiting" ? "عدد المنتظرين" : (currentMainListMode === "done" ? "عدد المستلمين" : "عدد الملغيين");
-    var html = '<div style="color:' + headerColor + '; font-size:12px; font-weight:bold; margin-bottom:10px; text-align:center;">' + countLabel + ' في هذا القسم: ' + list.length + '</div>';
-    for (var j = 0; j < list.length; j++) {
-        var meal = list[j];
-        var item = tableStatus[meal.number] || {};
-        var timeText = item.time ? item.time : "--:--";
-        var byText = item.by ? item.by : "غير معروف";
-        var details = currentMainListMode === "waiting" ? statusSub : (statusSub + " | " + timeText + " | " + byText);
-        html += '<div class="meal-row-card"><div class="meal-card-main-info"><div class="meal-card-info"><span class="meal-card-num"># ' + meal.number + '</span><span class="meal-card-name">' + meal.name + '</span><small style="color:#64748b; font-size:10px;">' + details + '</small></div><div style="text-align:left;"><span style="color:' + headerColor + '; font-weight:700; font-size:13px;">' + statusText + '</span><br><small style="color:#94a3b8; font-size:11px;">' + (currentMainListMode === "waiting" ? "بانتظار الإجراء" : timeText) + '</small></div></div></div>';
-    }
-    container.innerHTML = html;
-}
-
-function openReports() { updateReports(); document.getElementById("reportsOverlay").classList.add("open"); }
-function closeReports() { document.getElementById("reportsOverlay").classList.remove("open"); }
-function switchTab(t) { activeTab = t; updateReports(); }
-
-function updateReports() {
-    var content = document.getElementById("reportsContent");
-    if (!content) return;
-    document.getElementById("tab-done").className = "reports-tab " + (activeTab === "done" ? "active-tab" : "");
-    document.getElementById("tab-cancel").className = "reports-tab cancel-tab " + (activeTab === "cancel" ? "active-tab" : "");
-    document.getElementById("tab-archive").className = "reports-tab archive-tab " + (activeTab === "archive" ? "active-tab" : "");
-    var html = "";
-    if (currentBranchView === "delivery" && activeTab !== 'archive') {
-        html += '<div class="delivery-manual-box"><label>🚚 إقفال قسم التوصيل</label><button type="button" class="bulk-delivery-btn" onclick="deliverAllPendingDelivery()">✅ تسليم باقي وجبات التوصيل دفعة واحدة</button></div>';
-    }
-    if (activeTab === 'archive') {
-        var archiveKeys = Object.keys(historyArchive);
-        if (archiveKeys.length === 0) { content.innerHTML = html + '<div style="text-align:center; color:#64748b; padding:40px;">لا يوجد أيام مؤرشفة حتى الآن.</div>'; return; }
-        archiveKeys.reverse().forEach(function(key) {
-            var item = historyArchive[key];
-            var coldLine = item.coldTemp ? '<br><small style="color:#38bdf8;">❄️ برودة سيارة التوصيل: ' + item.coldTemp + '°C</small>' : '';
-            html += '<div class="report-card" style="border-right: 4px solid #38bdf8;"><div><span style="color:#38bdf8; font-weight:bold; font-size:14px;">📅 ' + item.date + '</span><br><small style="color:#22c55e;">✅ مستلم: ' + item.done + '</small> | <small style="color:#ef4444;">❌ ملغى: ' + item.cancel + '</small>' + coldLine + '</div><div><button type="button" class="delete-archive-btn" onclick="deleteArchiveItem(\'' + key + '\')">🗑️</button></div></div>';
-        });
-        content.innerHTML = html; return;
-    }
-    
-    var keys = [];
-    for(var k in tableStatus){
-        if(tableStatus.hasOwnProperty(k)){
-            var meal = null;
-            for(var i=0; i<meals.length; i++){ if(meals[i] && meals[i].number == k) { meal = meals[i]; break; } }
-            if(tableStatus[k].status === activeTab && meal && meal.branch === currentBranchView) { keys.push(k); }
-        }
-    }
-    if (keys.length === 0) { content.innerHTML = html + '<div style="text-align:center; color:#64748b; padding:40px;">السجل فارغ لهذا القسم حالياً.</div>'; return; }
-    
-    keys.forEach(function(num) {
-        var meal = null;
-        for(var i=0; i<meals.length; i++){ if(meals[i] && meals[i].number == num) { meal = meals[i]; break; } }
-        var name = meal ? meal.name : "مشترك #" + num;
-        var item = tableStatus[num];
-        var lbl = meal && meal.branch === 'delivery' ? "🚚 توصيل" : (meal && meal.branch === 'batarji' ? '🏪 بترجي' : '🏪 رحيلي');
-        html += '<div class="report-card"><div><b># ' + num + '</b> <small style="color:#facc15; padding-right:5px;">[' + lbl + ']</small><br><small style="color:#cbd5e1">' + name + '</small><br><small style="color:#64748b; font-size:10px;">بواسطة: ' + (item.by || 'غير معروف') + '</small></div><div style="text-align:left"><span style="color:' + (activeTab === 'done' ? '#22c55e' : '#ef4444') + '">' + (activeTab === 'done' ? '✓ مستلم' : '✕ ملغى') + '</span><br><small style="color:#94a3b8">' + item.time + '</small></div></div>';
-    });
-    content.innerHTML = html;
-}
-
-function generateAndSharePDFReport() {
-    if (meals.length === 0) { alert("لا توجد بيانات مشتركين لتوليد التقرير!"); return; }
-    var now = new Date();
-    var dateStr = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
-    var timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
-    document.getElementById("pdfReportDate").innerText = dateStr;
-    document.getElementById("pdfReportTime").innerText = timeStr;
-    document.getElementById("pdfDeliveryColdTemp").innerText = deliveryColdTemp || "--";
-    document.getElementById("pdfLabelStaffBatarji").innerText = "المسؤول: " + (staffData.batarji.name || '');
-    document.getElementById("pdfLabelStaffRuhaily").innerText = "المسؤول: " + (staffData.ruhaily.name || '');
-    document.getElementById("pdfLabelStaffDelivery").innerText = "المسؤول: " + (staffData.delivery.name || '');
-    var deliveryCount = 0, delCancelCount = 0, batDone = 0, batPending = 0, batCancel = 0, ruhDone = 0, ruhPending = 0, ruhCancel = 0;
-    var delRowsHtml = "", batRowsHtml = "", ruhRowsHtml = "";
-    
-    for(var i=0; i<meals.length; i++){
-        var m = meals[i];
-        if (!m || !m.number) continue;
-        var statusItem = tableStatus[m.number];
-        var statusText = "⏳ قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = "--";
-        if (m.branch === 'delivery') { deliveryCount++; statusText = "مشحون"; statusClass = "badge-pdf-done"; staffLog = staffData.delivery.name || ""; }
-        if (statusItem) {
-            staffLog = (statusItem.by || '--') + " / " + statusItem.time;
-            if (statusItem.status === 'done') {
-                statusText = "مستلم"; statusClass = "badge-pdf-done";
-                if (m.branch === 'batarji') batDone++;
-                if (m.branch === 'ruhaily') ruhDone++;
-            } else if (statusItem.status === 'cancel') {
-                statusText = "❌ ملغى"; statusClass = "badge-pdf-cancel";
-                if (m.branch === 'delivery') delCancelCount++;
-                if (m.branch === 'batarji') batCancel++;
-                if (m.branch === 'ruhaily') ruhCancel++;
-            }
-        } else {
-            if (m.branch === 'batarji') batPending++;
-            if (m.branch === 'ruhaily') ruhPending++;
-        }
-
-        var safeName = (m.name || '').toString();
-        var row = '<tr><td><b>#' + m.number + '</b></td><td>' + safeName + '</td><td class="' + statusClass + '">' + statusText + '</td><td style="font-size:11px; color:#475569;">' + staffLog + '</td></tr>';
-        if (m.branch === 'delivery') delRowsHtml += row;
-        else if (m.branch === 'batarji') batRowsHtml += row;
-        else if (m.branch === 'ruhaily') ruhRowsHtml += row;
-    }
-
-    var deliveryNetFinal = Math.max(0, deliveryCount - delCancelCount);
-    var globalTotal = meals.length;
-    var globalCancel = delCancelCount + batCancel + ruhCancel;
-    var globalDone = deliveryNetFinal + batDone + ruhDone;
-    var globalPending = batPending + ruhPending;
-
-    document.getElementById("pdfMetaGlobalTotal").innerText = globalTotal;
-    document.getElementById("pdfMetaGlobalDone").innerText = globalDone;
-    document.getElementById("pdfMetaGlobalPending").innerText = globalPending;
-    document.getElementById("pdfMetaGlobalCancel").innerText = globalCancel;
-    document.getElementById("pdfSumDeliveryDone").innerText = deliveryNetFinal;
-    document.getElementById("pdfSumBatarjiDone").innerText = batDone;
-    document.getElementById("pdfSumRuhailyDone").innerText = ruhDone;
-    document.getElementById("pdfSumTotal").innerText = globalTotal;
-
-    document.getElementById("pdfDeliveryTableBody").innerHTML = delRowsHtml || '<tr><td colspan="4" style="text-align:center;color:#64748b;">لا توجد بيانات توصيل</td></tr>';
-    document.getElementById("pdfBatarjiTableBody").innerHTML = batRowsHtml || '<tr><td colspan="4" style="text-align:center;color:#64748b;">لا توجد بيانات فرع البترجي</td></tr>';
-    document.getElementById("pdfRuhailyTableBody").innerHTML = ruhRowsHtml || '<tr><td colspan="4" style="text-align:center;color:#64748b;">لا توجد بيانات فرع الرحيلي</td></tr>';
-
-    var element = document.getElementById("pdfReportTemplate");
-    var oldDisplay = element.style.display;
-    element.style.display = "block";
-
-    var opt = {
-        margin: 0.25,
-        filename: 'تقرير-فرز-بروتين-وكارب.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(element).save().then(function() {
-        element.style.display = oldDisplay || "none";
-    }).catch(function(err) {
-        element.style.display = oldDisplay || "none";
-        alert("تعذر توليد التقرير، حاول مرة أخرى.");
-        console.error(err);
-    });
-}
-</script>
-</body>
-</html>
