@@ -22,7 +22,7 @@ input{width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;b
 .login-box button,.green-btn{width:100%;padding:14px;border-radius:14px;background:#22c55e;color:#fff;font-weight:900}
 .app{display:none;max-width:700px;margin:auto}
 .header{display:flex;justify-content:space-between;align-items:center;background:rgba(30,41,59,.6);padding:13px;border-radius:18px;margin-bottom:15px}
-.header button{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.08);color:#fff;font-size:20px}
+.header button{width:42px;height:42px;border-radius:12px;background:rgba(255,255,254,.08);color:#fff;font-size:20px}
 .brand{font-size:20px;font-weight:900}
 .banner{height:120px;border-radius:20px;background:linear-gradient(135deg,#1e293b,#111827);margin-bottom:15px;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.08)}
 .card{background:rgba(30,41,59,.55);padding:16px;border-radius:20px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
@@ -63,7 +63,7 @@ input{width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;b
 .ruhaily{background:rgba(168,85,247,.12);color:#c084fc}
 .archive{background:rgba(255,255,255,.05);padding:12px;border-radius:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .archive button{background:rgba(239,68,68,.15);color:#ef4444;padding:8px 12px;border-radius:10px}
-.bottom{position:fixed;bottom:0;left:0;width:100%;background:#111827;padding:10px;text-align:center;border-top:1px solid rgba(255,255,255,.08)}
+.bottom{position:fixed;bottom:0;left:0;width:100%;background:#111827;padding:10px;text-align:center;border-top:1px solid rgba(255,255,254,.08)}
 .bottom a{color:#22c55e;text-decoration:none;font-weight:900}
 </style>
 </head>
@@ -144,7 +144,7 @@ input{width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;b
 
 <div class="card">
 <input id="search" placeholder="🔍 الاسم أو الرقم" oninput="render()">
-<button class="search-btn" onclick="searchMeal()">بحث</button>
+<button class="search-btn" onclick="searchMeal()">بحث عن مشترك</button>
 <button id="deliverAll" class="deliver-btn" onclick="deliverAll()">⚡ تسليم الكل</button>
 <div id="state" class="status">⏳ جاري الاتصال...</div>
 </div>
@@ -207,7 +207,7 @@ document.getElementById("state").innerHTML="🟢 متصل";
 }
 
 function switchBranch(b){
-document.getElementById("search").value = ""; // تفريغ البحث عند تبديل الفرع
+document.getElementById("search").value = ""; // تفريغ البحث عند تبديل الفروع
 currentBranch=b;
 ["Delivery","Batarji","Ruhaily"].forEach(x=>document.getElementById("b"+x).classList.remove("active"));
 document.getElementById("b"+b.charAt(0).toUpperCase()+b.slice(1)).classList.add("active");
@@ -215,55 +215,50 @@ document.getElementById("deliverAll").style.display=b==="delivery"?"block":"none
 render();
 }
 
-// 🧠 تعديل نظام البحث ليكون عالمياً (يبحث في كل الفروع) ويخبرك إذا كان المشترك غير موجود
 function render(){
 const q=document.getElementById("search").value.toLowerCase().trim();
 const list=document.getElementById("list");
 list.innerHTML="";
 let p=0,d=0,c=0;
 
-// حساب الإحصائيات للفرع الحالي فقط لكي لا يتخرب العداد أثناء البحث
+// حساب إحصائيات الفرع الحالي فقط
 meals.filter(m=>m.branch===currentBranch).forEach(m=>{
-    const st=(actions[m.number]||{}).status||"pending";
-    if(st==="done")d++;
-    else if(st==="cancel")c++;
-    else p++;
+const st=(actions[m.number]||{}).status||"pending";
+if(st==="done")d++;
+else if(st==="cancel")c++;
+else p++;
 });
 
 let displayedMeals = meals;
 
+// إذا كان هناك بحث، اجلبه من كل الفروع
 if(q) {
-    // إذا كان هناك بحث، ابحث في جميع الفروع
     displayedMeals = meals.filter(m => String(m.name).toLowerCase().includes(q) || String(m.number).includes(q));
-    
-    // إذا لم يجد العميل نهائياً، يطبع رسالة حمراء
-    if(displayedMeals.length === 0) {
-        list.innerHTML = "<div style='text-align:center; padding:20px; color:#ef4444; font-weight:bold; line-height:1.8;'>❌ غير موجود!<br>تأكد من رقم المشترك أو اسمه.</div>";
-    }
 } else {
-    // إذا لم يكن هناك بحث، اعرض عملاء الفرع المختار فقط
     displayedMeals = meals.filter(m => m.branch === currentBranch);
 }
 
 displayedMeals.forEach(m=>{
-    const st=(actions[m.number]||{}).status||"pending";
-    let badge="<span style='color:#facc15'>⏳ انتظار</span>";
-    if(st==="done")badge="<span style='color:#22c55e'>✅ مستلم</span>";
-    if(st==="cancel")badge="<span style='color:#ef4444'>❌ ملغى</span>";
+const st=(actions[m.number]||{}).status||"pending";
+let badge="<span style='color:#facc15'>⏳ انتظار</span>";
+if(st==="done")badge="<span style='color:#22c55e'>✅ مستلم</span>";
+if(st==="cancel")badge="<span style='color:#ef4444'>❌ ملغى</span>";
 
-    // إظهار شارة صغيرة بجانب الاسم عند البحث لتوضح لك في أي فرع يوجد هذا المشترك
-    let branchBadge = "";
-    if(q) {
-        if(m.branch === "batarji") branchBadge = " <span style='font-size:10px; background:#22c55e; color:#fff; padding:2px 5px; border-radius:4px;'>البترجي</span>";
-        else if(m.branch === "ruhaily") branchBadge = " <span style='font-size:10px; background:#c084fc; color:#fff; padding:2px 5px; border-radius:4px;'>الرحيلي</span>";
-        else branchBadge = " <span style='font-size:10px; background:#38bdf8; color:#fff; padding:2px 5px; border-radius:4px;'>التوصيل</span>";
-    }
+// إضافة شارة توضح فرع العميل عند البحث لتسهيل المعرفة
+let branchBadge = "";
+if(q) {
+    if(m.branch === "batarji") branchBadge = " <span style='font-size:11px; background:#22c55e; color:#fff; padding:3px 6px; border-radius:6px; margin-right:5px;'>🏪 البترجي</span>";
+    else if(m.branch === "ruhaily") branchBadge = " <span style='font-size:11px; background:#c084fc; color:#fff; padding:3px 6px; border-radius:6px; margin-right:5px;'>🏪 الرحيلي</span>";
+    else branchBadge = " <span style='font-size:11px; background:#38bdf8; color:#fff; padding:3px 6px; border-radius:6px; margin-right:5px;'>🚚 التوصيل</span>";
+}
 
-    const div=document.createElement("div");
-    div.className="meal";
-    div.innerHTML="<div class='top'><div class='num'>#"+m.number+branchBadge+"</div>"+badge+"</div><div class='name'>"+m.name+"</div>";
-    div.onclick=()=>mealAction(m);
-    list.appendChild(div);
+let displayName = m.name || ("مشترك " + m.number);
+
+const div=document.createElement("div");
+div.className="meal";
+div.innerHTML="<div class='top'><div class='num'>#"+m.number+branchBadge+"</div>"+badge+"</div><div class='name'>"+displayName+"</div>";
+div.onclick=()=>mealAction(m);
+list.appendChild(div);
 });
 
 document.getElementById("pending").innerHTML=p;
@@ -271,23 +266,41 @@ document.getElementById("done").innerHTML=d;
 document.getElementById("cancel").innerHTML=c;
 }
 
-// 🔍 دالة زر البحث للتنبيه المباشر
+// 🧠 البحث الذكي: يبحث في كل الفروع ويفتح الصندوق فوراً أو يخبرك أنه غير موجود
 function searchMeal(){
     const q=document.getElementById("search").value.toLowerCase().trim();
     if(!q) return;
+    
     const found = meals.filter(m => String(m.name).toLowerCase().includes(q) || String(m.number).includes(q));
+    
     if(found.length === 0) {
-        alertBox("❌", "غير موجود", "المشترك (" + q + ") غير مسجل في الكشف الحالي!");
+        alertBox("❌", "غير موجود", "المشترك (" + q + ") غير مسجل في كشف اليوم!");
+    } else if(found.length === 1) {
+        mealAction(found[0]); // فتح صندوق التسليم فوراً
+        render();
     } else {
-        render(); // تحديث القائمة لعرضه
+        render(); // عرض النتائج في القائمة
     }
 }
 
+// 🧠 نافذة الإجراء تم تحسينها لتوضيح الفرع بشكل بارز جداً
 function mealAction(m){
 const st=(actions[m.number]||{}).status||"pending";
-if(st==="done"){alertBox("✅","تم التسليم","<b>"+m.name+"</b><br>#"+m.number);return;}
 
-alertBox("👤","تأكيد","<b>"+m.name+"</b><br>#"+m.number);
+let bName = m.branch === "batarji" ? "🏪 البترجي" : (m.branch === "ruhaily" ? "🏪 الرحيلي" : "🚚 التوصيل");
+let bColor = m.branch === "batarji" ? "#22c55e" : (m.branch === "ruhaily" ? "#c084fc" : "#38bdf8");
+let displayName = m.name || ("مشترك " + m.number);
+
+let infoHtml = "<b>" + displayName + "</b><br>" +
+               "<span style='color:#facc15'>#" + m.number + "</span><br><br>" +
+               "<span style='color:" + bColor + "; font-size:15px; font-weight:900; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:10px;'>القسم: " + bName + "</span>";
+
+if(st==="done"){
+    alertBox("✅","تم التسليم مسبقاً", infoHtml);
+    return;
+}
+
+alertBox("👤","تأكيد الإجراء", infoHtml);
 document.getElementById("actions").style.display="flex";
 
 document.getElementById("ok").onclick=()=>{
@@ -307,7 +320,7 @@ closeModal();
 };
 }
 
-// 🚀 دالة الفرز الأصلية القديمة (بدون أي تعديل) التي تعتمد على [SPLIT] للأسطر
+// 🚀 دالة الفرز الأصلية اللي استخرجت لك الـ 109 مشترك بدقة تامة (بدون تعديل)
 function startReadingPDF() {
     const file = document.getElementById("pdf").files[0];
     if (!file) { alertBox("⚠️","تنبيه","اختر PDF"); return; }
@@ -345,7 +358,7 @@ function startReadingPDF() {
     reader.readAsArrayBuffer(file);
 }
 
-// 🧠 الدالة الأصلية القديمة لاستخراج وتوزيع الفروع
+// دالة تفريغ ومعالجة النصوص الأصلية للفرز
 function parseAndProcessPDFText(text) {
     var newMeals = [];
     var tokens = text.split(" [SPLIT] ");
@@ -398,39 +411,42 @@ function parseAndProcessPDFText(text) {
             .replace(/\d{4,8}/g, "")
             .trim();
 
-        if (fullName.length > 2) {
-            var lowerContext = (contextText + " " + fullName)
-                .toLowerCase()
-                .replace(/[\u200B-\u200D\uFEFF]/g, "")
-                .replace(/[•●·.،,_\-–—:؛]/g, " ")
-                .replace(/\s+/g, " ");
+        // حماية الاسم من الاختفاء
+        if (fullName.length < 2) {
+            fullName = "مشترك رقم " + num;
+        }
 
-            if (
-                lowerContext.indexOf("بترجي") !== -1 ||
-                lowerContext.indexOf("البترجي") !== -1 ||
-                lowerContext.indexOf("batarji") !== -1
-            ) {
-                branch = "batarji";
-            } else if (
-                lowerContext.indexOf("رحيلي") !== -1 ||
-                lowerContext.indexOf("الرحيلي") !== -1 ||
-                lowerContext.indexOf("ruhaily") !== -1 ||
-                lowerContext.indexOf("rhili") !== -1
-            ) {
-                branch = "ruhaily";
-            }
+        var lowerContext = (contextText + " " + fullName)
+            .toLowerCase()
+            .replace(/[\u200B-\u200D\uFEFF]/g, "")
+            .replace(/[•●·.،,_\-–—:؛]/g, " ")
+            .replace(/\s+/g, " ");
 
-            var alreadyExists = newMeals.some(function (m) {
-                return m.number === num;
+        if (
+            lowerContext.indexOf("بترجي") !== -1 ||
+            lowerContext.indexOf("البترجي") !== -1 ||
+            lowerContext.indexOf("batarji") !== -1
+        ) {
+            branch = "batarji";
+        } else if (
+            lowerContext.indexOf("رحيلي") !== -1 ||
+            lowerContext.indexOf("الرحيلي") !== -1 ||
+            lowerContext.indexOf("ruhaily") !== -1 ||
+            lowerContext.indexOf("rhili") !== -1
+        ) {
+            branch = "ruhaily";
+        }
+
+        var alreadyExists = newMeals.some(function (m) {
+            return m.number === num;
+        });
+
+        if (!alreadyExists) {
+            newMeals.push({
+                number: num,
+                name: fullName,
+                branch: branch
             });
-
-            if (!alreadyExists) {
-                newMeals.push({
-                    number: num,
-                    name: fullName,
-                    branch: branch
-                });
-            }
         }
     }
 
