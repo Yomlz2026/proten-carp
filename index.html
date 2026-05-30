@@ -24,11 +24,10 @@
         .blue { background: #2563eb; } .greenBox { background: #16a34a; } .red { background: #dc2626; }
         .stat h2 { font-size: 24px; margin-top: 3px; }
         
-        /* التنسيق الأفقي لـ 3 نقاط المعتمد للوجبات */
         .meal-row-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 14px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
         .meal-card-info { display: flex; justify-content: space-between; align-items: center; }
         .meal-card-num { font-size: 18px; font-weight: 900; color: #facc15; display: flex; align-items: center; }
-        .meal-card-name { font-size: 15px; color: #fff; font-weight: bold; text-align: left;}
+        .meal-card-name { font-size: 15px; color: #fff; font-weight: bold; text-align: left; }
         .meal-card-status-bar { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; font-size: 14px; }
         .status-label { color: #aaa; }
         .status-value { font-weight: bold; color: #facc15; }
@@ -64,7 +63,7 @@
         <h3 style="color:#facc15; text-align:center; margin-bottom:10px;">🛠️ لوحة التحكم ورفع الكشوفات</h3>
         <div class="control-grid">
             <div class="control-item">
-                <label>📁 رفع كشف الـ PDF اليومي الجديد للجميع:</label>
+                <label>📁 رفع كشف الـ PDF اليومي للجميع بدقة عالية:</label>
                 <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file"/>
             </div>
         </div>
@@ -97,14 +96,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
     let meals = [];
     let tableStatus = {};
 
     window.onload = function() {
         pullFromCloud();
-        setInterval(pullFromCloud, 3000); // تحديث الجوالات تلقائياً كل 3 ثوانٍ
+        setInterval(pullFromCloud, 3000); // تحديث الأجهزة تلقائياً كل 3 ثوانٍ
     };
 
     function openPasswordModal() { document.getElementById("modalPasswordInput").value = ""; document.getElementById("passwordModal").classList.add("active"); }
@@ -117,7 +114,7 @@
         } else { alert("كلمة السر خطأ!"); }
     }
 
-    // جلب البيانات من سيرفر Vercel
+    // جلب البيانات من السيرفر
     function pullFromCloud() {
         fetch('/api/sync')
         .then(res => res.json())
@@ -133,7 +130,7 @@
         }).catch(e => console.log("Waiting for cloud data..."));
     }
 
-    // حفظ وتعميم البيانات في سيرفر Vercel
+    // حفظ البيانات في السيرفر
     function pushToCloud() {
         fetch('/api/sync', {
             method: 'POST',
@@ -142,11 +139,13 @@
         });
     }
 
-    // 🚀 المعادلة المدمجة (تأخذ الأرقام بدقة المعادلة القديمة + تقنص الاسم والفرع بدقة المعادلة الجديدة)
+    // الخوارزمية الذهبية المدمجة لقراءة PDF بدقة (قنص الاسم والفرع)
     async function startReadingPDF(file) {
         if(!file) return;
-        document.getElementById("status").innerHTML = "⏳ جاري قراءة كشف الـ PDF سحابياً...";
-        let rawMeals = []; // تخزين مؤقت للدمج
+        document.getElementById("status").innerHTML = "⏳ جاري قراءة كشف الـ PDF بأسماء صافية...";
+        meals = [];
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         const reader = new FileReader();
         reader.onload = async function() {
@@ -154,73 +153,83 @@
                 const typedarray = new Uint8Array(this.result);
                 const pdf = await pdfjsLib.getDocument(typedarray).promise;
 
+                let pageTexts = [];
                 for(let p=1; p<=pdf.numPages; p++) {
                     const page = await pdf.getPage(p);
                     const content = await page.getTextContent();
-                    let pageText = content.items.map(item => item.str).join(" ");
-                    
-                    // تحديد الفرع الخاص بالصفحة الحالية
-                    let branch = "delivery";
-                    let lowerText = pageText.toLowerCase();
-                    if (lowerText.includes("بترجي") || lowerText.includes("batarji") || lowerText.includes("albatarji")) {
-                        branch = "batarji";
-                    } else if (lowerText.includes("رحيلي") || lowerText.includes("ruhaily") || lowerText.includes("rhili") || lowerText.includes("al-rhili")) {
-                        branch = "ruhaily";
-                    }
-
-                    // 1️⃣ المعادلة البدائية الآمنة جداً (عشان ما يسقط ولا مشترك نجيبهم كلهم بالأرقام)
-                    const fallbackNumbers = pageText.match(/\b\d{5,8}\b/g) || [];
-                    fallbackNumbers.forEach(num => {
-                        rawMeals.push({ number: num, name: "مشترك رقم " + num, branch: branch });
-                    });
-
-                    // 2️⃣ المعادلة الذهبية الدقيقة (لقنص الاسم الحقيقي من النص المدمج)
-                    const exactRegex = /\[?(\d{5,8})\]?\s+(.*?)\s+Plan\s+name/ig;
-                    let match;
-                    while ((match = exactRegex.exec(pageText)) !== null) {
-                        let num = match[1];
-                        let exactName = match[2];
-                        
-                        // تنظيف الاسم من الشوائب
-                        exactName = exactName.replace(/PROTEIN\s+AND\s+CARB/i, "").trim();
-                        exactName = exactName.replace(/^[^\w\u0600-\u06FF]+/, "").replace(/[^\w\u0600-\u06FF]+$/, "").trim();
-                        
-                        rawMeals.push({ number: num, name: exactName, branch: branch });
-                    }
+                    pageTexts.push(content.items.map(item => item.str).join(" [SPLIT] "));
                 }
-
-                // 3️⃣ عملية الدمج السحرية (نستبدل الاسم "مشترك رقم X" بالاسم الحقيقي لو لقيناه)
-                let finalMealsMap = {};
-                rawMeals.forEach(m => {
-                    if (!finalMealsMap[m.number]) {
-                        finalMealsMap[m.number] = m;
-                    } else {
-                        // إذا كان المحفوظ قديماً فيه جملة "مشترك رقم" والجديد اسم حقيقي، سوي تحديث واستبدله!
-                        if (finalMealsMap[m.number].name.includes("مشترك رقم") && !m.name.includes("مشترك رقم")) {
-                            finalMealsMap[m.number].name = m.name;
-                            finalMealsMap[m.number].branch = m.branch;
-                        }
-                    }
-                });
-
-                // تحويل المخرجات النهائية وإرسالها
-                meals = Object.values(finalMealsMap);
-                tableStatus = {};
-
-                pushToCloud();
                 
-                document.getElementById("status").innerHTML = "✅ تم تعميم الكشف سحابياً! الإجمالي: " + meals.length;
-                document.getElementById("mealCardsContainer").innerHTML = '<p style="color:#aaa; text-align:center; padding:20px; font-size:14px;">ابتدئ بالبحث الفوري الآن.</p>';
-                recalculateStats();
-                alert("🎉 تم بث الكشف لتابلت شاومي وكافة الأجهزة بنجاح!\nالعدد: " + meals.length + " مشترك.");
-                
+                let fullCombinedText = pageTexts.join(" [SPLIT] ");
+                parseAndProcessPDFText(fullCombinedText);
+
             } catch(e) {
                 document.getElementById("status").innerHTML = "❌ خطأ في معالجة الملف!";
+                alert("خطأ: " + e.message);
             }
         };
         reader.readAsArrayBuffer(file);
     }
 
+    // فرز وتنظيف الأسماء والفروع
+    function parseAndProcessPDFText(text) {
+        text = text.replace(/\[SPLIT\]/g, " ");
+        text = text.replace(/Page\s+\d+\s+of\s+\d+/gi, " ");
+        text = text.replace(/---\s*PAGE\s+\d+\s*---/gi, " ");
+        text = text.replace(/\d{4}-\d{2}-\d{2}/g, " "); 
+        text = text.replace(/\d{10,}/g, " "); 
+        
+        var chunks = text.split(/Plan\s+name/i);
+        
+        for (var i = 0; i < chunks.length - 1; i++) {
+            var pieces = chunks[i].split(/PROTEIN\s+AND\s+CARB/i);
+            var headerText = pieces[pieces.length - 1]; 
+            
+            if (headerText.length > 200) {
+                headerText = headerText.slice(-200);
+            }
+            
+            var idMatch = headerText.match(/\[(\d{4,8})\]/);
+            if (!idMatch) continue;
+            
+            var num = idMatch[1];
+            
+            var name = headerText.replace(/\[\d{4,8}\]/, " ").trim();
+            name = name.replace(/\s+/g, " "); 
+            name = name.replace(/^[^\w\u0600-\u06FF]+/, "").replace(/[^\w\u0600-\u06FF]+$/, "").trim();
+            
+            if (name.length < 2) name = "مشترك رقم " + num;
+            
+            var branchText = chunks[i+1].substring(0, 500).toLowerCase();
+            var branch = "delivery";
+            if (branchText.includes("بترجي") || branchText.includes("batarji") || branchText.includes("albatarji")) {
+                branch = "batarji";
+            } else if (branchText.includes("رحيلي") || branchText.includes("ruhaily") || branchText.includes("rhili") || branchText.includes("al-rhili")) {
+                branch = "ruhaily";
+            }
+            
+            var alreadyExists = meals.some(function (m) { return m.number === num; });
+            if (!alreadyExists) {
+                meals.push({ number: num, name: name, branch: branch });
+            }
+        }
+
+        if (meals.length === 0) {
+            alert("⚠️ لم يتم استخراج أي اشتراكات! تأكد من جودة الكشف.");
+            document.getElementById("status").innerHTML = "❌ فشل استخراج البيانات";
+            return;
+        }
+
+        tableStatus = {};
+        pushToCloud();
+        document.getElementById("status").innerHTML = "✅ تم تعميم الكشف سحابياً! الإجمالي: " + meals.length;
+        document.getElementById("mealCardsContainer").innerHTML = '<p style="color:#aaa; text-align:center; padding:20px; font-size:14px;">ابتدئ بالبحث الفوري الآن.</p>';
+        recalculateStats();
+        alert("🎉 تم بث الكشف للأجهزة بنجاح، بأسماء وفرز صافي 100%!");
+        document.getElementById("pdfFile").value = "";
+    }
+
+    // دالة البحث الذكي مع شارات الفروع الملونة
     function checkMeal() {
         const input = document.getElementById("mealInput");
         const num = input.value.trim();
@@ -234,11 +243,11 @@
         const container = document.getElementById("mealCardsContainer");
         if(container.innerHTML.includes("بانتظار") || container.innerHTML.includes("ابتدئ")) container.innerHTML = "";
 
-        // إضافة الشارة الملونة الجميلة لتوضيح الفرع بجوار الرقم
+        // تحديد الشارة الملونة حسب فرع المشترك
         let branchBadge = "";
-        if(meal.branch === "batarji") branchBadge = " <span style='font-size:10px; background:#22c55e; color:#fff; padding:2px 6px; border-radius:6px; margin-right:8px;'>🏪 البترجي</span>";
-        else if(meal.branch === "ruhaily") branchBadge = " <span style='font-size:10px; background:#c084fc; color:#fff; padding:2px 6px; border-radius:6px; margin-right:8px;'>🏪 الرحيلي</span>";
-        else branchBadge = " <span style='font-size:10px; background:#38bdf8; color:#fff; padding:2px 6px; border-radius:6px; margin-right:8px;'>🚚 التوصيل</span>";
+        if(meal.branch === "batarji") branchBadge = " <span style='font-size:11px; background:#22c55e; color:#fff; padding:3px 6px; border-radius:6px; margin-right:8px;'>🏪 البترجي</span>";
+        else if(meal.branch === "ruhaily") branchBadge = " <span style='font-size:11px; background:#c084fc; color:#fff; padding:3px 6px; border-radius:6px; margin-right:8px;'>🏪 الرحيلي</span>";
+        else branchBadge = " <span style='font-size:11px; background:#38bdf8; color:#fff; padding:3px 6px; border-radius:6px; margin-right:8px;'>🚚 التوصيل</span>";
 
         const card = document.createElement("div");
         card.className = "meal-row-card";
