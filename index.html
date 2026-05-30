@@ -135,13 +135,13 @@ input[type="text"], input[type="password"], input[type="file"] {width:100%;paddi
 
 <hr style="border-top:1px solid rgba(255,255,255,0.05); margin: 15px 0;">
 
-<label>تغيير صورة البانر العلوي:</label>
+<label>تغيير صورة البانر العلوي (رفع ملف):</label>
 <input id="bannerFile" type="file" accept="image/*">
 
-<label>تغيير شعار صفحة الدخول:</label>
+<label>تغيير شعار صفحة الدخول (رفع ملف):</label>
 <input id="logoFile" type="file" accept="image/*">
 
-<button class="blue-btn" onclick="saveImages()">💾 رفع وحفظ الصور</button>
+<button class="blue-btn" onclick="saveImages()">💾 حفظ الصور وتعميمها</button>
 <div id="imgStatus" class="status" style="margin-bottom:15px;"></div>
 
 <button class="green-btn" onclick="closeAdmin()">إغلاق اللوحة</button>
@@ -203,7 +203,6 @@ document.getElementById("app").style.display="block";
 connect();
 }
 
-// 🧠 المزامنة: الآن تجلب صور البانر واللوجو من السيرفر
 function connect(){
 db.ref("pnc_data").on("value",s=>{
 const d=s.val()||{};
@@ -227,7 +226,7 @@ document.getElementById("state").innerHTML="🟢 متصل";
 });
 }
 
-// 🧠 رفع وحفظ الصور سحابياً
+// 🧠 دالة رفع الصور كملفات للسحابة
 function saveImages() {
     const bFile = document.getElementById("bannerFile").files[0];
     const lFile = document.getElementById("logoFile").files[0];
@@ -336,7 +335,7 @@ function searchMeal(){
     const found = meals.filter(m => String(m.name).toLowerCase().includes(q) || String(m.number).includes(q));
     
     if(found.length === 0) {
-        alertBox("❌", "غير موجود", "المشترك (" + q + ") غير مسجل في كشف اليوم!");
+        alertBox("❌", "غير موجود", "المشترك غير مسجل في كشف اليوم!");
     } else if(found.length === 1) {
         mealAction(found[0]);
         render();
@@ -386,7 +385,7 @@ function startReadingPDF() {
     const file = document.getElementById("pdf").files[0];
     if (!file) { alertBox("⚠️","تنبيه","اختر PDF"); return; }
     
-    document.getElementById("pdfStatus").innerHTML = "⏳ جاري قراءة الكشف...";
+    document.getElementById("pdfStatus").innerHTML = "⏳ جاري قراءة الكشف بدقة...";
 
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
@@ -419,90 +418,60 @@ function startReadingPDF() {
     reader.readAsArrayBuffer(file);
 }
 
-// 🧠 المصد الذكي (Smart Cutoff): يعزل الاسم ويوقف سحب الكلام فوراً
+// 🎯 الخوارزمية الذهبية الجديدة: فرز وقنص الأسماء بشكل صافي ونقي 100%
 function parseAndProcessPDFText(text) {
     var newMeals = [];
-    var tokens = text.split(" [SPLIT] ");
-    var cleanedTokens = [];
-
-    for (var i = 0; i < tokens.length; i++) {
-        var t = String(tokens[i]).trim();
-        if (t && t !== "[SPLIT]") cleanedTokens.push(t);
-    }
-
-    for (var i = 0; i < cleanedTokens.length; i++) {
-        var token = cleanedTokens[i];
-        var numMatch = token.match(/\[?(\d{4,8})\]?/);
-        if (!numMatch) continue;
-
-        var num = String(numMatch[1]);
-        var nameParts = [];
+    
+    // تنظيف الحشو العام لتجنب التشويش
+    text = text.replace(/\[SPLIT\]/g, " ");
+    text = text.replace(/Page\s+\d+\s+of\s+\d+/gi, " ");
+    text = text.replace(/---\s*PAGE\s+\d+\s*---/gi, " ");
+    text = text.replace(/\d{4}-\d{2}-\d{2}/g, " "); 
+    text = text.replace(/\d{10,}/g, " "); 
+    
+    // تقسيم النص بناءً على (Plan name) لأنه موجود عند كل مشترك
+    var chunks = text.split(/Plan\s+name/i);
+    
+    for (var i = 0; i < chunks.length - 1; i++) {
+        // نأخذ الجزء الموجود بعد شعار المطعم مباشرة، لأن هذا الجزء يحتوي فقط على الرقم والاسم!
+        var pieces = chunks[i].split(/PROTEIN\s+AND\s+CARB/i);
+        var headerText = pieces[pieces.length - 1]; 
+        
+        // للحماية: إذا كان النص طويل جداً نأخذ آخره فقط
+        if (headerText.length > 200) {
+            headerText = headerText.slice(-200);
+        }
+        
+        // استخراج رقم المشترك من الأقواس
+        var idMatch = headerText.match(/\[(\d{4,8})\]/);
+        if (!idMatch) continue;
+        
+        var num = idMatch[1];
+        
+        // تنظيف الاسم باقتطاع الرقم، ليبقى الاسم صافي 100%
+        var name = headerText.replace(/\[\d{4,8}\]/, " ").trim();
+        name = name.replace(/\s+/g, " "); 
+        name = name.replace(/^[^\w\u0600-\u06FF]+/, "").replace(/[^\w\u0600-\u06FF]+$/, "").trim();
+        
+        if (name.length < 2) name = "مشترك رقم " + num;
+        
+        // تحديد الفرع بالبحث في المقطع التابع للمشترك
+        var branchText = chunks[i+1].substring(0, 500).toLowerCase();
         var branch = "delivery";
-        var contextText = "";
-        var hitSystemWord = false; // المصد الذكي
-
-        var checkLimit = Math.min(i + 15, cleanedTokens.length);
-
-        for (var nextIdx = i + 1; nextIdx < checkLimit; nextIdx++) {
-            var nextToken = cleanedTokens[nextIdx];
-            if (/\[?\d{4,8}\]?/.test(nextToken)) break; // توقف إذا ظهر مشترك جديد
-            
-            contextText += " " + nextToken;
-
-            var lowerToken = nextToken.toLowerCase();
-            
-            // إذا ظهرت كلمة من كلمات النظام، نوقف إضافة كلمات لاسم العميل، لكن نكمل فحص الفرع
-            if (lowerToken.includes("plan") || lowerToken.includes("pickup") || lowerToken.includes("service") || lowerToken.includes("captain") || lowerToken.includes("district") || lowerToken.includes("notes") || lowerToken.includes("items") || lowerToken.includes("page")) {
-                hitSystemWord = true;
-            }
-
-            if (!hitSystemWord && nextToken.length > 1 && nextToken.indexOf(":") === -1 && nextToken.indexOf("/") === -1 && nextToken !== "-" && nextToken !== "*") {
-                nameParts.push(nextToken);
-            }
-        }
-
-        var fullName = nameParts.join(" ").replace(/\s+/g, " ").trim();
-
-        // حماية أخيرة
-        if (fullName.length < 2) {
-            fullName = "مشترك رقم " + num;
-        }
-
-        var lowerContext = contextText.toLowerCase()
-            .replace(/[\u200B-\u200D\uFEFF]/g, "")
-            .replace(/[•●·.،,_\-–—:؛]/g, " ")
-            .replace(/\s+/g, " ");
-
-        if (
-            lowerContext.indexOf("بترجي") !== -1 ||
-            lowerContext.indexOf("البترجي") !== -1 ||
-            lowerContext.indexOf("batarji") !== -1
-        ) {
+        if (branchText.includes("بترجي") || branchText.includes("batarji") || branchText.includes("albatarji")) {
             branch = "batarji";
-        } else if (
-            lowerContext.indexOf("رحيلي") !== -1 ||
-            lowerContext.indexOf("الرحيلي") !== -1 ||
-            lowerContext.indexOf("ruhaily") !== -1 ||
-            lowerContext.indexOf("rhili") !== -1
-        ) {
+        } else if (branchText.includes("رحيلي") || branchText.includes("ruhaily") || branchText.includes("rhili") || branchText.includes("al-rhili")) {
             branch = "ruhaily";
         }
-
-        var alreadyExists = newMeals.some(function (m) {
-            return m.number === num;
-        });
-
+        
+        var alreadyExists = newMeals.some(function (m) { return m.number === num; });
         if (!alreadyExists) {
-            newMeals.push({
-                number: num,
-                name: fullName,
-                branch: branch
-            });
+            newMeals.push({ number: num, name: name, branch: branch });
         }
     }
 
     if (newMeals.length === 0) {
-        alertBox("⚠️", "تنبيه", "لم يتم استخراج أي اشتراكات من ملف PDF");
+        alertBox("⚠️", "تنبيه", "لم يتم استخراج أي اشتراكات! تأكد من جودة الكشف.");
         document.getElementById("pdfStatus").innerHTML = "❌ فشل استخراج البيانات";
         return;
     }
@@ -520,7 +489,7 @@ function parseAndProcessPDFText(text) {
         return db.ref("pnc_data/mealsList").set(newMeals);
     }).then(function () {
         document.getElementById("pdfStatus").innerHTML = "✅ مكتمل (" + newMeals.length + ")";
-        alertBox("✅", "تم التحديث بنجاح", "تم استخراج " + newMeals.length + " مشترك بأسماء صافية.");
+        alertBox("✅", "تم التحديث بنجاح", "تم استخراج " + newMeals.length + " مشترك بأسماء صافية ومفرزة.");
         document.getElementById('pdf').value = "";
     }).catch(function (err) {
         alertBox("❌", "خطأ", "خطأ أثناء الرفع للسحابة: " + err.message);
