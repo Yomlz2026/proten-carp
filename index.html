@@ -15,7 +15,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Kufi Arabic',sans-serif}
 body{background:#0f172a;color:#fff;min-height:100vh;padding:15px;padding-bottom:100px}
 button{border:none;cursor:pointer;font-family:inherit}
-input{width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;border:1px solid rgba(255,255,255,.08);margin-bottom:10px;font-weight:700}
+input[type="text"], input[type="password"], input[type="file"] {width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;border:1px solid rgba(255,255,255,.08);margin-bottom:10px;font-weight:700}
 .login{position:fixed;inset:0;background:linear-gradient(135deg,#020617,#0f172a,#1e1b4b);display:flex;align-items:center;justify-content:center;z-index:99999}
 .login-box{background:rgba(30,41,59,.9);padding:28px;border-radius:28px;width:92%;max-width:390px;text-align:center;border:1px solid rgba(255,255,255,.1)}
 .login-box h1{margin:10px 0}
@@ -27,6 +27,7 @@ input{width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;b
 .banner{height:120px;border-radius:20px;background:linear-gradient(135deg,#1e293b,#111827);margin-bottom:15px;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.08)}
 .card{background:rgba(30,41,59,.55);padding:16px;border-radius:20px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
 .admin{display:none;background:rgba(20,83,45,.25)}
+.admin label {font-size:12px; color:#94a3b8; display:block; margin-bottom:6px; margin-top:8px; font-weight:bold; text-align:right;}
 .title{font-size:14px;font-weight:900;margin-bottom:12px}
 .row{display:flex;gap:8px}
 .row button{flex:1;padding:12px;border-radius:14px;background:#1e293b;color:#94a3b8;font-weight:900}
@@ -72,7 +73,8 @@ input{width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;b
 
 <div id="login" class="login">
 <div class="login-box">
-<div style="font-size:55px">🥗</div>
+<img id="loginLogoImg" src="" style="max-width:120px; max-height:120px; display:none; margin:0 auto 10px; border-radius:15px; object-fit:contain;">
+<div id="loginLogoEmoji" style="font-size:55px">🥗</div>
 <h1>بروتين وكارب</h1>
 <input id="pass" type="password" placeholder="رمز الدخول">
 <button onclick="login()">دخول</button>
@@ -126,14 +128,23 @@ input{width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;b
 <div id="admin" class="card admin">
 <div class="title">⚙️ الإشراف</div>
 
+<label>رفع ملف كشف المشتركين (PDF):</label>
 <input id="pdf" type="file" accept="application/pdf">
-<button class="purple-btn" onclick="startReadingPDF()">🚀 قراءة PDF</button>
-<div id="pdfStatus" class="status"></div>
+<button class="purple-btn" onclick="startReadingPDF()">🚀 قراءة الكشف</button>
+<div id="pdfStatus" class="status" style="margin-bottom:15px;"></div>
 
-<input id="bannerInput" placeholder="رابط صورة البانر">
-<button class="blue-btn" onclick="saveBanner()">💾 حفظ البانر</button>
+<hr style="border-top:1px solid rgba(255,255,255,0.05); margin: 15px 0;">
 
-<button class="green-btn" onclick="closeAdmin()">إغلاق</button>
+<label>تغيير صورة البانر العلوي:</label>
+<input id="bannerFile" type="file" accept="image/*">
+
+<label>تغيير شعار صفحة الدخول:</label>
+<input id="logoFile" type="file" accept="image/*">
+
+<button class="blue-btn" onclick="saveImages()">💾 رفع وحفظ الصور</button>
+<div id="imgStatus" class="status" style="margin-bottom:15px;"></div>
+
+<button class="green-btn" onclick="closeAdmin()">إغلاق اللوحة</button>
 </div>
 
 <div class="row">
@@ -192,13 +203,23 @@ document.getElementById("app").style.display="block";
 connect();
 }
 
+// 🧠 المزامنة: الآن تجلب صور البانر واللوجو من السيرفر
 function connect(){
 db.ref("pnc_data").on("value",s=>{
 const d=s.val()||{};
 meals=d.mealsList||[];
 actions=d.actions||{};
 archives=d.archives||{};
-document.getElementById("banner").style.backgroundImage="url('"+(d.banner||"")+"')";
+
+if(d.banner) {
+    document.getElementById("banner").style.backgroundImage="url('"+d.banner+"')";
+}
+if(d.logo) {
+    document.getElementById("loginLogoImg").src = d.logo;
+    document.getElementById("loginLogoImg").style.display = "block";
+    document.getElementById("loginLogoEmoji").style.display = "none";
+}
+
 render();
 renderArchives();
 drawerStats();
@@ -206,8 +227,50 @@ document.getElementById("state").innerHTML="🟢 متصل";
 });
 }
 
+// 🧠 رفع وحفظ الصور سحابياً
+function saveImages() {
+    const bFile = document.getElementById("bannerFile").files[0];
+    const lFile = document.getElementById("logoFile").files[0];
+    const st = document.getElementById("imgStatus");
+    
+    if(!bFile && !lFile) {
+        st.innerHTML = "⚠️ لم تقم باختيار أي صورة!";
+        return;
+    }
+    
+    st.innerHTML = "⏳ جاري الرفع للسحابة...";
+    let updates = {};
+    let promises = [];
+
+    if (bFile) {
+        promises.push(new Promise((resolve) => {
+            let r = new FileReader();
+            r.onload = (e) => { updates['pnc_data/banner'] = e.target.result; resolve(); };
+            r.readAsDataURL(bFile);
+        }));
+    }
+    if (lFile) {
+        promises.push(new Promise((resolve) => {
+            let r = new FileReader();
+            r.onload = (e) => { updates['pnc_data/logo'] = e.target.result; resolve(); };
+            r.readAsDataURL(lFile);
+        }));
+    }
+
+    Promise.all(promises).then(() => {
+        if (Object.keys(updates).length > 0) {
+            db.ref().update(updates).then(() => {
+                st.innerHTML = "✅ تم حفظ الصور وتعميمها بنجاح";
+                document.getElementById("bannerFile").value = "";
+                document.getElementById("logoFile").value = "";
+                setTimeout(() => { st.innerHTML = ""; }, 4000);
+            });
+        }
+    });
+}
+
 function switchBranch(b){
-document.getElementById("search").value = ""; // تفريغ البحث عند تبديل الفروع
+document.getElementById("search").value = "";
 currentBranch=b;
 ["Delivery","Batarji","Ruhaily"].forEach(x=>document.getElementById("b"+x).classList.remove("active"));
 document.getElementById("b"+b.charAt(0).toUpperCase()+b.slice(1)).classList.add("active");
@@ -221,7 +284,6 @@ const list=document.getElementById("list");
 list.innerHTML="";
 let p=0,d=0,c=0;
 
-// حساب إحصائيات الفرع الحالي فقط
 meals.filter(m=>m.branch===currentBranch).forEach(m=>{
 const st=(actions[m.number]||{}).status||"pending";
 if(st==="done")d++;
@@ -231,9 +293,11 @@ else p++;
 
 let displayedMeals = meals;
 
-// إذا كان هناك بحث، اجلبه من كل الفروع
 if(q) {
     displayedMeals = meals.filter(m => String(m.name).toLowerCase().includes(q) || String(m.number).includes(q));
+    if(displayedMeals.length === 0) {
+        list.innerHTML = "<div style='text-align:center; padding:20px; color:#ef4444; font-weight:bold; line-height:1.8;'>❌ غير موجود!<br>تأكد من رقم المشترك أو اسمه.</div>";
+    }
 } else {
     displayedMeals = meals.filter(m => m.branch === currentBranch);
 }
@@ -244,7 +308,6 @@ let badge="<span style='color:#facc15'>⏳ انتظار</span>";
 if(st==="done")badge="<span style='color:#22c55e'>✅ مستلم</span>";
 if(st==="cancel")badge="<span style='color:#ef4444'>❌ ملغى</span>";
 
-// إضافة شارة توضح فرع العميل عند البحث لتسهيل المعرفة
 let branchBadge = "";
 if(q) {
     if(m.branch === "batarji") branchBadge = " <span style='font-size:11px; background:#22c55e; color:#fff; padding:3px 6px; border-radius:6px; margin-right:5px;'>🏪 البترجي</span>";
@@ -266,7 +329,6 @@ document.getElementById("done").innerHTML=d;
 document.getElementById("cancel").innerHTML=c;
 }
 
-// 🧠 البحث الذكي: يبحث في كل الفروع ويفتح الصندوق فوراً أو يخبرك أنه غير موجود
 function searchMeal(){
     const q=document.getElementById("search").value.toLowerCase().trim();
     if(!q) return;
@@ -276,14 +338,13 @@ function searchMeal(){
     if(found.length === 0) {
         alertBox("❌", "غير موجود", "المشترك (" + q + ") غير مسجل في كشف اليوم!");
     } else if(found.length === 1) {
-        mealAction(found[0]); // فتح صندوق التسليم فوراً
+        mealAction(found[0]);
         render();
     } else {
-        render(); // عرض النتائج في القائمة
+        render();
     }
 }
 
-// 🧠 نافذة الإجراء تم تحسينها لتوضيح الفرع بشكل بارز جداً
 function mealAction(m){
 const st=(actions[m.number]||{}).status||"pending";
 
@@ -320,7 +381,7 @@ closeModal();
 };
 }
 
-// 🚀 دالة الفرز الأصلية اللي استخرجت لك الـ 109 مشترك بدقة تامة (بدون تعديل)
+// 🚀 دالة قراءة PDF
 function startReadingPDF() {
     const file = document.getElementById("pdf").files[0];
     if (!file) { alertBox("⚠️","تنبيه","اختر PDF"); return; }
@@ -358,7 +419,7 @@ function startReadingPDF() {
     reader.readAsArrayBuffer(file);
 }
 
-// دالة تفريغ ومعالجة النصوص الأصلية للفرز
+// 🧠 المصد الذكي (Smart Cutoff): يعزل الاسم ويوقف سحب الكلام فوراً
 function parseAndProcessPDFText(text) {
     var newMeals = [];
     var tokens = text.split(" [SPLIT] ");
@@ -378,46 +439,36 @@ function parseAndProcessPDFText(text) {
         var nameParts = [];
         var branch = "delivery";
         var contextText = "";
+        var hitSystemWord = false; // المصد الذكي
 
-        var checkLimit = Math.min(i + 12, cleanedTokens.length);
+        var checkLimit = Math.min(i + 15, cleanedTokens.length);
 
         for (var nextIdx = i + 1; nextIdx < checkLimit; nextIdx++) {
             var nextToken = cleanedTokens[nextIdx];
-            if (/\[?\d{4,8}\]?/.test(nextToken)) break;
+            if (/\[?\d{4,8}\]?/.test(nextToken)) break; // توقف إذا ظهر مشترك جديد
+            
             contextText += " " + nextToken;
 
-            if (
-                nextToken.length > 1 &&
-                nextToken.indexOf(":") === -1 &&
-                nextToken.indexOf("/") === -1 &&
-                nextToken !== "-" &&
-                nextToken !== "*"
-            ) {
+            var lowerToken = nextToken.toLowerCase();
+            
+            // إذا ظهرت كلمة من كلمات النظام، نوقف إضافة كلمات لاسم العميل، لكن نكمل فحص الفرع
+            if (lowerToken.includes("plan") || lowerToken.includes("pickup") || lowerToken.includes("service") || lowerToken.includes("captain") || lowerToken.includes("district") || lowerToken.includes("notes") || lowerToken.includes("items") || lowerToken.includes("page")) {
+                hitSystemWord = true;
+            }
+
+            if (!hitSystemWord && nextToken.length > 1 && nextToken.indexOf(":") === -1 && nextToken.indexOf("/") === -1 && nextToken !== "-" && nextToken !== "*") {
                 nameParts.push(nextToken);
             }
         }
 
         var fullName = nameParts.join(" ").replace(/\s+/g, " ").trim();
 
-        fullName = fullName
-            .replace(/pickup branch/ig, "")
-            .replace(/plan name/ig, "")
-            .replace(/service type/ig, "")
-            .replace(/captain name/ig, "")
-            .replace(/district/ig, "")
-            .replace(/notes/ig, "")
-            .replace(/items count/ig, "")
-            .replace(/\[SPLIT\]/ig, "")
-            .replace(/\d{4,8}/g, "")
-            .trim();
-
-        // حماية الاسم من الاختفاء
+        // حماية أخيرة
         if (fullName.length < 2) {
             fullName = "مشترك رقم " + num;
         }
 
-        var lowerContext = (contextText + " " + fullName)
-            .toLowerCase()
+        var lowerContext = contextText.toLowerCase()
             .replace(/[\u200B-\u200D\uFEFF]/g, "")
             .replace(/[•●·.،,_\-–—:؛]/g, " ")
             .replace(/\s+/g, " ");
@@ -469,7 +520,7 @@ function parseAndProcessPDFText(text) {
         return db.ref("pnc_data/mealsList").set(newMeals);
     }).then(function () {
         document.getElementById("pdfStatus").innerHTML = "✅ مكتمل (" + newMeals.length + ")";
-        alertBox("✅", "تم التحديث", "تم استخراج " + newMeals.length + " مشترك بنجاح.");
+        alertBox("✅", "تم التحديث بنجاح", "تم استخراج " + newMeals.length + " مشترك بأسماء صافية.");
         document.getElementById('pdf').value = "";
     }).catch(function (err) {
         alertBox("❌", "خطأ", "خطأ أثناء الرفع للسحابة: " + err.message);
@@ -519,7 +570,9 @@ a.appendChild(div);
 }
 
 function delArchive(k){
-db.ref("pnc_data/archives/"+k).remove();
+if(confirm("هل أنت متأكد من حذف هذا الأرشيف؟")) {
+    db.ref("pnc_data/archives/"+k).remove();
+}
 }
 
 function toggleAdmin(){
@@ -535,12 +588,9 @@ document.getElementById("drawer").className=v?"drawer open":"drawer";
 document.getElementById("overlay").className=v?"drawer-overlay open":"drawer-overlay";
 }
 
-function saveBanner(){
-const v=document.getElementById("bannerInput").value.trim();
-db.ref("pnc_data/banner").set(v);
-}
-
 function deliverAll(){
+if(!confirm("هل أنت متأكد من تحويل جميع طلبات التوصيل إلى 'مستلم'؟")) return;
+
 meals.forEach(m=>{
 if(m.branch==="delivery"){
 db.ref("pnc_data/actions/"+m.number).set({
