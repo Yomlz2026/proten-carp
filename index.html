@@ -1,591 +1,280 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>بروتين وكارب</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Kufi Arabic',sans-serif}
-body{background:#0f172a;color:#fff;min-height:100vh;padding:15px;padding-bottom:100px}
-button{border:none;cursor:pointer;font-family:inherit}
-input[type="text"], input[type="password"], input[type="file"] {width:100%;padding:14px;border-radius:14px;background:#111827;color:#fff;border:1px solid rgba(255,255,255,.08);margin-bottom:10px;font-weight:700}
-.login{position:fixed;inset:0;background:linear-gradient(135deg,#020617,#0f172a,#1e1b4b);display:flex;align-items:center;justify-content:center;z-index:99999}
-.login-box{background:rgba(30,41,59,.9);padding:28px;border-radius:28px;width:92%;max-width:390px;text-align:center;border:1px solid rgba(255,255,255,.1)}
-.login-box h1{margin:10px 0}
-.login-box button,.green-btn{width:100%;padding:14px;border-radius:14px;background:#22c55e;color:#fff;font-weight:900}
-.app{display:none;max-width:700px;margin:auto}
-.header{display:flex;justify-content:space-between;align-items:center;background:rgba(30,41,59,.6);padding:13px;border-radius:18px;margin-bottom:15px}
-.header button{width:42px;height:42px;border-radius:12px;background:rgba(255,255,254,.08);color:#fff;font-size:20px}
-.brand{font-size:20px;font-weight:900}
-.banner{height:120px;border-radius:20px;background:linear-gradient(135deg,#1e293b,#111827);margin-bottom:15px;background-size:cover;background-position:center;border:1px solid rgba(255,255,255,.08)}
-.card{background:rgba(30,41,59,.55);padding:16px;border-radius:20px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
-.admin{display:none;background:rgba(20,83,45,.25)}
-.admin label {font-size:12px; color:#94a3b8; display:block; margin-bottom:6px; margin-top:8px; font-weight:bold; text-align:right;}
-.title{font-size:14px;font-weight:900;margin-bottom:12px}
-.row{display:flex;gap:8px}
-.row button{flex:1;padding:12px;border-radius:14px;background:#1e293b;color:#94a3b8;font-weight:900}
-.row button.active{background:#22c55e;color:#fff}
-.search-btn,.purple-btn,.blue-btn,.deliver-btn{width:100%;padding:14px;border-radius:14px;color:#fff;font-weight:900;margin-top:6px}
-.search-btn,.purple-btn{background:#7c3aed}
-.blue-btn,.deliver-btn{background:#2563eb}
-.deliver-btn{display:none}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{padding:12px;border-radius:14px;text-align:center;font-size:13px;font-weight:900}
-.yellow{background:rgba(250,204,21,.12);color:#facc15}
-.green{background:rgba(34,197,94,.12);color:#22c55e}
-.red{background:rgba(239,68,68,.12);color:#ef4444}
-.meal{background:#111827;padding:15px;border-radius:18px;margin-bottom:12px;border:1px solid rgba(255,255,255,.06);cursor:pointer}
-.top{display:flex;justify-content:space-between;margin-bottom:8px}
-.num{color:#22c55e;font-weight:900}
-.name{font-size:15px;font-weight:900;line-height:1.8}
-.status{font-size:12px;text-align:center;color:#facc15;font-weight:900;margin-top:8px}
-.modal{position:fixed;inset:0;background:rgba(15,23,42,.88);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
-.modal-box{background:#111827;border-radius:28px;padding:25px;width:100%;max-width:400px;text-align:center}
-.modal-box h3{margin:10px 0}
-.msg{background:#0f172a;padding:14px;border-radius:14px;line-height:1.9;margin:12px 0}
-.actions{display:flex;gap:10px}
-.actions button{flex:1;padding:14px;border-radius:14px;color:#fff;font-weight:900}
-.ok{background:#22c55e}.no{background:#ef4444}
-.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:4000}
-.drawer-overlay.open{display:block}
-.drawer{position:fixed;top:0;right:-330px;width:320px;height:100%;background:#1e293b;z-index:4001;transition:.3s;padding:18px;overflow:auto}
-.drawer.open{right:0}
-.drawer-card{background:rgba(15,23,42,.5);padding:14px;border-radius:18px;margin-bottom:12px}
-.branch-card{padding:14px;border-radius:18px;margin-bottom:10px;font-weight:900}
-.delivery{background:rgba(59,130,246,.12);color:#38bdf8}
-.batarji{background:rgba(34,197,94,.12);color:#22c55e}
-.ruhaily{background:rgba(168,85,247,.12);color:#c084fc}
-.archive{background:rgba(255,255,255,.05);padding:12px;border-radius:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.archive button{background:rgba(239,68,68,.15);color:#ef4444;padding:8px 12px;border-radius:10px}
-.bottom{position:fixed;bottom:0;left:0;width:100%;background:#111827;padding:10px;text-align:center;border-top:1px solid rgba(255,255,254,.08)}
-.bottom a{color:#22c55e;text-decoration:none;font-weight:900}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Protein & Carb | Vercel Cloud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: white; min-height: 100vh; padding: 15px; padding-bottom: 70px; }
+        .container { width: 100%; max-width: 850px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
+        .main-title { font-size: 18px; font-weight: 900; }
+        .card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); padding: 15px; border-radius: 16px; margin-bottom: 15px; }
+        .control-panel { background: #14532d; border: 2px solid #22c55e; display: none; }
+        .control-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
+        .control-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .control-item label { font-size: 12px; font-weight: bold; color: #facc15; }
+        input[type="number"], input[type="password"] { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 18px; text-align: center; outline: none; background: rgba(255,255,255,.08); color: white; margin-top: 8px; }
+        .uploadBtn { background: linear-gradient(45deg,#16a34a,#eab308); color: white; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: bold; width: 100%; margin-top: 10px; border: none; cursor: pointer; }
+        .closeAdminBtn { background: #dc2626; color: white; padding: 10px; border-radius: 8px; font-weight: bold; margin-top: 10px; width: 100%; border: none; cursor: pointer; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .stat { padding: 10px 5px; border-radius: 12px; text-align: center; }
+        .blue { background: #2563eb; } .greenBox { background: #16a34a; } .red { background: #dc2626; }
+        .stat h2 { font-size: 24px; margin-top: 3px; }
+        
+        /* التنسيق الأفقي لـ 3 نقاط المعتمد للوجبات */
+        .meal-row-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 14px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .meal-card-info { display: flex; justify-content: space-between; align-items: center; }
+        .meal-card-num { font-size: 18px; font-weight: 900; color: #facc15; display: flex; align-items: center; }
+        .meal-card-name { font-size: 15px; color: #fff; font-weight: bold; text-align: left;}
+        .meal-card-status-bar { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; font-size: 14px; }
+        .status-label { color: #aaa; }
+        .status-value { font-weight: bold; color: #facc15; }
+        .meal-card-actions { display: flex; gap: 8px; margin-top: 4px; }
+        .actionBtn { padding: 10px; border-radius: 10px; font-weight: bold; flex: 1; font-size: 14px; color: white; text-align: center; border: none; cursor: pointer; }
+        .deliverBtn { background: #16a34a; } .cancelBtn { background: #dc2626; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); z-index: 10000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box { background: #1e293b; border: 2px solid rgba(34, 197, 94, 0.4); padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
+        .ticker-wrap { position: fixed; bottom: 0; left: 0; width: 100%; background: #16a34a; color: white; padding: 5px 0; z-index: 999; text-align: center; font-size: 12px; font-weight: bold; }
+    </style>
 </head>
-
 <body>
 
-<div id="login" class="login">
-<div class="login-box">
-<img id="loginLogoImg" src="" style="max-width:120px; max-height:120px; display:none; margin:0 auto 10px; border-radius:15px; object-fit:contain;">
-<div id="loginLogoEmoji" style="font-size:55px">🥗</div>
-<h1>بروتين وكارب</h1>
-<input id="pass" type="password" placeholder="رمز الدخول">
-<button onclick="login()">دخول</button>
-</div>
-</div>
-
-<div id="overlay" class="drawer-overlay" onclick="drawer(false)"></div>
-
-<div id="drawer" class="drawer">
-<div class="drawer-card">
-<h3>☁️ لوحة المتابعة</h3>
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal-box">
+        <h3 style="margin-bottom:10px;">🔒 منطقة الإدارة</h3>
+        <p style="font-size:12px; color:#ccc; margin-bottom:15px;">أدخل الرقم السري لرفع الكشوفات وتحديث البيانات</p>
+        <input id="modalPasswordInput" placeholder="•••••" type="password"/>
+        <button class="uploadBtn" onclick="submitPassword()">دخول</button>
+        <button onclick="closePasswordModal()" style="background:none; border:none; color:#aaa; margin-top:10px; font-size:13px; cursor:pointer;">إلغاء</button>
+    </div>
 </div>
 
-<div id="d1" class="branch-card delivery"></div>
-<div id="d2" class="branch-card batarji"></div>
-<div id="d3" class="branch-card ruhaily"></div>
+<div class="container">
+    <div class="header">
+        <div class="main-title">لوحة بروتين وكارب السحابية Vercel 🚀</div>
+        <button onclick="openPasswordModal()" style="background:rgba(255,255,255,0.1); color:white; padding:6px 12px; border-radius:8px; font-size:12px; border:none; cursor:pointer;">⚙️ الإدارة</button>
+    </div>
 
-<div class="drawer-card">
-<button class="purple-btn" onclick="generateReport()">📄 تحميل تقرير</button>
+    <div class="card control-panel" id="adminPanel">
+        <h3 style="color:#facc15; text-align:center; margin-bottom:10px;">🛠️ لوحة التحكم ورفع الكشوفات</h3>
+        <div class="control-grid">
+            <div class="control-item">
+                <label>📁 رفع كشف الـ PDF اليومي الجديد للجميع:</label>
+                <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file"/>
+            </div>
+        </div>
+        <button class="closeAdminBtn" onclick="document.getElementById('adminPanel').style.display='none'">🔒 إغلاق اللوحة</button>
+    </div>
+
+    <div class="card">
+        <h3>البحث الفوري برقم الاشتراك:</h3>
+        <input id="mealInput" onkeydown="if(event.key==='Enter') checkMeal()" placeholder="اكتب رقم الاشتراك واضغط Enter" type="number"/>
+        <div id="status" style="margin-top:10px; font-size:14px; color:#facc15; text-align:center;">🟢 متصل بقاعدة بيانات Vercel وجاهز...</div>
+    </div>
+
+    <div class="card">
+        <div class="stats">
+            <div class="stat blue">المتبقي<h2 id="remainingMeals">0</h2></div>
+            <div class="stat greenBox">تم<h2 id="doneMeals">0</h2></div>
+            <div class="stat red">ملغي<h2 id="cancelMeals">0</h2></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>سجل وحالات تسليم وجبات اليوم:</h3>
+        <div id="mealCardsContainer">
+            <p style="color:#aaa; text-align:center; padding:20px; font-size:14px;">بانتظار رفع الكشف أو البحث عن الروابط...</p>
+        </div>
+    </div>
 </div>
 
-<div class="drawer-card">
-<h3>📂 الأرشيف</h3>
-<div id="archives"></div>
-</div>
-</div>
+<div class="ticker-wrap">تصميم وتطوير مامون محمد 0506546313</div>
 
-<div id="modal" class="modal">
-<div class="modal-box">
-<div id="icon" style="font-size:45px">⚠️</div>
-<h3 id="title">تنبيه</h3>
-<div id="msg" class="msg"></div>
-<div id="actions" class="actions">
-<button id="ok" class="ok">تأكيد</button>
-<button id="no" class="no">إلغاء</button>
-</div>
-<button class="blue-btn" onclick="closeModal()">إغلاق</button>
-</div>
-</div>
-
-<div id="app" class="app">
-
-<div id="banner" class="banner"></div>
-
-<div class="header">
-<button onclick="drawer(true)">☰</button>
-<div class="brand">بروتين وكارب</div>
-<button onclick="toggleAdmin()">⚙️</button>
-</div>
-
-<div id="admin" class="card admin">
-<div class="title">⚙️ الإشراف</div>
-
-<label>رفع ملف كشف المشتركين (PDF):</label>
-<input id="pdf" type="file" accept="application/pdf">
-<button class="purple-btn" onclick="startReadingPDF()">🚀 قراءة الكشف</button>
-<div id="pdfStatus" class="status" style="margin-bottom:15px;"></div>
-
-<hr style="border-top:1px solid rgba(255,255,255,0.05); margin: 15px 0;">
-
-<label>تغيير صورة البانر العلوي (رفع ملف):</label>
-<input id="bannerFile" type="file" accept="image/*">
-
-<label>تغيير شعار صفحة الدخول (رفع ملف):</label>
-<input id="logoFile" type="file" accept="image/*">
-
-<button class="blue-btn" onclick="saveImages()">💾 حفظ الصور وتعميمها</button>
-<div id="imgStatus" class="status" style="margin-bottom:15px;"></div>
-
-<button class="green-btn" onclick="closeAdmin()">إغلاق اللوحة</button>
-</div>
-
-<div class="row">
-<button id="bDelivery" class="active" onclick="switchBranch('delivery')">🚚 التوصيل</button>
-<button id="bBatarji" onclick="switchBranch('batarji')">🏪 البترجي</button>
-<button id="bRuhaily" onclick="switchBranch('ruhaily')">🏪 الرحيلي</button>
-</div>
-
-<div class="card">
-<input id="search" placeholder="🔍 الاسم أو الرقم" oninput="render()">
-<button class="search-btn" onclick="searchMeal()">بحث عن مشترك</button>
-<button id="deliverAll" class="deliver-btn" onclick="deliverAll()">⚡ تسليم الكل</button>
-<div id="state" class="status">⏳ جاري الاتصال...</div>
-</div>
-
-<div class="card">
-<div class="stats">
-<div class="stat yellow">انتظار<br><span id="pending">0</span></div>
-<div class="stat green">مستلم<br><span id="done">0</span></div>
-<div class="stat red">ملغى<br><span id="cancel">0</span></div>
-</div>
-</div>
-
-<div class="card">
-<div id="list"></div>
-</div>
-
-</div>
-
-<div class="bottom">
-<a href="#">تصميم وتطوير مأمون محمد</a>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>
-const firebaseConfig={
-apiKey:"AIzaSyBY_5FtbLuUgLiOebfmzAMKqnDsvsbeDXc",
-authDomain:"protencarp.firebaseapp.com",
-databaseURL:"https://protencarp-default-rtdb.firebaseio.com/",
-projectId:"protencarp",
-storageBucket:"protencarp.appspot.com",
-messagingSenderId:"37899247050",
-appId:"1:37899247050:web:e8464a6386510174e2c333"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-
-let meals=[],actions={},archives={};
-let currentBranch="delivery";
-
-function login(){
-const p=document.getElementById("pass").value.trim();
-if(p!=="1234"&&p!=="0000"){alertBox("❌","خطأ","رمز غير صحيح");return;}
-document.getElementById("login").style.display="none";
-document.getElementById("app").style.display="block";
-connect();
-}
-
-function connect(){
-db.ref("pnc_data").on("value",s=>{
-const d=s.val()||{};
-meals=d.mealsList||[];
-actions=d.actions||{};
-archives=d.archives||{};
-
-if(d.banner) {
-    document.getElementById("banner").style.backgroundImage="url('"+d.banner+"')";
-}
-if(d.logo) {
-    document.getElementById("loginLogoImg").src = d.logo;
-    document.getElementById("loginLogoImg").style.display = "block";
-    document.getElementById("loginLogoEmoji").style.display = "none";
-}
-
-render();
-renderArchives();
-drawerStats();
-document.getElementById("state").innerHTML="🟢 متصل";
-});
-}
-
-// 🧠 دالة رفع الصور كملفات للسحابة
-function saveImages() {
-    const bFile = document.getElementById("bannerFile").files[0];
-    const lFile = document.getElementById("logoFile").files[0];
-    const st = document.getElementById("imgStatus");
-    
-    if(!bFile && !lFile) {
-        st.innerHTML = "⚠️ لم تقم باختيار أي صورة!";
-        return;
-    }
-    
-    st.innerHTML = "⏳ جاري الرفع للسحابة...";
-    let updates = {};
-    let promises = [];
-
-    if (bFile) {
-        promises.push(new Promise((resolve) => {
-            let r = new FileReader();
-            r.onload = (e) => { updates['pnc_data/banner'] = e.target.result; resolve(); };
-            r.readAsDataURL(bFile);
-        }));
-    }
-    if (lFile) {
-        promises.push(new Promise((resolve) => {
-            let r = new FileReader();
-            r.onload = (e) => { updates['pnc_data/logo'] = e.target.result; resolve(); };
-            r.readAsDataURL(lFile);
-        }));
-    }
-
-    Promise.all(promises).then(() => {
-        if (Object.keys(updates).length > 0) {
-            db.ref().update(updates).then(() => {
-                st.innerHTML = "✅ تم حفظ الصور وتعميمها بنجاح";
-                document.getElementById("bannerFile").value = "";
-                document.getElementById("logoFile").value = "";
-                setTimeout(() => { st.innerHTML = ""; }, 4000);
-            });
-        }
-    });
-}
-
-function switchBranch(b){
-document.getElementById("search").value = "";
-currentBranch=b;
-["Delivery","Batarji","Ruhaily"].forEach(x=>document.getElementById("b"+x).classList.remove("active"));
-document.getElementById("b"+b.charAt(0).toUpperCase()+b.slice(1)).classList.add("active");
-document.getElementById("deliverAll").style.display=b==="delivery"?"block":"none";
-render();
-}
-
-function render(){
-const q=document.getElementById("search").value.toLowerCase().trim();
-const list=document.getElementById("list");
-list.innerHTML="";
-let p=0,d=0,c=0;
-
-meals.filter(m=>m.branch===currentBranch).forEach(m=>{
-const st=(actions[m.number]||{}).status||"pending";
-if(st==="done")d++;
-else if(st==="cancel")c++;
-else p++;
-});
-
-let displayedMeals = meals;
-
-if(q) {
-    displayedMeals = meals.filter(m => String(m.name).toLowerCase().includes(q) || String(m.number).includes(q));
-    if(displayedMeals.length === 0) {
-        list.innerHTML = "<div style='text-align:center; padding:20px; color:#ef4444; font-weight:bold; line-height:1.8;'>❌ غير موجود!<br>تأكد من رقم المشترك أو اسمه.</div>";
-    }
-} else {
-    displayedMeals = meals.filter(m => m.branch === currentBranch);
-}
-
-displayedMeals.forEach(m=>{
-const st=(actions[m.number]||{}).status||"pending";
-let badge="<span style='color:#facc15'>⏳ انتظار</span>";
-if(st==="done")badge="<span style='color:#22c55e'>✅ مستلم</span>";
-if(st==="cancel")badge="<span style='color:#ef4444'>❌ ملغى</span>";
-
-let branchBadge = "";
-if(q) {
-    if(m.branch === "batarji") branchBadge = " <span style='font-size:11px; background:#22c55e; color:#fff; padding:3px 6px; border-radius:6px; margin-right:5px;'>🏪 البترجي</span>";
-    else if(m.branch === "ruhaily") branchBadge = " <span style='font-size:11px; background:#c084fc; color:#fff; padding:3px 6px; border-radius:6px; margin-right:5px;'>🏪 الرحيلي</span>";
-    else branchBadge = " <span style='font-size:11px; background:#38bdf8; color:#fff; padding:3px 6px; border-radius:6px; margin-right:5px;'>🚚 التوصيل</span>";
-}
-
-let displayName = m.name || ("مشترك " + m.number);
-
-const div=document.createElement("div");
-div.className="meal";
-div.innerHTML="<div class='top'><div class='num'>#"+m.number+branchBadge+"</div>"+badge+"</div><div class='name'>"+displayName+"</div>";
-div.onclick=()=>mealAction(m);
-list.appendChild(div);
-});
-
-document.getElementById("pending").innerHTML=p;
-document.getElementById("done").innerHTML=d;
-document.getElementById("cancel").innerHTML=c;
-}
-
-function searchMeal(){
-    const q=document.getElementById("search").value.toLowerCase().trim();
-    if(!q) return;
-    
-    const found = meals.filter(m => String(m.name).toLowerCase().includes(q) || String(m.number).includes(q));
-    
-    if(found.length === 0) {
-        alertBox("❌", "غير موجود", "المشترك غير مسجل في كشف اليوم!");
-    } else if(found.length === 1) {
-        mealAction(found[0]);
-        render();
-    } else {
-        render();
-    }
-}
-
-function mealAction(m){
-const st=(actions[m.number]||{}).status||"pending";
-
-let bName = m.branch === "batarji" ? "🏪 البترجي" : (m.branch === "ruhaily" ? "🏪 الرحيلي" : "🚚 التوصيل");
-let bColor = m.branch === "batarji" ? "#22c55e" : (m.branch === "ruhaily" ? "#c084fc" : "#38bdf8");
-let displayName = m.name || ("مشترك " + m.number);
-
-let infoHtml = "<b>" + displayName + "</b><br>" +
-               "<span style='color:#facc15'>#" + m.number + "</span><br><br>" +
-               "<span style='color:" + bColor + "; font-size:15px; font-weight:900; background:rgba(255,255,255,0.05); padding:6px 12px; border-radius:10px;'>القسم: " + bName + "</span>";
-
-if(st==="done"){
-    alertBox("✅","تم التسليم مسبقاً", infoHtml);
-    return;
-}
-
-alertBox("👤","تأكيد الإجراء", infoHtml);
-document.getElementById("actions").style.display="flex";
-
-document.getElementById("ok").onclick=()=>{
-db.ref("pnc_data/actions/"+m.number).set({
-status:"done",
-time:new Date().toLocaleTimeString("ar-SA")
-});
-closeModal();
-};
-
-document.getElementById("no").onclick=()=>{
-db.ref("pnc_data/actions/"+m.number).set({
-status:"cancel",
-time:new Date().toLocaleTimeString("ar-SA")
-});
-closeModal();
-};
-}
-
-// 🚀 دالة قراءة PDF
-function startReadingPDF() {
-    const file = document.getElementById("pdf").files[0];
-    if (!file) { alertBox("⚠️","تنبيه","اختر PDF"); return; }
-    
-    document.getElementById("pdfStatus").innerHTML = "⏳ جاري قراءة الكشف بدقة...";
-
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    var reader = new FileReader();
-    reader.onload = function () {
-        var typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
-            var countPromises = [];
-            for (var j = 1; j <= pdf.numPages; j++) {
-                countPromises.push(
-                    pdf.getPage(j).then(function (page) {
-                        return page.getTextContent().then(function (textContent) {
-                            return textContent.items.map(function (item) {
-                                return item.str;
-                            }).join(" [SPLIT] ");
-                        });
-                    })
-                );
-            }
-            Promise.all(countPromises).then(function (pageTexts) {
-                var fullCombinedText = pageTexts.join(" [SPLIT] ");
-                parseAndProcessPDFText(fullCombinedText);
-            }).catch(function (ex) {
-                alertBox("❌", "خطأ", "خطأ أثناء معالجة نصوص PDF: " + ex.message);
-            });
-        }).catch(function (err) {
-            alertBox("❌", "خطأ", "حدث خطأ أثناء تحليل PDF: " + err.message);
-        });
+    let meals = [];
+    let tableStatus = {};
+
+    window.onload = function() {
+        pullFromCloud();
+        setInterval(pullFromCloud, 3000); // تحديث الجوالات تلقائياً كل 3 ثوانٍ
     };
-    reader.readAsArrayBuffer(file);
-}
 
-// 🎯 الخوارزمية الذهبية الجديدة: فرز وقنص الأسماء بشكل صافي ونقي 100%
-function parseAndProcessPDFText(text) {
-    var newMeals = [];
+    function openPasswordModal() { document.getElementById("modalPasswordInput").value = ""; document.getElementById("passwordModal").classList.add("active"); }
+    function closePasswordModal() { document.getElementById("passwordModal").classList.remove("active"); }
     
-    // تنظيف الحشو العام لتجنب التشويش
-    text = text.replace(/\[SPLIT\]/g, " ");
-    text = text.replace(/Page\s+\d+\s+of\s+\d+/gi, " ");
-    text = text.replace(/---\s*PAGE\s+\d+\s*---/gi, " ");
-    text = text.replace(/\d{4}-\d{2}-\d{2}/g, " "); 
-    text = text.replace(/\d{10,}/g, " "); 
-    
-    // تقسيم النص بناءً على (Plan name) لأنه موجود عند كل مشترك
-    var chunks = text.split(/Plan\s+name/i);
-    
-    for (var i = 0; i < chunks.length - 1; i++) {
-        // نأخذ الجزء الموجود بعد شعار المطعم مباشرة، لأن هذا الجزء يحتوي فقط على الرقم والاسم!
-        var pieces = chunks[i].split(/PROTEIN\s+AND\s+CARB/i);
-        var headerText = pieces[pieces.length - 1]; 
-        
-        // للحماية: إذا كان النص طويل جداً نأخذ آخره فقط
-        if (headerText.length > 200) {
-            headerText = headerText.slice(-200);
-        }
-        
-        // استخراج رقم المشترك من الأقواس
-        var idMatch = headerText.match(/\[(\d{4,8})\]/);
-        if (!idMatch) continue;
-        
-        var num = idMatch[1];
-        
-        // تنظيف الاسم باقتطاع الرقم، ليبقى الاسم صافي 100%
-        var name = headerText.replace(/\[\d{4,8}\]/, " ").trim();
-        name = name.replace(/\s+/g, " "); 
-        name = name.replace(/^[^\w\u0600-\u06FF]+/, "").replace(/[^\w\u0600-\u06FF]+$/, "").trim();
-        
-        if (name.length < 2) name = "مشترك رقم " + num;
-        
-        // تحديد الفرع بالبحث في المقطع التابع للمشترك
-        var branchText = chunks[i+1].substring(0, 500).toLowerCase();
-        var branch = "delivery";
-        if (branchText.includes("بترجي") || branchText.includes("batarji") || branchText.includes("albatarji")) {
-            branch = "batarji";
-        } else if (branchText.includes("رحيلي") || branchText.includes("ruhaily") || branchText.includes("rhili") || branchText.includes("al-rhili")) {
-            branch = "ruhaily";
-        }
-        
-        var alreadyExists = newMeals.some(function (m) { return m.number === num; });
-        if (!alreadyExists) {
-            newMeals.push({ number: num, name: name, branch: branch });
-        }
+    function submitPassword() {
+        if (document.getElementById("modalPasswordInput").value.trim() === "71138") {
+            closePasswordModal();
+            document.getElementById("adminPanel").style.display = "block";
+        } else { alert("كلمة السر خطأ!"); }
     }
 
-    if (newMeals.length === 0) {
-        alertBox("⚠️", "تنبيه", "لم يتم استخراج أي اشتراكات! تأكد من جودة الكشف.");
-        document.getElementById("pdfStatus").innerHTML = "❌ فشل استخراج البيانات";
-        return;
+    // جلب البيانات من سيرفر Vercel
+    function pullFromCloud() {
+        fetch('/api/sync')
+        .then(res => res.json())
+        .then(data => {
+            if(data) {
+                meals = data.mealsList || [];
+                tableStatus = data.actions || {};
+                if(meals.length > 0) {
+                    document.getElementById("status").innerHTML = "✅ السحابة نشطة ومحدثة! الاشتراكات: " + meals.length;
+                    recalculateStats();
+                }
+            }
+        }).catch(e => console.log("Waiting for cloud data..."));
     }
 
-    var now = new Date();
-    var archiveKey = "Arch_" + now.getTime();
+    // حفظ وتعميم البيانات في سيرفر Vercel
+    function pushToCloud() {
+        fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mealsList: meals, actions: tableStatus })
+        });
+    }
 
-    db.ref("pnc_data/archives/" + archiveKey).set({
-        date: now.toLocaleDateString('ar-SA'),
-        actions: actions || {},
-        meals: meals || []
-    }).then(function () {
-        return db.ref("pnc_data/actions").remove();
-    }).then(function () {
-        return db.ref("pnc_data/mealsList").set(newMeals);
-    }).then(function () {
-        document.getElementById("pdfStatus").innerHTML = "✅ مكتمل (" + newMeals.length + ")";
-        alertBox("✅", "تم التحديث بنجاح", "تم استخراج " + newMeals.length + " مشترك بأسماء صافية ومفرزة.");
-        document.getElementById('pdf').value = "";
-    }).catch(function (err) {
-        alertBox("❌", "خطأ", "خطأ أثناء الرفع للسحابة: " + err.message);
-    });
-}
+    // 🚀 المعادلة المدمجة (تأخذ الأرقام بدقة المعادلة القديمة + تقنص الاسم والفرع بدقة المعادلة الجديدة)
+    async function startReadingPDF(file) {
+        if(!file) return;
+        document.getElementById("status").innerHTML = "⏳ جاري قراءة كشف الـ PDF سحابياً...";
+        let rawMeals = []; // تخزين مؤقت للدمج
 
-function drawerStats(){
-let d1=0,p1=0;
-let d2=0,p2=0;
-let d3=0,p3=0;
+        const reader = new FileReader();
+        reader.onload = async function() {
+            try {
+                const typedarray = new Uint8Array(this.result);
+                const pdf = await pdfjsLib.getDocument(typedarray).promise;
 
-meals.forEach(m=>{
-const st=(actions[m.number]||{}).status||"pending";
+                for(let p=1; p<=pdf.numPages; p++) {
+                    const page = await pdf.getPage(p);
+                    const content = await page.getTextContent();
+                    let pageText = content.items.map(item => item.str).join(" ");
+                    
+                    // تحديد الفرع الخاص بالصفحة الحالية
+                    let branch = "delivery";
+                    let lowerText = pageText.toLowerCase();
+                    if (lowerText.includes("بترجي") || lowerText.includes("batarji") || lowerText.includes("albatarji")) {
+                        branch = "batarji";
+                    } else if (lowerText.includes("رحيلي") || lowerText.includes("ruhaily") || lowerText.includes("rhili") || lowerText.includes("al-rhili")) {
+                        branch = "ruhaily";
+                    }
 
-if(m.branch==="delivery"){
-if(st==="done")d1++;
-else if(st!=="cancel")p1++;
-}
+                    // 1️⃣ المعادلة البدائية الآمنة جداً (عشان ما يسقط ولا مشترك نجيبهم كلهم بالأرقام)
+                    const fallbackNumbers = pageText.match(/\b\d{5,8}\b/g) || [];
+                    fallbackNumbers.forEach(num => {
+                        rawMeals.push({ number: num, name: "مشترك رقم " + num, branch: branch });
+                    });
 
-if(m.branch==="batarji"){
-if(st==="done")d2++;
-else if(st!=="cancel")p2++;
-}
+                    // 2️⃣ المعادلة الذهبية الدقيقة (لقنص الاسم الحقيقي من النص المدمج)
+                    const exactRegex = /\[?(\d{5,8})\]?\s+(.*?)\s+Plan\s+name/ig;
+                    let match;
+                    while ((match = exactRegex.exec(pageText)) !== null) {
+                        let num = match[1];
+                        let exactName = match[2];
+                        
+                        // تنظيف الاسم من الشوائب
+                        exactName = exactName.replace(/PROTEIN\s+AND\s+CARB/i, "").trim();
+                        exactName = exactName.replace(/^[^\w\u0600-\u06FF]+/, "").replace(/[^\w\u0600-\u06FF]+$/, "").trim();
+                        
+                        rawMeals.push({ number: num, name: exactName, branch: branch });
+                    }
+                }
 
-if(m.branch==="ruhaily"){
-if(st==="done")d3++;
-else if(st!=="cancel")p3++;
-}
-});
+                // 3️⃣ عملية الدمج السحرية (نستبدل الاسم "مشترك رقم X" بالاسم الحقيقي لو لقيناه)
+                let finalMealsMap = {};
+                rawMeals.forEach(m => {
+                    if (!finalMealsMap[m.number]) {
+                        finalMealsMap[m.number] = m;
+                    } else {
+                        // إذا كان المحفوظ قديماً فيه جملة "مشترك رقم" والجديد اسم حقيقي، سوي تحديث واستبدله!
+                        if (finalMealsMap[m.number].name.includes("مشترك رقم") && !m.name.includes("مشترك رقم")) {
+                            finalMealsMap[m.number].name = m.name;
+                            finalMealsMap[m.number].branch = m.branch;
+                        }
+                    }
+                });
 
-document.getElementById("d1").innerHTML="🚚 التوصيل<br>"+d1+" مستلم / "+p1+" باقي";
-document.getElementById("d2").innerHTML="🏪 البترجي<br>"+d2+" مستلم / "+p2+" باقي";
-document.getElementById("d3").innerHTML="🏪 الرحيلي<br>"+d3+" مستلم / "+p3+" باقي";
-}
+                // تحويل المخرجات النهائية وإرسالها
+                meals = Object.values(finalMealsMap);
+                tableStatus = {};
 
-function renderArchives(){
-const a=document.getElementById("archives");
-a.innerHTML="";
+                pushToCloud();
+                
+                document.getElementById("status").innerHTML = "✅ تم تعميم الكشف سحابياً! الإجمالي: " + meals.length;
+                document.getElementById("mealCardsContainer").innerHTML = '<p style="color:#aaa; text-align:center; padding:20px; font-size:14px;">ابتدئ بالبحث الفوري الآن.</p>';
+                recalculateStats();
+                alert("🎉 تم بث الكشف لتابلت شاومي وكافة الأجهزة بنجاح!\nالعدد: " + meals.length + " مشترك.");
+                
+            } catch(e) {
+                document.getElementById("status").innerHTML = "❌ خطأ في معالجة الملف!";
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
 
-Object.keys(archives).reverse().forEach(k=>{
-const x=archives[k];
-const div=document.createElement("div");
-div.className="archive";
-div.innerHTML="<div>📅 "+x.date+"</div><button onclick=\"delArchive('"+k+"')\">حذف</button>";
-a.appendChild(div);
-});
-}
+    function checkMeal() {
+        const input = document.getElementById("mealInput");
+        const num = input.value.trim();
+        if(!num) return;
 
-function delArchive(k){
-if(confirm("هل أنت متأكد من حذف هذا الأرشيف؟")) {
-    db.ref("pnc_data/archives/"+k).remove();
-}
-}
+        if(meals.length === 0) { alert("⚠️ يرجى رفع الكشف أولاً!"); input.value = ""; return; }
+        const meal = meals.find(m => m.number === num);
+        if(!meal) { alert("❌ الرقم غير مدرج بكشف اليوم!"); input.value = ""; return; }
+        if(tableStatus[num]) { alert("⚠️ تم اتخاذ إجراء مسبقاً!"); input.value = ""; return; }
 
-function toggleAdmin(){
-document.getElementById("admin").style.display="block";
-}
+        const container = document.getElementById("mealCardsContainer");
+        if(container.innerHTML.includes("بانتظار") || container.innerHTML.includes("ابتدئ")) container.innerHTML = "";
 
-function closeAdmin(){
-document.getElementById("admin").style.display="none";
-}
+        // إضافة الشارة الملونة الجميلة لتوضيح الفرع بجوار الرقم
+        let branchBadge = "";
+        if(meal.branch === "batarji") branchBadge = " <span style='font-size:10px; background:#22c55e; color:#fff; padding:2px 6px; border-radius:6px; margin-right:8px;'>🏪 البترجي</span>";
+        else if(meal.branch === "ruhaily") branchBadge = " <span style='font-size:10px; background:#c084fc; color:#fff; padding:2px 6px; border-radius:6px; margin-right:8px;'>🏪 الرحيلي</span>";
+        else branchBadge = " <span style='font-size:10px; background:#38bdf8; color:#fff; padding:2px 6px; border-radius:6px; margin-right:8px;'>🚚 التوصيل</span>";
 
-function drawer(v){
-document.getElementById("drawer").className=v?"drawer open":"drawer";
-document.getElementById("overlay").className=v?"drawer-overlay open":"drawer-overlay";
-}
+        const card = document.createElement("div");
+        card.className = "meal-row-card";
+        card.id = "card-" + num;
+        card.innerHTML = '<div class="meal-card-info"><span class="meal-card-num"># ' + num + branchBadge + '</span><span class="meal-card-name">' + meal.name + '</span></div><div class="meal-card-status-bar"><span class="status-label">حالة التسليم الآن:</span><span class="status-value" id="st-' + num + '">⏳ قيد الانتظار</span></div><div class="meal-card-actions" id="act-' + num + '"><button class="actionBtn deliverBtn" onclick="actionMeal(\'' + num + '\', \'done\')">تم التسليم</button><button class="actionBtn cancelBtn" onclick="actionMeal(\'' + num + '\', \'cancel\')">ملغي</button></div>';
+        
+        container.insertBefore(card, container.firstChild);
+        input.value = "";
+    }
 
-function deliverAll(){
-if(!confirm("هل أنت متأكد من تحويل جميع طلبات التوصيل إلى 'مستلم'؟")) return;
+    function actionMeal(num, type) {
+        tableStatus[num] = type;
+        recalculateStats();
+        pushToCloud();
+    }
 
-meals.forEach(m=>{
-if(m.branch==="delivery"){
-db.ref("pnc_data/actions/"+m.number).set({
-status:"done",
-time:new Date().toLocaleTimeString("ar-SA")
-});
-}
-});
-}
+    function recalculateStats() {
+        let d = 0, c = 0;
+        Object.keys(tableStatus).forEach(k => {
+            if(tableStatus[k] === 'done') d++;
+            if(tableStatus[k] === 'cancel') c++;
+        });
+        document.getElementById("remainingMeals").innerHTML = Math.max(0, meals.length - (d + c));
+        document.getElementById("doneMeals").innerHTML = d;
+        document.getElementById("cancelMeals").innerHTML = c;
 
-function generateReport(){
-alertBox("📄","التقرير","ميزة التقرير جاهزة لاحقاً");
-}
-
-function alertBox(i,t,m){
-document.getElementById("icon").innerHTML=i;
-document.getElementById("title").innerHTML=t;
-document.getElementById("msg").innerHTML=m;
-document.getElementById("modal").style.display="flex";
-}
-
-function closeModal(){
-document.getElementById("modal").style.display="none";
-document.getElementById("actions").style.display="none";
-}
+        Object.keys(tableStatus).forEach(k => {
+            const stEl = document.getElementById("st-" + k);
+            const actEl = document.getElementById("act-" + k);
+            if(stEl) {
+                stEl.innerHTML = tableStatus[k] === 'done' ? "✅ تم تسليمها بنجاح" : "❌ ملغية من الطاقم";
+                stEl.style.color = tableStatus[k] === 'done' ? "#22c55e" : "#dc2626";
+            }
+            if(actEl) actEl.style.display = "none";
+        });
+    }
 </script>
-
 </body>
 </html>
