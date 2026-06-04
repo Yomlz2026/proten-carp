@@ -679,7 +679,7 @@ async function startReadingPDF(file) {
                         else if (line.includes("بترجي") || lowerLine.includes("batarji")) targetBranch = "batarji";
                     }
                     if (!detectedNumber) {
-                        var numMatch = line.match(/\b\d{5,8}\b/);
+                        var numMatch = line.match(/\b\d{7,8}\b/);
                         if (numMatch) {
                             detectedNumber = numMatch[0];
                             var nameClean = line.replace(detectedNumber, "").replace(/[:\-\*]/g, "").trim().replace(/\s+/g, " ");
@@ -732,7 +732,7 @@ async function readSubscriptionNumberFromCamera(file) {
         });
         var text = result && result.data && result.data.text ? result.data.text : "";
         var cleanedText = text.replace(/[^0-9\s]/g, " ").replace(/\s+/g, " ");
-        var match = cleanedText.match(/\d{5,8}/);
+        var match = cleanedText.match(/\d{7,8}/);
         if (!match) {
             showCustomAlert("⚠️", "الرقم غير واضح", "لم أستطع قراءة رقم اشتراك واضح. قرّب الكاميرا من الرقم وحاول مرة أخرى.", false);
             if (statusEl) statusEl.innerHTML = meals.length > 0 ? "🟢 الموقع نشط | مجموع المشتركين: " + meals.length : "🟢 الموقع نشط | بانتظار رفع PDF";
