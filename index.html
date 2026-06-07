@@ -92,9 +92,7 @@ input { width: 100%; padding: 14px; border-radius: 14px; background: rgba(15, 23
 input[type="number"] { font-size: 20px; text-align: center; }
 
 .searchBtn { background: rgba(255, 255, 255, 0.06); color: white; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; margin-top: 12px; border: 1px solid rgba(255, 255, 255, 0.1); font-family: 'Noto Kufi Arabic', sans-serif; }
-.search-actions-row { display: grid; grid-template-columns: 1fr 0.9fr; gap: 8px; margin-top: 12px; }
-.cameraReadBtn { background: rgba(56, 189, 248, 0.10); color: #7dd3fc; padding: 14px; border-radius: 14px; font-size: 13px; font-weight: 800; width: 100%; border: 1px solid rgba(56, 189, 248, 0.28); font-family: 'Noto Kufi Arabic', sans-serif; }
-@media (max-width:420px){ .search-actions-row { grid-template-columns: 1fr; } }
+@media (max-width:420px){  }
 .pdfShareBtn { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: bold; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: 'Noto Kufi Arabic', sans-serif; }
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -115,21 +113,49 @@ input[type="number"] { font-size: 20px; text-align: center; }
 .ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: tickerMove 14s linear infinite; font-size: 13px; font-weight: 700; color: #cbd5e1; }
 @keyframes tickerMove { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-#pdfReportTemplate { display: none; background: #ffffff; color: #1e293b; padding: 30px; direction: rtl; }
-.pdf-header { border-bottom: 3px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-.pdf-title { font-size: 22px; font-weight: 900; color: #0f172a; }
-.pdf-meta { font-size: 12px; color: #64748b; text-align: left; }
-.pdf-grid-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 30px; }
-.pdf-sum-box { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; text-align: center; background: #f8fafc; }
-.pdf-sum-val { font-size: 16px; font-weight: 900; margin-top: 4px; }
-.pdf-section-title { font-size: 14px; font-weight: bold; color: #0f172a; border-right: 4px solid #facc15; padding-right: 8px; margin-bottom: 12px; margin-top: 20px; }
-.pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
-.pdf-table th { background: #0f172a; color: #ffffff; padding: 10px; text-align: right; font-weight: bold; }
-.pdf-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; }
-.pdf-table tr:nth-child(even) { background: #f8fafc; }
-.badge-pdf-done { color: #16a34a; font-weight: bold; }
-.badge-pdf-cancel { color: #dc2626; font-weight: bold; }
-.badge-pdf-pending { color: #64748b; font-style: italic; }
+#pdfReportTemplate { display: none; background: #ffffff; color: #1f2933; padding: 0; direction: rtl; font-family: 'Noto Kufi Arabic', sans-serif; }
+.pdf-page { padding: 28px 32px; min-height: 1050px; background: #ffffff; position: relative; }
+.pdf-cover-header { display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 2px solid #0f5f3a; padding-bottom: 18px; margin-bottom: 24px; }
+.pdf-brand-mark { width: 54px; height: 54px; border-radius: 18px; background: #0f5f3a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; margin-left: 12px; }
+.pdf-brand-title { font-size: 22px; font-weight: 900; color: #0f3d2e; line-height: 1.4; }
+.pdf-brand-sub { font-size: 13px; color: #60736a; font-weight: 700; margin-top: 2px; }
+.pdf-meta-panel { text-align: left; font-size: 12px; color: #53645d; line-height: 1.9; min-width: 190px; }
+.pdf-main-title { text-align: center; font-size: 24px; font-weight: 900; color: #0f3d2e; margin: 16px 0 24px; }
+.pdf-kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+.pdf-kpi-card { border: 1px solid #e2e8e4; border-radius: 16px; padding: 16px 10px; text-align: center; background: #fbfcfb; min-height: 104px; }
+.pdf-kpi-label { font-size: 11px; color: #53645d; font-weight: 800; margin-bottom: 8px; }
+.pdf-kpi-value { font-size: 24px; font-weight: 900; color: #0f3d2e; }
+.pdf-kpi-sub { font-size: 10px; color: #8a9992; margin-top: 4px; font-weight: 700; }
+.pdf-kpi-done .pdf-kpi-value { color: #14804a; }
+.pdf-kpi-cancel .pdf-kpi-value { color: #b42318; }
+.pdf-kpi-pending .pdf-kpi-value { color: #5b6470; }
+.pdf-kpi-cold .pdf-kpi-value { color: #075985; }
+.pdf-branches-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.pdf-branch-card { border: 1px solid #dfe7e2; border-radius: 18px; background: #ffffff; overflow: hidden; box-shadow: 0 8px 20px rgba(15, 61, 46, 0.06); }
+.pdf-branch-head { background: #f3f8f5; border-bottom: 1px solid #dfe7e2; padding: 14px; text-align: center; }
+.pdf-branch-title { font-size: 15px; font-weight: 900; color: #0f3d2e; }
+.pdf-branch-total { font-size: 26px; font-weight: 900; color: #0f5f3a; margin-top: 8px; }
+.pdf-branch-total small { display: block; font-size: 10px; color: #60736a; font-weight: 700; margin-top: 4px; }
+.pdf-branch-stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+.pdf-branch-stats div { padding: 11px 4px; border-left: 1px solid #edf1ef; font-size: 10px; color: #60736a; font-weight: 800; }
+.pdf-branch-stats div:last-child { border-left: none; }
+.pdf-branch-stats b { display: block; font-size: 17px; margin-top: 3px; }
+.pdf-branch-mini { font-size:10px; color:#60736a; margin-top:4px; line-height:1.7; }
+.pdf-notes-box { border: 1px solid #e2e8e4; border-radius: 16px; padding: 15px 18px; background: #fbfcfb; color: #53645d; font-size: 11px; line-height: 1.8; margin-top: 18px; }
+.pdf-footer-line { position: absolute; bottom: 22px; left: 32px; right: 32px; border-top: 2px solid #0f5f3a; padding-top: 8px; display: flex; justify-content: space-between; color: #60736a; font-size: 10px; font-weight: 700; }
+.pdf-detail-page { page-break-before: always; padding: 28px 32px; background:#ffffff; min-height:1050px; position:relative; }
+.pdf-detail-header { display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #0f5f3a; padding-bottom:12px; margin-bottom:18px; }
+.pdf-detail-title { font-size:18px; font-weight:900; color:#0f3d2e; }
+.pdf-detail-summary { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:16px; }
+.pdf-mini-stat { border:1px solid #e2e8e4; border-radius:12px; padding:10px; text-align:center; background:#fbfcfb; font-size:10px; color:#60736a; font-weight:800; }
+.pdf-mini-stat b { display:block; font-size:17px; color:#0f3d2e; margin-top:4px; }
+.pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; border:1px solid #e5ebe7; }
+.pdf-table th { background: #0f3d2e; color: #ffffff; padding: 10px; text-align: right; font-weight: bold; }
+.pdf-table td { padding: 8px 10px; border-bottom: 1px solid #edf1ef; color:#26332d; }
+.pdf-table tr:nth-child(even) { background: #f8faf9; }
+.badge-pdf-done { color: #14804a; font-weight: bold; }
+.badge-pdf-cancel { color: #b42318; font-weight: bold; }
+.badge-pdf-pending { color: #5b6470; font-style: normal; font-weight:700; }
 .undo-status-btn { background: rgba(250,204,21,0.15); color:#facc15; border:1px solid rgba(250,204,21,0.35); width:100%; margin-top:8px; }
 .pdf-branch-mini { font-size:10px; color:#475569; margin-top:4px; line-height:1.7; }
 
@@ -140,7 +166,6 @@ input[type="number"] { font-size: 20px; text-align: center; }
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
     try { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js'; } catch(e){}
 </script>
@@ -274,12 +299,8 @@ input[type="number"] { font-size: 20px; text-align: center; }
 
     <div class="card">
         <input id="mealInput" placeholder="اكتب رقم اشتراك العميل هنا..." type="number"/>
-        <input id="cameraNumberInput" type="file" accept="image/*" capture="environment" onchange="readSubscriptionNumberFromCamera(this.files[0])" style="display:none;">
-        <div class="search-actions-row">
-            <button type="button" class="searchBtn" id="searchBtnId" onclick="checkMeal()" style="margin-top:0;">🔍 ابدأ الفرز والبحث</button>
-            <button type="button" class="cameraReadBtn" onclick="openCameraNumberReader()">📷 قراءة الرقم</button>
-        </div>
-        <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;">⏳ جاري المزامنة...</div>
+        <button type="button" class="searchBtn" id="searchBtnId" onclick="checkMeal()">ابدأ الفرز والبحث</button>
+        <div id="status" style="margin-top:10px; font-size:12px; color:#facc15; text-align:center; font-weight:700;">جاري المزامنة...</div>
     </div>
 
     <div class="daily-summary-strip">
@@ -306,42 +327,118 @@ input[type="number"] { font-size: 20px; text-align: center; }
 </div>
 
 <div id="pdfReportTemplate">
-    <div class="pdf-header">
-        <div>
-            <div class="pdf-title">🥗 كشف الفرز اليومي - بروتين وكارب</div>
-            <div style="font-size:12px; margin-top:4px; color:#059669; font-weight:bold;"></div>
+    <div class="pdf-page">
+        <div class="pdf-cover-header">
+            <div style="display:flex; align-items:center;">
+                <div class="pdf-brand-mark">PC</div>
+                <div>
+                    <div class="pdf-brand-title">PROTEIN &amp; CARB</div>
+                    <div class="pdf-brand-sub">بروتين وكارب</div>
+                </div>
+            </div>
+            <div class="pdf-meta-panel">
+                <div><b>التاريخ:</b> <span id="pdfReportDate">--</span></div>
+                <div><b>وقت التقرير:</b> <span id="pdfReportTime">--</span></div>
+            </div>
         </div>
-        <div class="pdf-meta">
-            <div><b>التاريخ:</b> <span id="pdfReportDate">--</span></div>
-            <div><b>وقت التوليد:</b> <span id="pdfReportTime">--</span></div>
+
+        <div class="pdf-main-title">التقرير التشغيلي اليومي</div>
+
+        <div class="pdf-kpi-grid">
+            <div class="pdf-kpi-card">
+                <div class="pdf-kpi-label">مجموع المشتركين</div>
+                <div class="pdf-kpi-value" id="pdfMetaGlobalTotal">0</div>
+                <div class="pdf-kpi-sub">مشترك</div>
+            </div>
+            <div class="pdf-kpi-card pdf-kpi-done">
+                <div class="pdf-kpi-label">إجمالي المستلمين</div>
+                <div class="pdf-kpi-value" id="pdfMetaGlobalDone">0</div>
+                <div class="pdf-kpi-sub">مشترك</div>
+            </div>
+            <div class="pdf-kpi-card pdf-kpi-cancel">
+                <div class="pdf-kpi-label">إجمالي الملغيين</div>
+                <div class="pdf-kpi-value" id="pdfMetaGlobalCancel">0</div>
+                <div class="pdf-kpi-sub">مشترك</div>
+            </div>
+            <div class="pdf-kpi-card pdf-kpi-pending">
+                <div class="pdf-kpi-label">قائمة الانتظار</div>
+                <div class="pdf-kpi-value" id="pdfMetaGlobalPending">0</div>
+                <div class="pdf-kpi-sub">مشترك</div>
+            </div>
+            <div class="pdf-kpi-card pdf-kpi-cold">
+                <div class="pdf-kpi-label">برودة سيارة التوصيل</div>
+                <div class="pdf-kpi-value"><span id="pdfDeliveryColdTemp">--</span>°C</div>
+                <div class="pdf-kpi-sub">درجة مئوية</div>
+            </div>
+        </div>
+
+        <div class="pdf-branches-grid">
+            <div class="pdf-branch-card">
+                <div class="pdf-branch-head">
+                    <div class="pdf-branch-title">قسم التوصيل</div>
+                    <div class="pdf-branch-total"><span id="pdfSumDeliveryDone">0</span><small>عدد المشتركين</small></div>
+                </div>
+                <div class="pdf-branch-stats" id="pdfLabelStaffDelivery">--</div>
+            </div>
+            <div class="pdf-branch-card">
+                <div class="pdf-branch-head">
+                    <div class="pdf-branch-title">فرع البترجي</div>
+                    <div class="pdf-branch-total"><span id="pdfSumBatarjiDone">0</span><small>عدد المشتركين</small></div>
+                </div>
+                <div class="pdf-branch-stats" id="pdfLabelStaffBatarji">--</div>
+            </div>
+            <div class="pdf-branch-card">
+                <div class="pdf-branch-head">
+                    <div class="pdf-branch-title">فرع الرحيلي</div>
+                    <div class="pdf-branch-total"><span id="pdfSumRuhailyDone">0</span><small>عدد المشتركين</small></div>
+                </div>
+                <div class="pdf-branch-stats" id="pdfLabelStaffRuhaily">--</div>
+            </div>
+        </div>
+
+        <div class="pdf-notes-box">
+            <b>ملاحظات التقرير:</b><br>
+            هذا التقرير يعرض ملخص الفرز اليومي حسب الأقسام، مع تفاصيل المستلمين والملغيين والمنتظرين في الصفحات التالية.
+        </div>
+
+        <div style="display:none;" id="pdfSumTotal">0</div>
+        <div style="display:none;" id="pdfSumTotalVisible">0</div>
+
+        <div class="pdf-footer-line">
+            <span>PROTEIN &amp; CARB</span>
+            <span>1</span>
         </div>
     </div>
-    <div class="pdf-cold-box">
-        <div class="pdf-cold-title">❄️ درجة برودة سيارة التوصيل</div>
-        <div class="pdf-cold-value"><span id="pdfDeliveryColdTemp">--</span>°C</div>
-    </div>
-    <div style="background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 14px; padding: 15px; margin-bottom: 25px;">
-        <div style="font-size:14px; font-weight:bold; color:#0f172a; margin-bottom:10px; text-align:center; border-bottom:1px solid #cbd5e1; padding-bottom:5px;">ملخص المشتركين حسب الأقسام</div>
-        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; text-align:center;">
-            <div><small style="color:#475569; font-weight:bold; font-size:11px;">مجموع المشتركين</small><div style="font-size:16px; font-weight:900; color:#0f172a;" id="pdfMetaGlobalTotal">0</div></div>
-            <div><small style="color:#16a34a; font-weight:bold; font-size:11px;">المشحون والمستلم</small><div style="font-size:16px; font-weight:900; color:#16a34a;" id="pdfMetaGlobalDone">0</div></div>
-            <div><small style="color:#2563eb; font-weight:bold; font-size:11px;">قيد الانتظار</small><div style="font-size:16px; font-weight:900; color:#2563eb;" id="pdfMetaGlobalPending">0</div></div>
-            <div><small style="color:#dc2626; font-weight:bold; font-size:11px;">الملغي اليوم</small><div style="font-size:16px; font-weight:900; color:#dc2626;" id="pdfMetaGlobalCancel">0</div></div>
+
+    <div class="pdf-detail-page">
+        <div class="pdf-detail-header">
+            <div class="pdf-detail-title">تفاصيل قسم التوصيل</div>
+            <div style="font-size:11px; color:#60736a; font-weight:700;">PROTEIN &amp; CARB</div>
         </div>
+        <div class="pdf-detail-summary" id="pdfDeliveryMiniSummary"></div>
+        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
+        <div class="pdf-footer-line"><span>تفاصيل قسم التوصيل</span><span>2</span></div>
     </div>
-    <div class="pdf-grid-summary">
-        <div class="pdf-sum-box" style="border-top:3px solid #0f172a;"><div style="color:#0f172a; font-size:11px; font-weight:bold;">مجموع المشتركين</div><div class="pdf-sum-val" id="pdfSumTotalVisible">0</div><div class="pdf-branch-mini">إجمالي الكشف اليومي</div></div>
-        <div class="pdf-sum-box" style="border-top:3px solid #3b82f6;"><div style="color:#3b82f6; font-size:11px; font-weight:bold;">التوصيل</div><div class="pdf-sum-val" id="pdfSumDeliveryDone">0</div><div class="pdf-branch-mini" id="pdfLabelStaffDelivery">--</div></div>
-        <div class="pdf-sum-box" style="border-top:3px solid #10b981;"><div style="color:#10b981; font-size:11px; font-weight:bold;">البترجي</div><div class="pdf-sum-val" id="pdfSumBatarjiDone">0</div><div class="pdf-branch-mini" id="pdfLabelStaffBatarji">--</div></div>
-        <div class="pdf-sum-box" style="border-top:3px solid #a855f7;"><div style="color:#a855f7; font-size:11px; font-weight:bold;">الرحيلي</div><div class="pdf-sum-val" id="pdfSumRuhailyDone">0</div><div class="pdf-branch-mini" id="pdfLabelStaffRuhaily">--</div></div>
+
+    <div class="pdf-detail-page">
+        <div class="pdf-detail-header">
+            <div class="pdf-detail-title">تفاصيل فرع البترجي</div>
+            <div style="font-size:11px; color:#60736a; font-weight:700;">PROTEIN &amp; CARB</div>
+        </div>
+        <div class="pdf-detail-summary" id="pdfBatarjiMiniSummary"></div>
+        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
+        <div class="pdf-footer-line"><span>تفاصيل فرع البترجي</span><span>3</span></div>
     </div>
-    <div style="display:none;" id="pdfSumTotal">0</div>
-    <div class="pdf-section-title">🚚 تفاصيل فرز قسم التوصيل</div>
-    <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
-    <div class="pdf-section-title">🏪 تفاصيل فرز فرع البترجي</div>
-    <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
-    <div class="pdf-section-title">🏪 تفاصيل فرز فرع الرحيلي</div>
-    <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
+
+    <div class="pdf-detail-page">
+        <div class="pdf-detail-header">
+            <div class="pdf-detail-title">تفاصيل فرع الرحيلي</div>
+            <div style="font-size:11px; color:#60736a; font-weight:700;">PROTEIN &amp; CARB</div>
+        </div>
+        <div class="pdf-detail-summary" id="pdfRuhailyMiniSummary"></div>
+        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
+        <div class="pdf-footer-line"><span>تفاصيل فرع الرحيلي</span><span>4</span></div>
+    </div>
 </div>
 
 <script>
@@ -705,51 +802,6 @@ async function startReadingPDF(file) {
     reader.readAsArrayBuffer(file);
 }
 
-function openCameraNumberReader() {
-    var cameraInput = document.getElementById("cameraNumberInput");
-    if (cameraInput) {
-        cameraInput.value = "";
-        cameraInput.click();
-    }
-}
-
-async function readSubscriptionNumberFromCamera(file) {
-    if (!file) return;
-    var statusEl = document.getElementById("status");
-    if (statusEl) statusEl.innerHTML = "📷 جاري قراءة الرقم من الصورة...";
-    try {
-        if (typeof Tesseract === "undefined") {
-            showCustomAlert("⚠️", "تعذر تشغيل الكاميرا", "مكتبة قراءة الأرقام لم تُحمّل. تأكد من اتصال الإنترنت ثم حاول مرة أخرى.", false);
-            if (statusEl) statusEl.innerHTML = meals.length > 0 ? "🟢 الموقع نشط | مجموع المشتركين: " + meals.length : "🟢 الموقع نشط | بانتظار رفع PDF";
-            return;
-        }
-        var result = await Tesseract.recognize(file, "eng", {
-            logger: function(m) {
-                if (statusEl && m && m.status === "recognizing text" && m.progress) {
-                    statusEl.innerHTML = "📷 قراءة الرقم: " + Math.round(m.progress * 100) + "%";
-                }
-            }
-        });
-        var text = result && result.data && result.data.text ? result.data.text : "";
-        var cleanedText = text.replace(/[^0-9\s]/g, " ").replace(/\s+/g, " ");
-        var match = cleanedText.match(/\d{7,8}/);
-        if (!match) {
-            showCustomAlert("⚠️", "الرقم غير واضح", "لم أستطع قراءة رقم اشتراك واضح. قرّب الكاميرا من الرقم وحاول مرة أخرى.", false);
-            if (statusEl) statusEl.innerHTML = meals.length > 0 ? "🟢 الموقع نشط | مجموع المشتركين: " + meals.length : "🟢 الموقع نشط | بانتظار رفع PDF";
-            return;
-        }
-        var detectedNumber = match[0];
-        var input = document.getElementById("mealInput");
-        if (input) input.value = detectedNumber;
-        if (statusEl) statusEl.innerHTML = "✅ تم قراءة الرقم: " + detectedNumber;
-        checkMeal();
-    } catch (e) {
-        console.error(e);
-        showCustomAlert("❌", "فشل قراءة الرقم", "حدث خطأ أثناء قراءة الصورة. حاول بصورة أوضح.", false);
-        if (statusEl) statusEl.innerHTML = meals.length > 0 ? "🟢 الموقع نشط | مجموع المشتركين: " + meals.length : "🟢 الموقع نشط | بانتظار رفع PDF";
-    }
-}
-
 function checkMeal() {
     var input = document.getElementById("mealInput"), num = input.value.trim();
     if (!num) return;
@@ -1093,7 +1145,7 @@ function generateAndSharePDFReport() {
         var m = meals[i];
         if (!m || !m.number) continue;
         var statusItem = tableStatus[m.number];
-        var statusText = "⏳ قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = "--";
+        var statusText = "قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = "--";
         if (m.branch === 'delivery') { deliveryCount++; statusText = "قيد الانتظار"; statusClass = "badge-pdf-pending"; staffLog = staffData.delivery.name || ""; }
         if (m.branch === 'batarji') batTotal++;
         if (m.branch === 'ruhaily') ruhTotal++;
@@ -1105,7 +1157,7 @@ function generateAndSharePDFReport() {
                 if (m.branch === 'batarji') batDone++;
                 if (m.branch === 'ruhaily') ruhDone++;
             } else if (statusItem.status === 'cancel') {
-                statusText = "❌ ملغى"; statusClass = "badge-pdf-cancel";
+                statusText = "ملغي"; statusClass = "badge-pdf-cancel";
                 if (m.branch === 'delivery') delCancelCount++;
                 if (m.branch === 'batarji') batCancel++;
                 if (m.branch === 'ruhaily') ruhCancel++;
@@ -1139,13 +1191,26 @@ function generateAndSharePDFReport() {
     document.getElementById("pdfSumTotal").innerText = globalTotal;
     var totalVis = document.getElementById("pdfSumTotalVisible");
     if (totalVis) totalVis.innerText = globalTotal;
-    document.getElementById("pdfLabelStaffDelivery").innerHTML = "مستلم: " + delDone + " | ملغي: " + delCancelCount + " | انتظار: " + delPending + "<br>المسؤول: " + (staffData.delivery.name || "--");
-    document.getElementById("pdfLabelStaffBatarji").innerHTML = "مستلم: " + batDone + " | ملغي: " + batCancel + " | انتظار: " + batPending + "<br>المسؤول: " + (staffData.batarji.name || "--");
-    document.getElementById("pdfLabelStaffRuhaily").innerHTML = "مستلم: " + ruhDone + " | ملغي: " + ruhCancel + " | انتظار: " + ruhPending + "<br>المسؤول: " + (staffData.ruhaily.name || "--");
+    document.getElementById("pdfLabelStaffDelivery").innerHTML = '<div>مستلم<b>' + delDone + '</b></div><div>ملغي<b style="color:#b42318;">' + delCancelCount + '</b></div><div>انتظار<b style="color:#5b6470;">' + delPending + '</b></div>';
+    document.getElementById("pdfLabelStaffBatarji").innerHTML = '<div>مستلم<b>' + batDone + '</b></div><div>ملغي<b style="color:#b42318;">' + batCancel + '</b></div><div>انتظار<b style="color:#5b6470;">' + batPending + '</b></div>';
+    document.getElementById("pdfLabelStaffRuhaily").innerHTML = '<div>مستلم<b>' + ruhDone + '</b></div><div>ملغي<b style="color:#b42318;">' + ruhCancel + '</b></div><div>انتظار<b style="color:#5b6470;">' + ruhPending + '</b></div>';
 
     document.getElementById("pdfDeliveryTableBody").innerHTML = delRowsHtml || '<tr><td colspan="4" style="text-align:center;color:#64748b;">لا توجد بيانات توصيل</td></tr>';
     document.getElementById("pdfBatarjiTableBody").innerHTML = batRowsHtml || '<tr><td colspan="4" style="text-align:center;color:#64748b;">لا توجد بيانات فرع البترجي</td></tr>';
     document.getElementById("pdfRuhailyTableBody").innerHTML = ruhRowsHtml || '<tr><td colspan="4" style="text-align:center;color:#64748b;">لا توجد بيانات فرع الرحيلي</td></tr>';
+
+    function miniSummaryHtml(total, done, cancel, pending) {
+        return '<div class="pdf-mini-stat">عدد المشتركين<b>' + total + '</b></div>' +
+               '<div class="pdf-mini-stat">مستلم<b style="color:#14804a;">' + done + '</b></div>' +
+               '<div class="pdf-mini-stat">ملغي<b style="color:#b42318;">' + cancel + '</b></div>' +
+               '<div class="pdf-mini-stat">انتظار<b style="color:#5b6470;">' + pending + '</b></div>';
+    }
+    var delMini = document.getElementById("pdfDeliveryMiniSummary");
+    var batMini = document.getElementById("pdfBatarjiMiniSummary");
+    var ruhMini = document.getElementById("pdfRuhailyMiniSummary");
+    if (delMini) delMini.innerHTML = miniSummaryHtml(deliveryCount, delDone, delCancelCount, delPending);
+    if (batMini) batMini.innerHTML = miniSummaryHtml(batTotal, batDone, batCancel, batPending);
+    if (ruhMini) ruhMini.innerHTML = miniSummaryHtml(ruhTotal, ruhDone, ruhCancel, ruhPending);
 
     var element = document.getElementById("pdfReportTemplate");
     var oldDisplay = element.style.display;
