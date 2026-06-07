@@ -258,7 +258,7 @@ input[type="number"] { font-size: 20px; text-align: center; }
 
     <div class="card control-panel" id="adminPanel">
         <input accept=".pdf" id="pdfFile" onchange="startReadingPDF(this.files[0])" type="file" style="margin-bottom:12px; font-size:12px;"/>
-        <input id="whatsappInput" type="tel" value="966506546313" placeholder="رقم الواتساب المشرف..."/>
+        <input id="whatsappInput" type="url" value="https://wa.me/966506546313" placeholder="رابط قروب الواتساب أو رقم المشرف..."/>
         <div class="cold-admin-box" style="margin-top:12px; margin-bottom:12px;">
             <label>🖼️ صورة البانر من المعرض</label>
             <input id="bannerImageInput" type="file" accept="image/*" onchange="handleBannerImageFile(this.files[0])" style="font-size:12px; padding:10px;">
@@ -318,7 +318,7 @@ input[type="number"] { font-size: 20px; text-align: center; }
 <div class="whatsapp-bottom-bar">
     <a class="whatsapp-btn-link" id="waLink" href="https://wa.me/966506546313" target="_blank">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width:20px; height:20px;"/>
-        <span>التواصل الفوري عبر الواتساب للمشرف</span>
+        <span>قروب الشركة على الواتساب</span>
     </a>
 </div>
 
@@ -416,7 +416,7 @@ input[type="number"] { font-size: 20px; text-align: center; }
             <div style="font-size:11px; color:#60736a; font-weight:700;">PROTEIN &amp; CARB</div>
         </div>
         <div class="pdf-detail-summary" id="pdfDeliveryMiniSummary"></div>
-        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
+        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">المسؤول / الوقت</th></tr></thead><tbody id="pdfDeliveryTableBody"></tbody></table>
         <div class="pdf-footer-line"><span>تفاصيل قسم التوصيل</span><span>2</span></div>
     </div>
 
@@ -426,7 +426,7 @@ input[type="number"] { font-size: 20px; text-align: center; }
             <div style="font-size:11px; color:#60736a; font-weight:700;">PROTEIN &amp; CARB</div>
         </div>
         <div class="pdf-detail-summary" id="pdfBatarjiMiniSummary"></div>
-        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
+        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">المسؤول / الوقت</th></tr></thead><tbody id="pdfBatarjiTableBody"></tbody></table>
         <div class="pdf-footer-line"><span>تفاصيل فرع البترجي</span><span>3</span></div>
     </div>
 
@@ -436,7 +436,7 @@ input[type="number"] { font-size: 20px; text-align: center; }
             <div style="font-size:11px; color:#60736a; font-weight:700;">PROTEIN &amp; CARB</div>
         </div>
         <div class="pdf-detail-summary" id="pdfRuhailyMiniSummary"></div>
-        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">بواسطة / الوقت</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
+        <table class="pdf-table"><thead><tr><th style="width:15%">رقم الاشتراك</th><th style="width:45%">اسم المشترك</th><th style="width:20%">الحالة</th><th style="width:20%">المسؤول / الوقت</th></tr></thead><tbody id="pdfRuhailyTableBody"></tbody></table>
         <div class="pdf-footer-line"><span>تفاصيل فرع الرحيلي</span><span>4</span></div>
     </div>
 </div>
@@ -473,7 +473,7 @@ var db = firebase.database();
 var masterSystemSecret = "0506546313";
 var defaultBanner = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000";
 
-var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "summary", waNum = "966506546313", currentBannerUrl = defaultBanner;
+var meals = [], tableStatus = {}, historyArchive = {}, searchedNumbers = new Set(), activeTab = "summary", waNum = "https://wa.me/966506546313", currentBannerUrl = defaultBanner;
 var currentBranchView = "delivery";
 var currentMainListMode = "waiting";
 var expandedArchiveKey = null;
@@ -575,7 +575,7 @@ db.ref("pnc_data").on("value", function(snapshot) {
 
         tableStatus = data.actions || {};
         historyArchive = data.archive || {};
-        waNum = data.whatsapp || "966506546313";
+        waNum = data.whatsapp || "https://wa.me/966506546313";
         currentBannerUrl = data.bannerUrl || defaultBanner;
         if (data.deliveryTotalCount !== undefined) deliveryTotalCount = data.deliveryTotalCount;
         if (data.deliveryColdTemp !== undefined) deliveryColdTemp = data.deliveryColdTemp;
@@ -588,7 +588,9 @@ db.ref("pnc_data").on("value", function(snapshot) {
         }
 
         var waEl = document.getElementById("waLink");
-        if (waEl) waEl.href = "https://wa.me/" + waNum;
+        var finalWaLink = waNum;
+        if (finalWaLink && finalWaLink.indexOf("http") !== 0) finalWaLink = "https://wa.me/" + finalWaLink;
+        if (waEl) waEl.href = finalWaLink || "#";
         var waInput = document.getElementById("whatsappInput");
         if (waInput) waInput.value = waNum;
         var masterInput = document.getElementById("adminMasterPassInput");
@@ -677,7 +679,7 @@ function saveAdminSettings() {
         }
     };
     db.ref("pnc_data").update(updateData);
-    showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة بيانات الموظفين والأكواد ودرجة برودة سيارة التوصيل بنجاح!", true);
+    showCustomAlert("✨", "تم حفظ وتحديث الصلاحيات", "تم مزامنة بيانات الموظفين والأكواد ورابط الواتساب ودرجة برودة سيارة التوصيل بنجاح!", true);
 }
 
 function updateDeliveryManualCount(val) {
@@ -1145,12 +1147,13 @@ function generateAndSharePDFReport() {
         var m = meals[i];
         if (!m || !m.number) continue;
         var statusItem = tableStatus[m.number];
-        var statusText = "قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = "--";
-        if (m.branch === 'delivery') { deliveryCount++; statusText = "قيد الانتظار"; statusClass = "badge-pdf-pending"; staffLog = staffData.delivery.name || ""; }
+        var branchStaffName = m.branch === 'delivery' ? (staffData.delivery.name || 'مسؤول قسم التوصيل') : (m.branch === 'batarji' ? (staffData.batarji.name || 'مسؤول فرع البترجي') : (staffData.ruhaily.name || 'مسؤول فرع الرحيلي'));
+        var statusText = "قيد الانتظار", statusClass = "badge-pdf-pending", staffLog = branchStaffName + " / --";
+        if (m.branch === 'delivery') { deliveryCount++; statusText = "قيد الانتظار"; statusClass = "badge-pdf-pending"; }
         if (m.branch === 'batarji') batTotal++;
         if (m.branch === 'ruhaily') ruhTotal++;
         if (statusItem) {
-            staffLog = (statusItem.by || '--') + " / " + statusItem.time;
+            staffLog = branchStaffName + " / " + (statusItem.time || "--");
             if (statusItem.status === 'done') {
                 statusText = "مستلم"; statusClass = "badge-pdf-done";
                 if (m.branch === 'delivery') delDone++;
